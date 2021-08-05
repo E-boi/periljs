@@ -1,7 +1,7 @@
 
 import WebSocket from "ws";
 import { EventEmitter } from "events";
-
+import { WS_URI } from "../constants"
 import { ClientOptions } from "./intf/clientoptions"
 class Client extends EventEmitter {
     private token: string;
@@ -13,7 +13,7 @@ class Client extends EventEmitter {
         this.token = clientOptions.clientAuthentication.token;
         this.applicationId = clientOptions.clientAuthentication.applicationId;
         this.initializedOptions = clientOptions;
-        this.ws = new WebSocket(clientOptions.discordWebsocket || "wss://gateway.discord.gg/?v=9&encoding=json");
+        this.ws = new WebSocket(clientOptions.discordWebsocket || WS_URI);
     }
     private isAsync(fn: Function): boolean {
         return (typeof fn).toLowerCase() === "function";
