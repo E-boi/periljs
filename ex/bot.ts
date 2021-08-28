@@ -1,5 +1,3 @@
-import { Client } from 'peril';
+import {} from 'peril';
 
-const bot = new Client({
-  
-})
+const bot = new Client({});

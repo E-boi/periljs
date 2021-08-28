@@ -1,6 +1,5 @@
-import { Intents } from "./intents";
-import { Opcode } from "./opcodes";
-
+import { Intents } from './intents';
+import { Opcode } from './opcodes';
 
 /**
  * Discord Event Object
@@ -11,8 +10,8 @@ import { Opcode } from "./opcodes";
  * @typedef {DiscordEvent}
  */
 export interface DiscordEvent {
-    event: string;
-    payload: object | any;
-    op: Opcode;
-    intent: Intents;
+	event: string;
+	payload: object | any;
+	op: Opcode;
+	intent: Intents;
 }

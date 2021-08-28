@@ -1,25 +1,25 @@
 {
-  "plugins": ["plugins/markdown", "./lib/util/jsdoc/plugins/notimplemented.js", "node_modules/better-docs/typescript"],
-  "recurseDepth": 10,
-  "source": {
-    "includePattern": ".+\\.(j|t)s(doc|x)?$",
-    "excludePattern": "(^|\\/|\\\\)_",
-    "exclude": ["./lib/util/jsdoc/plugins/notimplemented.js"]
-  },
-  "sourceType": "module",
-  "tags": {
-    "allowUnknownTags": true,
-    "dictionaries": ["jsdoc", "closure"]
-  },
-  "templates": {
-    "better-docs": {
-        "name": "My React components"
-      }
-    },
-  "opts": {
-    "template": "node_modules/better-docs",
-    "encoding": "utf8",
-    "destination": "./docs/",
-    "recurse": true
-  }
+	"plugins": ["plugins/markdown", "./lib/util/jsdoc/plugins/notimplemented.js", "node_modules/better-docs/typescript"],
+	"recurseDepth": 10,
+	"source": {
+		"includePattern": ".+\\.(j|t)s(doc|x)?$",
+		"excludePattern": "(^|\\/|\\\\)_",
+		"exclude": ["./lib/util/jsdoc/plugins/notimplemented.js"]
+	},
+	"sourceType": "module",
+	"tags": {
+		"allowUnknownTags": true,
+		"dictionaries": ["jsdoc", "closure"]
+	},
+	"templates": {
+		"better-docs": {
+			"name": "My React components"
+		}
+	},
+	"opts": {
+		"template": "node_modules/better-docs",
+		"encoding": "utf8",
+		"destination": "./docs/",
+		"recurse": true
+	}
 }

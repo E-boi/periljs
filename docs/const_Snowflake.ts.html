@@ -72,7 +72,7 @@
             
             <nav>
                 
-                    <h2><a href="index.html">Documentation</a></h2><div class="category"><h3>Classes</h3><ul><li><a href="global.html#Client">Client</a></li></ul><h3><a href="global.html">Global</a></h3></div>
+                    <h2><a href="index.html">Documentation</a></h2><div class="category"><h3>Classes</h3><ul><li><a href="global.html#Client">Client</a></li></ul><h3>Interfaces</h3><ul><li><a href="DiscordEvent.html">DiscordEvent</a></li></ul><h3>Global</h3><ul><li><a href="global.html#PremiumTypes">PremiumTypes</a></li><li><a href="global.html#UserFlags">UserFlags</a></li></ul></div>
                 
             </nav>
         </div>
@@ -89,8 +89,8 @@
     
     <section>
         <article>
-            <pre class="prettyprint source linenums"><code>import { ISnowflake } from "../intf/ISnowflake";
-import IEquatable from "typescript-dotnet-umd/System/IEquatable";
+            <pre class="prettyprint source linenums"><code>import { ISnowflake } from '../intf/ISnowflake';
+import IEquatable from 'typescript-dotnet-umd/System/IEquatable';
 /**
  * Snowflake object.
  * @date 8/8/2021 - 11:49:00 AM
@@ -102,17 +102,17 @@ import IEquatable from "typescript-dotnet-umd/System/IEquatable";
  * @implements {IEquatable&lt;String | ISnowflake>}
  */
 export class Snowflake implements ISnowflake, IEquatable&lt;String | ISnowflake> {
-    equals(other: String | ISnowflake): boolean {
-        throw new Error("Method not implemented.");
-    }
-    as&lt;T>(): T {
-        throw new Error("Method not implemented.");
-    }
-    clone(): ISnowflake {
-        throw new Error("Method not implemented.");
-    }
-    
-}</code></pre>
+	equals(other: String | ISnowflake): boolean {
+		throw new Error('Method not implemented.');
+	}
+	as&lt;T>(): T {
+		throw new Error('Method not implemented.');
+	}
+	clone(): ISnowflake {
+		throw new Error('Method not implemented.');
+	}
+}
+</code></pre>
         </article>
     </section>
 

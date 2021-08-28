@@ -1,7 +1,7 @@
 {
-    "compilerOptions": {
-      "paths": {
-        "peril": ["../lib"]
-      }
-    }
-  }
+	"compilerOptions": {
+		"paths": {
+			"peril": ["../lib"]
+		}
+	}
+}

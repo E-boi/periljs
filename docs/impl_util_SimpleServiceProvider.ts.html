@@ -7,7 +7,7 @@
   
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title> impl/ClientOptions.ts</title>
+  <title> impl/util/SimpleServiceProvider.ts</title>
 
   <script src="https://cdn.jsdelivr.net/gh/google/code-prettify@master/loader/run_prettify.js"></script>
   <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
@@ -80,7 +80,7 @@
             <div class="content">
                 <header class="page-title">
                     <p>Source</p>
-                    <h1>impl/ClientOptions.ts</h1>
+                    <h1>impl/util/SimpleServiceProvider.ts</h1>
                 </header>
                 
 
@@ -89,40 +89,36 @@
     
     <section>
         <article>
-            <pre class="prettyprint source linenums"><code>import { Intents } from '../const/discord/intents';
-import { IClientAuthentication } from '../intf/clientAuthentication';
-import { IClientOptions } from '../intf/IClientOptions';
+            <pre class="prettyprint source linenums"><code>import { ISimpleServiceProvider } from '../../intf/util/ISimpleServiceProvider';
 
 /**
- * Client Options for the Discord Client.
- * @date 8/8/2021 - 11:31:55 AM
+ * Implementation of C#'s `Microsoft.Extensions.DependencyInjection.ServiceProvider` on a need-to-do basis
+ * @date 8/8/2021 - 7:57:14 PM
  *
  * @export
- * @class ClientOptions
- * @typedef {ClientOptions}
- * @implements {IClientOptions}
+ * @class SimpleServiceProvider
+ * @typedef {SimpleServiceProvider}
+ * @implements {ISimpleServiceProvider}
  */
-export class ClientOptions implements IClientOptions {
-	allowSlashCommands?: boolean | undefined;
-	commandsDir?: string | undefined;
-	isSharded?: boolean | undefined;
-	discordWebsocket?: string | undefined;
-	intents?: Intents;
-	clientAuthentication: IClientAuthentication;
-	constructor(
-		clientAuthentication: IClientAuthentication,
-		allowSlashCommands: boolean = false,
-		commandsDir: string | undefined = undefined,
-		isSharded: boolean = false,
-		discordWebsocket: string | undefined = undefined,
-		intents: Intents = Intents.AllUnprivileged
-	) {
-		this.allowSlashCommands = allowSlashCommands;
-		this.commandsDir = commandsDir;
-		this.isSharded = isSharded;
-		this.discordWebsocket = discordWebsocket;
-		this.intents = intents;
-		this.clientAuthentication = clientAuthentication;
+export class SimpleServiceProvider implements ISimpleServiceProvider {
+	private _singletons: { [key: string]: any } = {};
+	// private _transients: any[] = [];
+
+	addSingleton&lt;T>(service: T, id: string): ISimpleServiceProvider {
+		if (this._singletons[id]) {
+			throw new Error('Service already registered.');
+		}
+		this._singletons[id] = service;
+		return this;
+	}
+	get&lt;T>(id: string): T {
+		if (this._singletons[id]) {
+			return this._singletons[id];
+		}
+		throw new Error('Service not registered. ( Transients are currently not supported or processed. )');
+	}
+	addTransient&lt;T>(service: T, id: string): ISimpleServiceProvider {
+		throw new Error('Method not implemented.');
 	}
 }
 </code></pre>

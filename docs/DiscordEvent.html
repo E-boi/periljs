@@ -1,5 +1,3 @@
-
-
 <!DOCTYPE html>
 <html lang="en">
 
@@ -7,7 +5,7 @@
   
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title> impl/ClientOptions.ts</title>
+  <title> DiscordEvent</title>
 
   <script src="https://cdn.jsdelivr.net/gh/google/code-prettify@master/loader/run_prettify.js"></script>
   <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
@@ -79,55 +77,101 @@
         <div class="core" id="main-content-wrapper">
             <div class="content">
                 <header class="page-title">
-                    <p>Source</p>
-                    <h1>impl/ClientOptions.ts</h1>
+                    <p>Interface</p>
+                    <h1>DiscordEvent</h1>
                 </header>
                 
 
 
 
-    
-    <section>
-        <article>
-            <pre class="prettyprint source linenums"><code>import { Intents } from '../const/discord/intents';
-import { IClientAuthentication } from '../intf/clientAuthentication';
-import { IClientOptions } from '../intf/IClientOptions';
 
-/**
- * Client Options for the Discord Client.
- * @date 8/8/2021 - 11:31:55 AM
- *
- * @export
- * @class ClientOptions
- * @typedef {ClientOptions}
- * @implements {IClientOptions}
- */
-export class ClientOptions implements IClientOptions {
-	allowSlashCommands?: boolean | undefined;
-	commandsDir?: string | undefined;
-	isSharded?: boolean | undefined;
-	discordWebsocket?: string | undefined;
-	intents?: Intents;
-	clientAuthentication: IClientAuthentication;
-	constructor(
-		clientAuthentication: IClientAuthentication,
-		allowSlashCommands: boolean = false,
-		commandsDir: string | undefined = undefined,
-		isSharded: boolean = false,
-		discordWebsocket: string | undefined = undefined,
-		intents: Intents = Intents.AllUnprivileged
-	) {
-		this.allowSlashCommands = allowSlashCommands;
-		this.commandsDir = commandsDir;
-		this.isSharded = isSharded;
-		this.discordWebsocket = discordWebsocket;
-		this.intents = intents;
-		this.clientAuthentication = clientAuthentication;
-	}
-}
-</code></pre>
-        </article>
-    </section>
+<section>
+
+<header>
+    
+        <h2>DiscordEvent</h2>
+        
+    
+</header>
+
+<article>
+    <div class="container-overview">
+    
+        
+            <div class="description"><p>Discord Event Object</p></div>
+        
+
+        
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    
+
+    
+
+    
+
+    
+        <p class="tag-source">
+            <a href="const_discord_event.ts.html" class="button">View Source</a>
+            <span>
+                <a href="const_discord_event.ts.html">const/discord/event.ts</a>, <a href="const_discord_event.ts.html#line5">line 5</a>
+            </span>
+        </p>
+    
+</dl>
+
+
+        
+    
+    </div>
+    
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+</article>
+
+</section>
 
 
 

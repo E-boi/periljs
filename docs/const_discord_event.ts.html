@@ -7,7 +7,7 @@
   
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title> impl/ClientOptions.ts</title>
+  <title> const/discord/event.ts</title>
 
   <script src="https://cdn.jsdelivr.net/gh/google/code-prettify@master/loader/run_prettify.js"></script>
   <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
@@ -80,7 +80,7 @@
             <div class="content">
                 <header class="page-title">
                     <p>Source</p>
-                    <h1>impl/ClientOptions.ts</h1>
+                    <h1>const/discord/event.ts</h1>
                 </header>
                 
 
@@ -89,41 +89,22 @@
     
     <section>
         <article>
-            <pre class="prettyprint source linenums"><code>import { Intents } from '../const/discord/intents';
-import { IClientAuthentication } from '../intf/clientAuthentication';
-import { IClientOptions } from '../intf/IClientOptions';
+            <pre class="prettyprint source linenums"><code>import { Intents } from './intents';
+import { Opcode } from './opcodes';
 
 /**
- * Client Options for the Discord Client.
- * @date 8/8/2021 - 11:31:55 AM
+ * Discord Event Object
+ * @date 8/8/2021 - 11:55:23 AM
  *
  * @export
- * @class ClientOptions
- * @typedef {ClientOptions}
- * @implements {IClientOptions}
+ * @interface DiscordEvent
+ * @typedef {DiscordEvent}
  */
-export class ClientOptions implements IClientOptions {
-	allowSlashCommands?: boolean | undefined;
-	commandsDir?: string | undefined;
-	isSharded?: boolean | undefined;
-	discordWebsocket?: string | undefined;
-	intents?: Intents;
-	clientAuthentication: IClientAuthentication;
-	constructor(
-		clientAuthentication: IClientAuthentication,
-		allowSlashCommands: boolean = false,
-		commandsDir: string | undefined = undefined,
-		isSharded: boolean = false,
-		discordWebsocket: string | undefined = undefined,
-		intents: Intents = Intents.AllUnprivileged
-	) {
-		this.allowSlashCommands = allowSlashCommands;
-		this.commandsDir = commandsDir;
-		this.isSharded = isSharded;
-		this.discordWebsocket = discordWebsocket;
-		this.intents = intents;
-		this.clientAuthentication = clientAuthentication;
-	}
+export interface DiscordEvent {
+	event: string;
+	payload: object | any;
+	op: Opcode;
+	intent: Intents;
 }
 </code></pre>
         </article>

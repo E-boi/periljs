@@ -72,7 +72,7 @@
             
             <nav>
                 
-                    <h2><a href="index.html">Documentation</a></h2><div class="category"><h3>Classes</h3><ul><li><a href="global.html#Client">Client</a></li></ul><h3><a href="global.html">Global</a></h3></div>
+                    <h2><a href="index.html">Documentation</a></h2><div class="category"><h3>Classes</h3><ul><li><a href="global.html#Client">Client</a></li></ul><h3>Interfaces</h3><ul><li><a href="DiscordEvent.html">DiscordEvent</a></li></ul><h3>Global</h3><ul><li><a href="global.html#PremiumTypes">PremiumTypes</a></li><li><a href="global.html#UserFlags">UserFlags</a></li></ul></div>
                 
             </nav>
         </div>
@@ -89,13 +89,13 @@
     
     <section>
         <article>
-            <pre class="prettyprint source linenums"><code>
-import WebSocket from "ws";
-import { EventEmitter } from "events";
-import Constants from "../../constants"
-import { IClientOptions } from "../intf/IClientOptions"
-import { IClient } from "../intf/IClient";
-import { ISuccess } from "../intf/ISuccess";
+            <pre class="prettyprint source linenums"><code>import WebSocket from 'ws';
+import { EventEmitter } from 'events';
+import Constants from '../../constants';
+import { IClientOptions } from '../intf/IClientOptions';
+import { IClient } from '../intf/IClient';
+import { ISuccess } from '../intf/ISuccess';
+import { ExpectMessageSuccess } from './success/ExpectMessageSuccess';
 
 /**
  * Discord API Client
@@ -107,59 +107,59 @@ import { ISuccess } from "../intf/ISuccess";
  * @implements {IClient}
  */
 class Client extends EventEmitter implements IClient {
-    private token: string;
-    private applicationId: string;
-    private initializedOptions: IClientOptions;
-    private ws: WebSocket;
-    /**
-     * Creates an instance of Client.
-     * @date 8/8/2021 - 11:21:12 AM
-     *
-     * @constructor
-     * @param {IClientOptions} clientOptions
-     */
-    constructor(clientOptions: IClientOptions) {
-        super();
-        this.token = clientOptions.clientAuthentication.token;
-        this.applicationId = clientOptions.clientAuthentication.applicationId;
-        this.initializedOptions = clientOptions;
-        this.ws = new WebSocket(clientOptions.discordWebsocket || Constants.WS_URI);
-    }
-    /**
-     * Connects to Discord.
-     * @date 8/8/2021 - 11:21:23 AM
-     *
-     * @returns {Promise&lt;ISuccess>}
-     */
-    connect(): Promise&lt;ISuccess> {
-        throw new Error("Method not implemented.");
-    }
-    disconnect(): Promise&lt;ISuccess> {
-        throw new Error("Method not implemented.");
-    }
-    getGuildByID(guildID: string): Promise&lt;any> {
-        throw new Error("Method not implemented.");
-    }
-    getUserByID(userID: string): Promise&lt;any> {
-        throw new Error("Method not implemented.");
-    }
-    _buildPayload(opcode: any, payload: any): Promise&lt;ISuccess> {
-        throw new Error("Method not implemented.");
-    }
-    private isAsync(fn: Function): boolean {
-        return (typeof fn).toLowerCase() === "function";
-    }
-    private registerExpectPayload(opcode: any): Promise&lt;ISuccess> {
-        return new Promise((resolve, reject) => {
-            this.ws.on("message", (message: any) => {
-                if (message.opcode === opcode) {
-                    resolve(message);
-                }
-            });
-        });
-    }
-    
-}</code></pre>
+	private token: string;
+	private applicationId: string;
+	private initializedOptions: IClientOptions;
+	private ws: WebSocket;
+	/**
+	 * Creates an instance of Client.
+	 * @date 8/8/2021 - 11:21:12 AM
+	 *
+	 * @constructor
+	 * @param {IClientOptions} clientOptions
+	 */
+	constructor(clientOptions: IClientOptions) {
+		super();
+		this.token = clientOptions.clientAuthentication.token;
+		this.applicationId = clientOptions.clientAuthentication.applicationId;
+		this.initializedOptions = clientOptions;
+		this.ws = new WebSocket(clientOptions.discordWebsocket || Constants.WS_URI);
+	}
+	/**
+	 * Connects to Discord.
+	 * @date 8/8/2021 - 11:21:23 AM
+	 *
+	 * @returns {Promise&lt;ISuccess>}
+	 */
+	connect(): Promise&lt;ISuccess> {
+		throw new Error('Method not implemented.');
+	}
+	disconnect(): Promise&lt;ISuccess> {
+		throw new Error('Method not implemented.');
+	}
+	getGuildByID(guildID: string): Promise&lt;any> {
+		throw new Error('Method not implemented.');
+	}
+	getUserByID(userID: string): Promise&lt;any> {
+		throw new Error('Method not implemented.');
+	}
+	_buildPayload(opcode: any, payload: any): Promise&lt;ISuccess> {
+		throw new Error('Method not implemented.');
+	}
+	private isAsync(fn: Function): boolean {
+		return (typeof fn).toLowerCase() !== 'function';
+	}
+	private registerExpectPayload(opcode: any): Promise&lt;ISuccess> {
+		return new Promise((resolve, reject) => {
+			this.ws.on('message', (message: any) => {
+				if (message.opcode === opcode) {
+					resolve(new ExpectMessageSuccess(message));
+				}
+			});
+		});
+	}
+}
+</code></pre>
         </article>
     </section>
 
