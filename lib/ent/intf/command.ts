@@ -1,4 +1,4 @@
-import { CommandProps, InternalCommandProps } from "./commandProps";
+import { CommandProps, InternalCommandProps } from "./ICommandProps";
 
 export interface Command {
     /**

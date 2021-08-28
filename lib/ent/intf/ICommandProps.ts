@@ -1,7 +1,7 @@
-import { Permissions } from "./discord/permissions";
-import { CommandContext } from "./commandContext";
+import { Permissions } from "../const/discord/permissions";
+import { ICommandContext } from "./ICommandContext";
 export
-interface CommandProps {
+interface ICommandProps {
     name: string;
     description: string;
     usage: string;
@@ -12,11 +12,10 @@ interface CommandProps {
     requiredPermissions: Permissions;
     ownerOnly: boolean;
     guildRequired: boolean;
-    validateRun: (ctx: CommandContext) => boolean | undefined;
+    validateRun: (ctx: ICommandContext) => boolean | undefined;
 }
 
 export
-interface InternalCommandProps {
+interface IInternalCommandProps {
     filename: string;
-    directory: string;
 }

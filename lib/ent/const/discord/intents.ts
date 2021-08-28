@@ -15,6 +15,6 @@ export enum Intents {
     DIRECT_MESSAGE_REACTIONS = 1 << 13,
     DIRECT_MESSAGE_TYPING = 1 << 14,
     All = (1 << 15) - 1,
-    AllUnpriveleged = All ^ (GUILD_PRESENCES | GUILD_MEMBERS)
+    AllUnprivileged = All ^ (GUILD_PRESENCES | GUILD_MEMBERS)
 
 }

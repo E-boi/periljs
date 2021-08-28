@@ -1,4 +1,4 @@
-export interface clientAuthentication {
+export interface IClientAuthentication {
     token: string;
     applicationId: string;
 }

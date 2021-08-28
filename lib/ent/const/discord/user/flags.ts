@@ -1,3 +1,10 @@
+/**
+ * Flag constants for the user object.
+ * @date 8/8/2021 - 11:59:05 AM
+ *
+ * @export
+ * @enum {number}
+ */
 export enum UserFlags {
     None = 0,
     DISCORD_EMPLOYEE = 1 << 0,
@@ -14,6 +21,13 @@ export enum UserFlags {
     EARLY_VERIFIED_BOT_DEVELOPER = 1 << 11,
     DISCORD_CERTIFIED_MODERATOR = 1 << 12
 }
+/**
+ * Constants defining the version of nitro a user has.
+ * @date 8/8/2021 - 11:59:17 AM
+ *
+ * @export
+ * @enum {number}
+ */
 export enum PremiumTypes {
     NONE = 0,
     CLASSIC = 1,

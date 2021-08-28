@@ -1,4 +1,4 @@
-export enum Opcodes {
+export enum Opcode {
   DISPATCH = 0,
   HEARTBEAT = 1,
   IDENTIFY = 2,
@@ -11,7 +11,7 @@ export enum Opcodes {
   HELLO = 9,
   HEARTBEAT_ACK = 10,
 }
-export enum Closecodes {
+export enum Closecode {
   UNKNOWN_ERROR = 4000,
   UNKNOWN_OPCODE = 4001,
   DECODE_ERROR = 4002,
@@ -27,8 +27,8 @@ export enum Closecodes {
   INVALID_INTENTS = 4013,
   DISALLOWED_INTENTS = 4014,
 }
-export enum Voicecodes {}
-export enum JSONcodes {
+export enum Voicecode {}
+export enum JSONcode {
   GENERAL_ERROR = 0,
   UNKNOWN_ACCOUNT = 10001,
   UNKNOWN_APPLICATION = 10002,
