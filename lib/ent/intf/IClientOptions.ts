@@ -9,6 +9,6 @@ export interface IClientOptions {
 
 	discordWebsocket?: string;
 
-	intents?: Intents;
+	intents: Intents[];
 	clientAuthentication: IClientAuthentication;
 }
