@@ -1,5 +1,5 @@
 import { ISnowflake } from '../intf/ISnowflake';
-import IEquatable from 'typescript-dotnet-umd/System/IEquatable';
+
 /**
  * Snowflake object.
  * @date 8/8/2021 - 11:49:00 AM
@@ -8,16 +8,15 @@ import IEquatable from 'typescript-dotnet-umd/System/IEquatable';
  * @class Snowflake
  * @typedef {Snowflake}
  * @implements {ISnowflake}
- * @implements {IEquatable<String | ISnowflake>}
+ * @extends {String}
  */
-export class Snowflake implements ISnowflake, IEquatable<String | ISnowflake> {
-	equals(other: String | ISnowflake): boolean {
-		throw new Error('Method not implemented.');
+
+export class Snowflake extends String implements ISnowflake {
+	equals(other: String | Snowflake): boolean {
+		if (other.toString() === this.toString()) return true;
+		return false;
 	}
 	as<T>(): T {
-		throw new Error('Method not implemented.');
-	}
-	clone(): ISnowflake {
-		throw new Error('Method not implemented.');
+		return this as unknown as T;
 	}
 }
