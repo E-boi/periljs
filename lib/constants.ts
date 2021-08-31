@@ -7,7 +7,7 @@ import { GuildFeatures } from './ent/const/discord/guild/features';
 import { NSFWLevel, PremiumTypes, PrivacyLevel } from './ent/const/discord/guild/level';
 import { StickerTypes, StickerFormatTypes } from './ent/const/discord/guild/sticker';
 const WS_URI = 'wss://gateway.discord.gg/?v=9&encoding=json';
-const API_URI = 'https://discord.com/api/';
+const API_URI = 'https://discord.com/api';
 export {
 	WS_URI,
 	API_URI,
