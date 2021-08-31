@@ -1,3 +1,10 @@
+/**
+ * Discord Intents
+ *
+ * @enum {number}
+ * @export
+ */
+
 export enum Intents {
 	GUILDS = 1 << 0,
 	GUILD_MEMBERS = 1 << 1,

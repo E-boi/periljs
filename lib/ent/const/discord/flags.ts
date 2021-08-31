@@ -1,3 +1,10 @@
+/**
+ * Application Flags
+ *
+ * @enum {number}
+ * @export
+ */
+
 export enum ApplicationFlags {
 	GATEWAY_PRESENCE = 1 << 12,
 	GATEWAY_PRESENCE_LIMITED = 1 << 13,

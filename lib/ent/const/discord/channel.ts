@@ -1,3 +1,10 @@
+/**
+ * Types of channels (text channel, voice channels, etc)
+ *
+ * @enum {number}
+ * @export
+ */
+
 export enum ChannelTypes {
 	GUILD_TEXT = 0,
 	DM = 0,
