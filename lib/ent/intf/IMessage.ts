@@ -1,6 +1,6 @@
 import { MessageActivityTypes } from '../../constants';
 import { InteractionTypes } from '../const/discord/interaction';
-import { MessageTypes } from '../const/discord/message';
+import { MessageFlags, MessageTypes } from '../const/discord/message';
 import { Snowflake } from '../const/Snowflake';
 import IEmoji from './guild/IEmoji';
 import IGuildMember from './guild/IGuildMember';
@@ -11,9 +11,17 @@ import IComponent from './IComponent';
 import IEmbed from './IEmbed';
 import { IUser } from './user/IUser';
 
+/**
+ * Message object
+ *
+ * @interface IMessage
+ * @typedef {IMessage}
+ * @export
+ */
+
 export default interface IMessage {
 	id: Snowflake;
-	channel_id: Snowflake;
+	channel_id: string;
 	guild_id?: Snowflake;
 	author: IUser;
 	member?: IGuildMember;
@@ -36,13 +44,21 @@ export default interface IMessage {
 	application?: IApplication;
 	application_id?: Snowflake;
 	message_reference?: IMessageReference;
-	flags?: number;
+	flags?: MessageFlags;
 	referenced_message?: IMessage;
 	interaction?: IMessageIntercation;
 	thread?: IChannel;
 	components?: IComponent[];
 	sticker_items?: IStickerItem[];
 }
+
+/**
+ * Message object to create a message
+ *
+ * @interface IMessageCreate
+ * @typedef {IMessageCreate}
+ * @export
+ */
 
 export interface IMessageCreate {
 	content?: string;
@@ -55,6 +71,14 @@ export interface IMessageCreate {
 	sticker_ids?: string[];
 }
 
+/**
+ * Attachment object
+ *
+ * @interface IAttachment
+ * @typedef {IAttachment}
+ * @export
+ */
+
 export interface IAttachment {
 	id: Snowflake;
 	filename: string;
@@ -66,16 +90,37 @@ export interface IAttachment {
 	width?: string;
 }
 
+/**
+ * Reaction Type
+ *
+ * @interface IReaction
+ * @typedef {IReaction}
+ */
+
 export interface IReaction {
 	count: number;
 	me: boolean;
 	emoji: IEmoji;
 }
 
+/**
+ * Message Activity Type
+ *
+ * @interface IMessageActivity
+ * @typedef {IMessageActivity}
+ */
+
 export interface IMessageActivity {
 	type: MessageActivityTypes;
 	party_id?: string;
 }
+
+/**
+ * Message Reference Type (reply, crosspost, pin, etc)
+ *
+ * @interface IMessageReference
+ * @typedef {IMessageReference}
+ */
 
 export interface IMessageReference {
 	message_id?: Snowflake;
@@ -83,6 +128,13 @@ export interface IMessageReference {
 	guild_id?: Snowflake;
 	fail_if_not_exists?: boolean;
 }
+
+/**
+ * Message Interaction Type (if message is responce intercation)
+ *
+ * @interface IMessageIntercation
+ * @typedef {IMessageIntercation}
+ */
 
 export interface IMessageIntercation {
 	id: Snowflake;
