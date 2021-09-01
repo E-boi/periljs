@@ -1,8 +1,6 @@
-// import { Opcode } from '../const/discord/opcodes';
-import { ISuccess } from './ISuccess';
-// import { IClientOptions } from './IClientOptions';
 import { IUser } from './user/IUser';
 import IGuild from './guild/IGuild';
+import { ISuccess } from './ISuccess';
 
 export interface IClient {
 	connect(): void;
