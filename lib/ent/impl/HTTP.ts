@@ -60,7 +60,6 @@ export default class HTTP {
 			});
 			return this.put(`/applications/${this.bot.bot!.id}/guilds/${guild}/commands`, JSON.stringify(command));
 		} else {
-			console.log(command);
 			command.type = ApplicationCommandTypes[command.type] as any;
 			command.options = command.options?.map(opt => {
 				opt.type = ApplicationCommandOptionType[opt.type] as any;
