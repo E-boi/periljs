@@ -97,8 +97,12 @@ export default class Client extends EventEmitter implements IClient {
 		return this.HTTP.getIntercationCommands(this.bot.id);
 	}
 
-	async setComamnd(command: IInteractionCreate | IInteractionCreate[]) {
-		return this.HTTP.setGuildCommand(command, '881625034018410536');
+	async setGuildComamnd(command: IInteractionCreate | IInteractionCreate[], guildID: Snowflake | string) {
+		return this.HTTP.setGuildCommand(command, guildID);
+	}
+
+	async setCommand(command: IInteractionCreate | IInteractionCreate[]) {
+		return this.HTTP.setCommand(command);
 	}
 	// _buildPayload(opcode: any, payload: any): Promise<ISuccess> {
 	// 	opcode;

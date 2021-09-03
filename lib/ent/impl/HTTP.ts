@@ -48,6 +48,27 @@ export default class HTTP {
 		return commands;
 	}
 
+	async setCommand(command: IInteractionCreate | IInteractionCreate[]) {
+		if (Array.isArray(command)) {
+			command = command.map(c => {
+				c.type = ApplicationCommandTypes[c.type] as any;
+				c.options = c.options?.map(opt => {
+					opt.type = ApplicationCommandOptionType[opt.type] as any;
+					return opt;
+				});
+				return c;
+			});
+			return this.put(`/applications/${this.bot.bot!.id}/commands`, JSON.stringify(command));
+		} else {
+			command.type = ApplicationCommandTypes[command.type] as any;
+			command.options = command.options?.map(opt => {
+				opt.type = ApplicationCommandOptionType[opt.type] as any;
+				return opt;
+			});
+			return this.post(`/applications/${this.bot.bot!.id}/commands`, JSON.stringify(command));
+		}
+	}
+
 	async setGuildCommand(command: IInteractionCreate | IInteractionCreate[], guild: Snowflake | string) {
 		if (Array.isArray(command)) {
 			command = command.map(c => {
