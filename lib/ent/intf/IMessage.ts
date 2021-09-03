@@ -1,6 +1,6 @@
 import { MessageActivityTypes } from '../../constants';
 import { InteractionTypes } from '../const/discord/interaction';
-import { MessageFlags, MessageTypes } from '../const/discord/message';
+import { AllowedMentionTypes, MessageFlags, MessageTypes } from '../const/discord/message';
 import { Snowflake } from '../const/Snowflake';
 import IEmoji from './guild/IEmoji';
 import IGuildMember from './guild/IGuildMember';
@@ -65,7 +65,7 @@ export interface IMessageCreate {
 	tts?: boolean;
 	file?: Blob;
 	embeds?: IEmbed[];
-	allowed_mentions?: any; // IAllowedMention
+	allowed_mentions?: IAllowedMention;
 	message_reference?: IMessageReference;
 	components?: IComponent[];
 	sticker_ids?: string[];
@@ -141,4 +141,11 @@ export interface IMessageIntercation {
 	type: InteractionTypes;
 	name: string;
 	user: IUser;
+}
+
+export interface IAllowedMention {
+	parse: AllowedMentionTypes;
+	users?: Snowflake[];
+	roles?: Snowflake[];
+	replied_user?: boolean;
 }

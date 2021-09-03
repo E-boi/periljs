@@ -3,8 +3,8 @@ export default interface IEmbed {
 	type?: string;
 	description?: string;
 	url?: string;
-	timestamp: string;
-	color: number;
+	timestamp?: string;
+	color?: number;
 	footer?: IEmbedFooter;
 	image?: IEmbedImage;
 	thumbnail?: IEmbedImage;

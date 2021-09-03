@@ -47,3 +47,9 @@ export enum MessageFlags {
 	EPHEMERAL = 1 << 6,
 	LOADING = 1 << 7,
 }
+
+export enum AllowedMentionTypes {
+	ROLE = 'roles',
+	USER = 'users',
+	EVERYONE = 'everyone',
+}
