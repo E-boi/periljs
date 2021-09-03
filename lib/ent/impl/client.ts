@@ -9,6 +9,8 @@ import IMessage, { IMessageCreate } from '../intf/IMessage';
 import IClientEvents from '../intf/IClientEvents';
 import { Snowflake } from '../const/Snowflake';
 import { ISuccess } from '../intf/ISuccess';
+import { IApplicationCommand } from '../intf/IApplicationCommand';
+import { IInteractionCreate } from '../intf/IInteraction';
 
 /**
  * Discord API Client
@@ -23,11 +25,11 @@ export default class Client extends EventEmitter implements IClient {
 	private token: string;
 	private initializedOptions: IClientOptions;
 	private ws?: Peril;
-	private HTTP: HTTP;
+	HTTP: HTTP;
 	declare on: IClientEvents<this>;
 	declare once: IClientEvents<this>;
 	bot?: IUser;
-	guilds: Map<Snowflake, IGuild>;
+	guilds: Map<string, IGuild>;
 	/**
 	 * Creates an instance of Client.
 	 * @date 8/8/2021 - 11:21:12 AM
@@ -41,7 +43,10 @@ export default class Client extends EventEmitter implements IClient {
 		this.initializedOptions = clientOptions;
 		this.bot = undefined;
 		this.guilds = new Map();
-		this.HTTP = new HTTP(this.token);
+		this.HTTP = new HTTP(this.token, this);
+		// this.commands = {
+		// 	set: this.setComamnd,
+		// };
 	}
 	/**
 	 * Connects to Discord.
@@ -61,8 +66,8 @@ export default class Client extends EventEmitter implements IClient {
 	 * @returns {IGuild | undefined}
 	 */
 
-	getGuildByID(guildID: string): IGuild | undefined {
-		return this.guilds.get(new Snowflake(guildID));
+	getGuildByID(guildID: string | Snowflake): IGuild | undefined {
+		return this.guilds.get(guildID.toString());
 	}
 
 	/**
@@ -85,6 +90,15 @@ export default class Client extends EventEmitter implements IClient {
 	 */
 	async sendMessage(message: IMessageCreate, channel_id: string): Promise<IMessage> {
 		return this.HTTP.sendMessage(message, channel_id);
+	}
+
+	async getIntercationCommands(): Promise<IApplicationCommand[]> {
+		if (!this.bot) return [];
+		return this.HTTP.getIntercationCommands(this.bot.id);
+	}
+
+	async setComamnd(command: IInteractionCreate | IInteractionCreate[]) {
+		return this.HTTP.setGuildCommand(command, '881625034018410536');
 	}
 	// _buildPayload(opcode: any, payload: any): Promise<ISuccess> {
 	// 	opcode;

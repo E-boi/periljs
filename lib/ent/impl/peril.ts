@@ -1,10 +1,10 @@
 import WebSocket from 'ws';
 import { WS_URI } from '../../constants';
-import { Snowflake } from '../const/Snowflake';
 import { IClientOptions } from '../intf/IClientOptions';
 import IMessage from '../intf/IMessage';
 import Client from './client';
 import intentCalculator from './intents';
+import SlashInteraction from './SlashInteraction';
 
 export default class Peril extends WebSocket {
 	options: IClientOptions;
@@ -24,12 +24,12 @@ export default class Peril extends WebSocket {
 							this.bot.emit('ready', this.bot.bot);
 							break;
 						case 'GUILD_CREATE':
-							this.bot.guilds.set(new Snowflake(data.d.id), data.d);
+							this.bot.guilds.set(data.d.id, data.d);
 							this.bot.emit('guild.create', data.d);
 							break;
 						case 'GUILD_DELETE':
-							const guild = this.bot.guilds.get(new Snowflake(data.d.id));
-							if (!data.d.unavailible) this.bot.guilds.delete(new Snowflake(data.d.id));
+							const guild = this.bot.guilds.get(data.d.id);
+							if (!data.d.unavailible) this.bot.guilds.delete(data.d.id);
 							this.bot.emit('guild.delete', guild);
 							break;
 						case 'MESSAGE_CREATE':
@@ -44,6 +44,11 @@ export default class Peril extends WebSocket {
 						case 'MESSAGE_DELETE':
 							const deletedMessages: IMessage = data.d;
 							this.bot.emit('message.delete', deletedMessages);
+							break;
+						case 'INTERACTION_CREATE':
+							if (data.d.type === 2) {
+								if (data.d.data.type === 1) this.bot.emit('interaction.slash', new SlashInteraction(this.bot, data.d));
+							}
 							break;
 						default:
 							console.log(data);
