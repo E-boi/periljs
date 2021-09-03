@@ -4,7 +4,7 @@ import fetch, { BodyInit, HeadersInit, Response } from 'node-fetch';
 import { Snowflake } from '../const/Snowflake';
 import { IApplicationCommand } from '../intf/IApplicationCommand';
 import { ApplicationCommandOptionType, ApplicationCommandTypes } from '../const/discord/interaction';
-import { IInteractionCreate } from '../intf/IInteraction';
+import { IMessageCommandCreate, ISlashCreate, IUserCommandCreate } from '../intf/IInteraction';
 import Client from './client';
 
 export default class HTTP {
@@ -41,51 +41,60 @@ export default class HTTP {
 		return messageObj;
 	}
 
-	async getIntercationCommands(id: Snowflake | string) {
-		const commandsReq = await this.get(`/applications/${id}/commands`);
+	async getIntercationCommands() {
+		const commandsReq = await this.get(`/applications/${this.bot.bot?.id}/commands`);
 		const commands: IApplicationCommand[] = await commandsReq.json();
 		commands.map(command => command.type && (command.type = ApplicationCommandTypes[command.type] as any));
 		return commands;
 	}
 
-	async setCommand(command: IInteractionCreate | IInteractionCreate[]) {
+	async setCommand(
+		command: (IUserCommandCreate | ISlashCreate | IMessageCommandCreate)[] | (ISlashCreate | IUserCommandCreate | IMessageCommandCreate)
+	) {
 		if (Array.isArray(command)) {
 			command = command.map(c => {
+				if (c.type === 'CHAT_INPUT')
+					c.options = c.options?.map(opt => {
+						opt.type = ApplicationCommandOptionType[opt.type] as any;
+						return opt;
+					});
 				c.type = ApplicationCommandTypes[c.type] as any;
-				c.options = c.options?.map(opt => {
-					opt.type = ApplicationCommandOptionType[opt.type] as any;
-					return opt;
-				});
 				return c;
 			});
 			return this.put(`/applications/${this.bot.bot!.id}/commands`, JSON.stringify(command));
 		} else {
+			if (command.type === 'CHAT_INPUT')
+				command.options = command.options?.map(opt => {
+					opt.type = ApplicationCommandOptionType[opt.type] as any;
+					return opt;
+				});
 			command.type = ApplicationCommandTypes[command.type] as any;
-			command.options = command.options?.map(opt => {
-				opt.type = ApplicationCommandOptionType[opt.type] as any;
-				return opt;
-			});
 			return this.post(`/applications/${this.bot.bot!.id}/commands`, JSON.stringify(command));
 		}
 	}
 
-	async setGuildCommand(command: IInteractionCreate | IInteractionCreate[], guild: Snowflake | string) {
+	async setGuildCommand(
+		command: (IUserCommandCreate | ISlashCreate | IMessageCommandCreate)[] | (ISlashCreate | IUserCommandCreate | IMessageCommandCreate),
+		guild: Snowflake | string
+	) {
 		if (Array.isArray(command)) {
 			command = command.map(c => {
+				if (c.type === 'CHAT_INPUT')
+					c.options = c.options?.map(opt => {
+						opt.type = ApplicationCommandOptionType[opt.type] as any;
+						return opt;
+					});
 				c.type = ApplicationCommandTypes[c.type] as any;
-				c.options = c.options?.map(opt => {
-					opt.type = ApplicationCommandOptionType[opt.type] as any;
-					return opt;
-				});
 				return c;
 			});
 			return this.put(`/applications/${this.bot.bot!.id}/guilds/${guild}/commands`, JSON.stringify(command));
 		} else {
 			command.type = ApplicationCommandTypes[command.type] as any;
-			command.options = command.options?.map(opt => {
-				opt.type = ApplicationCommandOptionType[opt.type] as any;
-				return opt;
-			});
+			if (command.type === 'CHAT_INPUT')
+				command.options = command.options?.map(opt => {
+					opt.type = ApplicationCommandOptionType[opt.type] as any;
+					return opt;
+				});
 			return this.post(`/applications/${this.bot.bot!.id}/guilds/${guild}/commands`, JSON.stringify(command));
 		}
 	}

@@ -10,7 +10,7 @@ import IClientEvents from '../intf/IClientEvents';
 import { Snowflake } from '../const/Snowflake';
 import { ISuccess } from '../intf/ISuccess';
 import { IApplicationCommand } from '../intf/IApplicationCommand';
-import { IInteractionCreate } from '../intf/IInteraction';
+import { IMessageCommandCreate, ISlashCreate, IUserCommandCreate } from '../intf/IInteraction';
 
 /**
  * Discord API Client
@@ -92,16 +92,21 @@ export default class Client extends EventEmitter implements IClient {
 		return this.HTTP.sendMessage(message, channel_id);
 	}
 
-	async getIntercationCommands(): Promise<IApplicationCommand[]> {
+	async getGlobalCommands(): Promise<IApplicationCommand[]> {
 		if (!this.bot) return [];
-		return this.HTTP.getIntercationCommands(this.bot.id);
+		return this.HTTP.getIntercationCommands();
 	}
 
-	async setGuildComamnd(command: IInteractionCreate | IInteractionCreate[], guildID: Snowflake | string) {
+	async setGuildComamnd(
+		command: (IUserCommandCreate | ISlashCreate | IMessageCommandCreate)[] | (ISlashCreate | IUserCommandCreate | IMessageCommandCreate),
+		guildID: Snowflake | string
+	) {
 		return this.HTTP.setGuildCommand(command, guildID);
 	}
 
-	async setCommand(command: IInteractionCreate | IInteractionCreate[]) {
+	async setCommand(
+		command: (IUserCommandCreate | ISlashCreate | IMessageCommandCreate)[] | (ISlashCreate | IUserCommandCreate | IMessageCommandCreate)
+	) {
 		return this.HTTP.setCommand(command);
 	}
 	// _buildPayload(opcode: any, payload: any): Promise<ISuccess> {

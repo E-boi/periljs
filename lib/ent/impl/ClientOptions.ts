@@ -16,7 +16,7 @@ export class ClientOptions implements IClientOptions {
 	commandsDir?: string | undefined;
 	isSharded?: boolean | undefined;
 	discordWebsocket?: string | undefined;
-	intents?: Intents;
+	intents: Intents[];
 	clientAuthentication: IClientAuthentication;
 	constructor(
 		clientAuthentication: IClientAuthentication,
@@ -24,7 +24,7 @@ export class ClientOptions implements IClientOptions {
 		commandsDir: string | undefined = undefined,
 		isSharded: boolean = false,
 		discordWebsocket: string | undefined = undefined,
-		intents: Intents = Intents.AllUnprivileged
+		intents: Intents[] = [Intents.AllUnprivileged]
 	) {
 		this.allowSlashCommands = allowSlashCommands;
 		this.commandsDir = commandsDir;

@@ -4,7 +4,9 @@ import { IClientOptions } from '../intf/IClientOptions';
 import IMessage from '../intf/IMessage';
 import Client from './client';
 import intentCalculator from './intents';
-import SlashInteraction from './SlashInteraction';
+import MessageInteraction from './interactions/MessageInteraction';
+import SlashInteraction from './interactions/SlashInteraction';
+import UserInteraction from './interactions/UserInteraction';
 
 export default class Peril extends WebSocket {
 	options: IClientOptions;
@@ -48,6 +50,8 @@ export default class Peril extends WebSocket {
 						case 'INTERACTION_CREATE':
 							if (data.d.type === 2) {
 								if (data.d.data.type === 1) this.bot.emit('interaction.slash', new SlashInteraction(this.bot, data.d));
+								else if (data.d.data.type === 2) this.bot.emit('interaction.user', new UserInteraction(this.bot, data.d));
+								else if (data.d.data.type === 3) this.bot.emit('interaction.message', new MessageInteraction(this.bot, data.d));
 							}
 							break;
 						default:

@@ -40,10 +40,10 @@ export interface IInteractionData {
 
 export interface IResolvedData {
 	users?: { [x: string]: IUser };
-	members?: Map<Snowflake | string, IGuildMember>;
-	roles?: Map<Snowflake | string, IRole>;
-	channels?: Map<Snowflake | string, IChannel>;
-	messages?: Map<Snowflake | string, IMessage>;
+	members?: { [x: string]: IGuildMember };
+	roles?: { [x: string]: IRole };
+	channels?: { [x: string]: IChannel };
+	messages?: { [x: string]: IMessage };
 }
 
 export interface ISelectOption {
@@ -59,11 +59,23 @@ export interface IInteractionResponse {
 	data?: IInteractionCallbackData;
 }
 
-export interface IInteractionCreate {
-	type: keyof typeof ApplicationCommandTypes;
+export interface ISlashCreate {
+	type: 'CHAT_INPUT';
 	name: string;
 	description: string;
 	options?: IApplicationCommandOption[];
+	default_permission?: boolean;
+}
+
+export interface IUserCommandCreate {
+	type: 'USER';
+	name: string;
+	default_permission?: boolean;
+}
+
+export interface IMessageCommandCreate {
+	type: 'MESSAGE';
+	name: string;
 	default_permission?: boolean;
 }
 
@@ -76,10 +88,26 @@ export interface IInteractionCallbackData {
 	components?: IComponent[];
 }
 
-export interface IInteractionCommand {
+export interface ISlashCommand {
 	id: Snowflake;
 	name: string;
 	type: InteractionTypes;
 	resolved?: IInteractionData['resolved'];
 	options?: IInteractionData['options'];
+}
+
+export interface IUserCommand {
+	id: Snowflake;
+	name: string;
+	type: InteractionTypes;
+	resolved: IResolvedData;
+	target_id: Snowflake;
+}
+
+export interface IMessageCommand {
+	id: Snowflake;
+	name: string;
+	type: InteractionTypes;
+	resolved: IResolvedData;
+	target_id: Snowflake;
 }
