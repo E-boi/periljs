@@ -37,13 +37,13 @@ export default class HTTP {
 
 	async sendMessage(message: IMessageCreate, channel_id: string): Promise<IMessage> {
 		const messageReq = await this.post(`/channels/${channel_id}/messages`, JSON.stringify(message));
-		const messageObj: IMessage = await messageReq.json();
+		const messageObj: IMessage = (await messageReq.json()) as IMessage;
 		return messageObj;
 	}
 
 	async getIntercationCommands() {
 		const commandsReq = await this.get(`/applications/${this.bot.bot?.id}/commands`);
-		const commands: IApplicationCommand[] = await commandsReq.json();
+		const commands: IApplicationCommand[] = (await commandsReq.json()) as IApplicationCommand[];
 		commands.map(command => command.type && (command.type = ApplicationCommandTypes[command.type] as any));
 		return commands;
 	}
