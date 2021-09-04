@@ -4,7 +4,9 @@ import { IClientOptions } from '../intf/IClientOptions';
 import IMessage from '../intf/IMessage';
 import Client from './client';
 import intentCalculator from './intents';
+import ButtonInteraction from './interactions/ButtonInteraction';
 import MessageInteraction from './interactions/MessageInteraction';
+import SelectMenuInteraction from './interactions/SelectMenuInteraction';
 import SlashInteraction from './interactions/SlashInteraction';
 import UserInteraction from './interactions/UserInteraction';
 
@@ -52,6 +54,9 @@ export default class Peril extends WebSocket {
 								if (data.d.data.type === 1) this.bot.emit('interaction.slash', new SlashInteraction(this.bot, data.d));
 								else if (data.d.data.type === 2) this.bot.emit('interaction.user', new UserInteraction(this.bot, data.d));
 								else if (data.d.data.type === 3) this.bot.emit('interaction.message', new MessageInteraction(this.bot, data.d));
+							} else if (data.d.type === 3) {
+								if (data.d.data.component_type === 2) this.bot.emit('interaction.button', new ButtonInteraction(this.bot, data.d));
+								if (data.d.data.component_type === 3) this.bot.emit('interaction.selectMenu', new SelectMenuInteraction(this.bot, data.d));
 							}
 							break;
 						default:

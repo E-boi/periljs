@@ -2,6 +2,7 @@ import { InteractionCallbackFlags } from '../../const/discord/interaction';
 import { Snowflake } from '../../const/Snowflake';
 import IInteraction, { IInteractionCallbackData } from '../../intf/IInteraction';
 import Client from '../client';
+import { transformComponents } from '../util/components';
 
 export default class interaction {
 	type: IInteraction['type'];
@@ -12,6 +13,7 @@ export default class interaction {
 	member: IInteraction['member'];
 	user: IInteraction['user'];
 	applicationId: IInteraction['application_id'];
+	message: IInteraction['message'];
 	readonly bot: Client;
 	constructor(bot: Client, interaction: IInteraction) {
 		this.type = interaction.type;
@@ -22,13 +24,17 @@ export default class interaction {
 		this.member = interaction.member;
 		this.user = interaction.user;
 		this.applicationId = interaction.application_id;
+		this.message = interaction.message;
 		this.bot = bot;
 	}
 
-	reply(content: IInteractionCallbackData) {
+	reply(content: IInteractionCallbackData | string) {
+		if (typeof content === 'string')
+			return this.bot.HTTP.post(`/interactions/${this.id}/${this.token}/callback`, JSON.stringify({ type: 4, data: { content } }));
 		const reply: IInteractionCallbackData & { flags: InteractionCallbackFlags } = content as any;
 		if (content.ephemeral) reply.flags = InteractionCallbackFlags.EPHEMERAL;
-		this.bot.HTTP.post(`/interactions/${this.id}/${this.token}/callback`, JSON.stringify({ type: 4, data: reply }));
+		if (reply.components) reply.components = transformComponents(reply.components);
+		return this.bot.HTTP.post(`/interactions/${this.id}/${this.token}/callback`, JSON.stringify({ type: 4, data: reply }));
 	}
 
 	get guild() {

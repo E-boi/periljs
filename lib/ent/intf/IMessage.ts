@@ -9,6 +9,7 @@ import IApplication from './IApplication';
 import IChannel, { IChannelMention } from './IChannel';
 import IComponent from './IComponent';
 import IEmbed from './IEmbed';
+import { IButtonComponent, ISelectMenuComponent } from './IComponent';
 import { IUser } from './user/IUser';
 
 /**
@@ -48,7 +49,7 @@ export default interface IMessage {
 	referenced_message?: IMessage;
 	interaction?: IMessageIntercation;
 	thread?: IChannel;
-	components?: IComponent[];
+	components?: { components: IComponent[] }[];
 	sticker_items?: IStickerItem[];
 }
 
@@ -67,7 +68,7 @@ export interface IMessageCreate {
 	embeds?: IEmbed[];
 	allowed_mentions?: IAllowedMention;
 	message_reference?: IMessageReference;
-	components?: IComponent[];
+	components?: (IButtonComponent | ISelectMenuComponent)[][];
 	sticker_ids?: string[];
 }
 

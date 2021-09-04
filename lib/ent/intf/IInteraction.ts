@@ -1,4 +1,4 @@
-import { InteractionCallbackFlags, InteractionCallbackTypes, InteractionTypes } from '../const/discord/interaction';
+import { InteractionCallbackTypes, InteractionTypes } from '../const/discord/interaction';
 import { Snowflake } from '../const/Snowflake';
 import { ApplicationCommandTypes } from '../const/discord/interaction';
 import { ComponentTypes } from '../const/discord/interaction';
@@ -8,9 +8,8 @@ import IMessage, { IAllowedMention } from './IMessage';
 import IRole from './guild/IRole';
 import IChannel from './IChannel';
 import { IApplicationCommandOption, IApplicationInteractionData } from './IApplicationCommand';
-import IEmoji from './guild/IEmoji';
 import IEmbed from './IEmbed';
-import IComponent from './IComponent';
+import { IButtonComponent, ISelectMenuComponent } from './IComponent';
 
 export default interface IInteraction {
 	id: Snowflake;
@@ -34,7 +33,7 @@ export interface IInteractionData {
 	options?: IApplicationInteractionData[];
 	custom_id?: string;
 	component_type?: ComponentTypes;
-	values?: ISelectOption[];
+	values?: string[];
 	target_id?: Snowflake;
 }
 
@@ -46,17 +45,17 @@ export interface IResolvedData {
 	messages?: { [x: string]: IMessage };
 }
 
-export interface ISelectOption {
-	label: string;
-	value: string;
-	description?: string;
-	emoji?: IEmoji;
-	default?: boolean;
-}
-
 export interface IInteractionResponse {
 	type: InteractionCallbackTypes;
 	data?: IInteractionCallbackData;
+}
+export interface IInteractionCallbackData {
+	tts?: boolean;
+	content?: string;
+	embeds?: IEmbed[];
+	allowed_mentions?: IAllowedMention;
+	ephemeral?: boolean;
+	components?: (IButtonComponent | ISelectMenuComponent)[][];
 }
 
 export interface ISlashCreate {
@@ -79,19 +78,10 @@ export interface IMessageCommandCreate {
 	default_permission?: boolean;
 }
 
-export interface IInteractionCallbackData {
-	tts?: boolean;
-	content?: string;
-	embeds?: IEmbed[];
-	allowed_mentions?: IAllowedMention;
-	ephemeral?: boolean;
-	components?: IComponent[];
-}
-
 export interface ISlashCommand {
 	id: Snowflake;
 	name: string;
-	type: InteractionTypes;
+	type: 'CHAT_INPUT';
 	resolved?: IInteractionData['resolved'];
 	options?: IInteractionData['options'];
 }
@@ -99,7 +89,7 @@ export interface ISlashCommand {
 export interface IUserCommand {
 	id: Snowflake;
 	name: string;
-	type: InteractionTypes;
+	type: 'USER';
 	resolved: IResolvedData;
 	target_id: Snowflake;
 }
@@ -107,7 +97,7 @@ export interface IUserCommand {
 export interface IMessageCommand {
 	id: Snowflake;
 	name: string;
-	type: InteractionTypes;
+	type: 'MESSAGE';
 	resolved: IResolvedData;
 	target_id: Snowflake;
 }

@@ -11,6 +11,7 @@ import { Snowflake } from '../const/Snowflake';
 import { ISuccess } from '../intf/ISuccess';
 import { IApplicationCommand } from '../intf/IApplicationCommand';
 import { IMessageCommandCreate, ISlashCreate, IUserCommandCreate } from '../intf/IInteraction';
+import { transformComponents } from './util/components';
 
 /**
  * Discord API Client
@@ -89,6 +90,7 @@ export default class Client extends EventEmitter implements IClient {
 	 * @returns {Promise<Response>}
 	 */
 	async sendMessage(message: IMessageCreate, channel_id: string): Promise<IMessage> {
+		if (message.components) message.components = transformComponents(message.components);
 		return this.HTTP.sendMessage(message, channel_id);
 	}
 
