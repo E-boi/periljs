@@ -99,7 +99,7 @@ export default class Client extends EventEmitter implements IClient {
 		return this.HTTP.getIntercationCommands();
 	}
 
-	async setGuildComamnd(
+	async setGuildCommand(
 		command: (IUserCommandCreate | ISlashCreate | IMessageCommandCreate)[] | (ISlashCreate | IUserCommandCreate | IMessageCommandCreate),
 		guildID: Snowflake | string
 	) {
