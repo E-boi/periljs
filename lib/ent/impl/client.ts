@@ -80,7 +80,7 @@ export default class Client extends EventEmitter implements IClient {
 	async getUserByID(userID: string): Promise<IUser | null> {
 		const userReq = await this.HTTP.get(`/users/${userID}`);
 		if (!userReq.ok) return null;
-		return userReq.json();
+		return userReq.json() as Promise<IUser | null>;
 	}
 
 	/**
