@@ -103,12 +103,14 @@ export default class Client extends EventEmitter implements IClient {
 		command: (IUserCommandCreate | ISlashCreate | IMessageCommandCreate)[] | (ISlashCreate | IUserCommandCreate | IMessageCommandCreate),
 		guildID: Snowflake | string
 	) {
+		if (!this.bot) throw Error('Cannot set command before logging in!');
 		return this.HTTP.setGuildCommand(command, guildID);
 	}
 
 	async setCommand(
 		command: (IUserCommandCreate | ISlashCreate | IMessageCommandCreate)[] | (ISlashCreate | IUserCommandCreate | IMessageCommandCreate)
 	) {
+		if (!this.bot) throw Error('Cannot set command before logging in!');
 		return this.HTTP.setCommand(command);
 	}
 	// _buildPayload(opcode: any, payload: any): Promise<ISuccess> {
