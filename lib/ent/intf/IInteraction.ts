@@ -2,7 +2,7 @@ import { InteractionCallbackTypes, InteractionTypes } from '../const/discord/int
 import { Snowflake } from '../const/Snowflake';
 import { ApplicationCommandTypes } from '../const/discord/interaction';
 import { ComponentTypes } from '../const/discord/interaction';
-import IGuildMember from './guild/IGuildMember';
+import IGuildMember, { IPartialGuildMember } from './guild/IGuildMember';
 import { IUser } from './user/IUser';
 import IMessage, { IAllowedMention } from './IMessage';
 import IRole from './guild/IRole';
@@ -39,7 +39,7 @@ export interface IInteractionData {
 
 export interface IResolvedData {
 	users?: { [x: string]: IUser };
-	members?: { [x: string]: IGuildMember };
+	members?: { [x: string]: IPartialGuildMember };
 	roles?: { [x: string]: IRole };
 	channels?: { [x: string]: IChannel };
 	messages?: { [x: string]: IMessage };

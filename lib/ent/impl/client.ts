@@ -3,7 +3,6 @@ import { IClientOptions } from '../intf/IClientOptions';
 import { IClient } from '../intf/IClient';
 import Peril from './peril';
 import { IUser } from '../intf/user/IUser';
-import IGuild from '../intf/guild/IGuild';
 import HTTP from './HTTP';
 import IMessage, { IMessageCreate } from '../intf/IMessage';
 import IClientEvents from '../intf/IClientEvents';
@@ -12,6 +11,8 @@ import { ISuccess } from '../intf/ISuccess';
 import { IApplicationCommand } from '../intf/IApplicationCommand';
 import { IMessageCommandCreate, ISlashCreate, IUserCommandCreate } from '../intf/IInteraction';
 import { transformComponents } from './util/components';
+import IChannel from '../intf/IChannel';
+import Guild from './guild/Guild';
 
 /**
  * Discord API Client
@@ -30,7 +31,9 @@ export default class Client extends EventEmitter implements IClient {
 	declare on: IClientEvents<this>;
 	declare once: IClientEvents<this>;
 	bot?: IUser;
-	guilds: Map<string, IGuild>;
+	guilds: Map<string, Guild>;
+	channels: Map<string, IChannel>;
+	getAllMembers: boolean;
 	/**
 	 * Creates an instance of Client.
 	 * @date 8/8/2021 - 11:21:12 AM
@@ -44,7 +47,9 @@ export default class Client extends EventEmitter implements IClient {
 		this.initializedOptions = clientOptions;
 		this.bot = undefined;
 		this.guilds = new Map();
+		this.channels = new Map();
 		this.HTTP = new HTTP(this.token, this);
+		this.getAllMembers = clientOptions.getAllMembers || false;
 		// this.commands = {
 		// 	set: this.setComamnd,
 		// };
@@ -67,8 +72,12 @@ export default class Client extends EventEmitter implements IClient {
 	 * @returns {IGuild | undefined}
 	 */
 
-	getGuildByID(guildID: string | Snowflake): IGuild | undefined {
+	getGuildByID(guildID: string | Snowflake): Guild | undefined {
 		return this.guilds.get(guildID.toString());
+	}
+
+	getChannelByID(channelId: string | Snowflake): IChannel | undefined {
+		return this.channels.get(channelId.toString());
 	}
 
 	/**

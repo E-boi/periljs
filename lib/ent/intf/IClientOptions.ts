@@ -11,4 +11,5 @@ export interface IClientOptions {
 
 	intents: Intents[];
 	clientAuthentication: IClientAuthentication;
+	getAllMembers?: boolean;
 }

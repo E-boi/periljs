@@ -1,4 +1,11 @@
-import { GuildFeatures } from '../../const/discord/guild/features';
+import {
+	DefaultMessageNotificationsLevel,
+	ExplicitContentFilterLevel,
+	GuildFeatures,
+	MFALevel,
+	SystemChannelFlags,
+	VerificationLevel,
+} from '../../const/discord/guild/features';
 import { NSFWLevel, PremiumTypes } from '../../const/discord/guild/level';
 import { Snowflake } from '../../const/Snowflake';
 import IChannel from '../IChannel';
@@ -15,13 +22,13 @@ export default interface IGuild {
 	id: Snowflake;
 	name: string;
 	owner_id: Snowflake;
-	verification_level: number;
-	default_message_notifications: number;
-	explicit_content_filter: number;
+	verification_level: VerificationLevel;
+	default_message_notifications: DefaultMessageNotificationsLevel;
+	explicit_content_filter: ExplicitContentFilterLevel;
 	roles: IRole[];
 	emojis: IEmoji[];
 	features: GuildFeatures[];
-	mfa_level: number;
+	mfa_level: MFALevel;
 	nsfw_level: NSFWLevel;
 	premium_tier: PremiumTypes;
 	icon?: string;
@@ -33,7 +40,7 @@ export default interface IGuild {
 	widget_channel_id?: Snowflake;
 	application_id?: Snowflake;
 	system_channel_id?: Snowflake;
-	system_channel_flags: number;
+	system_channel_flags: SystemChannelFlags;
 	rules_channel_id?: Snowflake;
 	joined_at?: string;
 	large?: boolean;
@@ -41,8 +48,8 @@ export default interface IGuild {
 	member_count?: number;
 	voice_states?: IVoiceStates[];
 	members?: IGuildMember[];
-	channels?: IChannel[];
-	threads?: IChannel[];
+	channels: IChannel[];
+	threads: IChannel[];
 	presences?: IPresenceUpdate[];
 	max_presences?: number;
 	vanity_url_code?: string;

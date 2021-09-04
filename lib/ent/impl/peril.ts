@@ -3,6 +3,7 @@ import { WS_URI } from '../../constants';
 import { IClientOptions } from '../intf/IClientOptions';
 import IMessage from '../intf/IMessage';
 import Client from './client';
+import Guild from './guild/Guild';
 import intentCalculator from './intents';
 import ButtonInteraction from './interactions/ButtonInteraction';
 import MessageInteraction from './interactions/MessageInteraction';
@@ -28,8 +29,11 @@ export default class Peril extends WebSocket {
 							this.bot.emit('ready', this.bot.bot);
 							break;
 						case 'GUILD_CREATE':
-							this.bot.guilds.set(data.d.id, data.d);
-							this.bot.emit('guild.create', data.d);
+							const createdGuild: Guild = new Guild(data.d);
+							this.bot.guilds.set(createdGuild.id.toString(), createdGuild);
+							createdGuild.channels.forEach(channel => this.bot.channels.set(channel.id.toString(), channel));
+							if (this.bot.getAllMembers) this.send(JSON.stringify({ op: 8, d: { guild_id: [data.d.id], query: '', limit: 0 } }));
+							this.bot.emit('guild.create', createdGuild);
 							break;
 						case 'GUILD_DELETE':
 							const guild = this.bot.guilds.get(data.d.id);

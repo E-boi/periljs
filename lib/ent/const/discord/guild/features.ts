@@ -28,3 +28,33 @@ export enum GuildFeatures {
 	SEVEN_DAY_THREAD_ARCHIVE = 'SEVEN_DAY_THREAD_ARCHIVE',
 	PRIVATE_THREADS = 'PRIVATE_THREADS',
 }
+
+export enum VerificationLevel {
+	NONE = 0,
+	LOW = 1,
+	MEDIUM = 2,
+	HIGH = 3,
+	VERY_HIGH = 4,
+}
+
+export enum DefaultMessageNotificationsLevel {
+	ALL_MESSAGES = 0,
+	ONLY_MENTIONS = 1,
+}
+
+export enum ExplicitContentFilterLevel {
+	DISABLED = 0,
+	MEMBERS_WITHOUT_ROLES = 1,
+	ALL_MEMBERS = 2,
+}
+
+export enum SystemChannelFlags {
+	SUPPRESS_JOIN_NOTIFICATIONS = 1 << 0,
+	SUPPRESS_PREMIUM_SUBSCRIPTIONS = 1 << 1,
+	SUPPRESS_GUILD_REMINDER_NOTIFICATIONS = 1 << 2,
+}
+
+export enum MFALevel {
+	NONE = 0,
+	ELEVATED = 1,
+}
