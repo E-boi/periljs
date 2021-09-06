@@ -41,4 +41,11 @@ export default class interaction {
 		if (!this.guildId) return undefined;
 		return this.bot.getGuildByID(this.guildId);
 	}
+
+	get channel() {
+		if (!this.channelId) return;
+		const channel = this.bot.getChannelByID(this.channelId);
+		if (!channel || (channel.type !== 'GUILD_TEXT' && channel.type !== 'DM')) return;
+		return channel;
+	}
 }

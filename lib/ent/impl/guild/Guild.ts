@@ -14,9 +14,13 @@ import IRole from '../../intf/guild/IRole';
 import IStageInstance from '../../intf/guild/IStageInstance';
 import ISticker from '../../intf/guild/ISticker';
 import IWelcomeScreen from '../../intf/guild/IWelcomeScreen';
-import IChannel from '../../intf/IChannel';
 import IPresenceUpdate from '../../intf/IPresenceUpdate';
 import IVoiceStates from '../../intf/IVoiceStates';
+import Category from '../channels/Category';
+import TextChannel from '../channels/TextChannel';
+import ThreadChannel from '../channels/ThreadChannel';
+import VoiceChannel from '../channels/VoiceChannel';
+import HTTP from '../HTTP';
 import { getDateFromID } from '../util/snowflake';
 import { GuildMember } from './GuildMember';
 
@@ -33,8 +37,8 @@ export default class Guild {
 	mfaLevel: keyof typeof MFALevel;
 	nsfwLevel: keyof typeof NSFWLevel;
 	premiumTier: keyof typeof PremiumTypes;
-	channels: IChannel[];
-	threads: IChannel[];
+	channels: Map<string, TextChannel | VoiceChannel | Category> = new Map();
+	threads: Map<string, ThreadChannel> = new Map();
 	preferredLocale: string;
 	icon?: string;
 	iconHash?: string;
@@ -53,7 +57,7 @@ export default class Guild {
 	unavailable?: boolean;
 	memberCount?: number;
 	voiceStates?: IVoiceStates[];
-	members?: GuildMember[];
+	members: Map<string, GuildMember> = new Map();
 	presences?: IPresenceUpdate[];
 	maxPresences?: number;
 	vanityUrlCode?: string;
@@ -67,7 +71,8 @@ export default class Guild {
 	welcomeScreen?: IWelcomeScreen;
 	stageInstances?: IStageInstance[];
 	stickers?: ISticker[];
-	constructor(guild: IGuild) {
+	private HTTP: HTTP;
+	constructor(guild: IGuild, http: HTTP) {
 		this.id = new Snowflake(guild.id);
 		this.name = guild.name;
 		this.owner_id = new Snowflake(guild.owner_id);
@@ -96,9 +101,6 @@ export default class Guild {
 		this.unavailable = guild.unavailable;
 		this.memberCount = guild.member_count;
 		this.voiceStates = guild.voice_states;
-		this.members = guild.members?.map(member => new GuildMember(member));
-		this.channels = guild.channels;
-		this.threads = guild.threads;
 		this.presences = guild.presences;
 		this.maxPresences = guild.max_presences;
 		this.vanityUrlCode = guild.vanity_url_code;
@@ -114,5 +116,26 @@ export default class Guild {
 		this.stageInstances = guild.stage_instances;
 		this.stickers = guild.stickers;
 		this.createdAt = getDateFromID(this.id);
+
+		guild.channels.forEach(channel => {
+			if (channel.type === 0) return this.channels.set(channel.id, new TextChannel(channel as any, http));
+			else if (channel.type === 2) return this.channels.set(channel.id, new VoiceChannel(channel as any));
+			else if (channel.type === 4) return this.channels.set(channel.id, new Category(channel as any));
+			else return;
+		});
+
+		guild.members?.forEach(member => this.members.set(member.user.id, new GuildMember(member)));
+		guild.threads.forEach(thread => this.threads.set(thread.id, new ThreadChannel(thread, http)));
+
+		this.HTTP = http;
+	}
+
+	async fetchUser(user_id: string) {
+		if (this.members.has(user_id)) return this.members.get(user_id);
+		const user = await this.HTTP.fetchGuildUser(user_id, this.id.toString());
+		if (!user) return;
+		const member = new GuildMember(user);
+		this.members.set(user_id, member);
+		return member;
 	}
 }

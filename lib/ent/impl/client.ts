@@ -11,8 +11,12 @@ import { ISuccess } from '../intf/ISuccess';
 import { IApplicationCommand } from '../intf/IApplicationCommand';
 import { IMessageCommandCreate, ISlashCreate, IUserCommandCreate } from '../intf/IInteraction';
 import { transformComponents } from './util/components';
-import IChannel from '../intf/IChannel';
 import Guild from './guild/Guild';
+import TextChannel from './channels/TextChannel';
+import VoiceChannel from './channels/VoiceChannel';
+import Category from './channels/Category';
+import ThreadChannel from './channels/ThreadChannel';
+import DMChannel from './channels/DMChannel';
 
 /**
  * Discord API Client
@@ -32,7 +36,7 @@ export default class Client extends EventEmitter implements IClient {
 	declare once: IClientEvents<this>;
 	bot?: IUser;
 	guilds: Map<string, Guild>;
-	channels: Map<string, IChannel>;
+	channels: Map<string, TextChannel | DMChannel | VoiceChannel | ThreadChannel | Category>;
 	getAllMembers: boolean;
 	/**
 	 * Creates an instance of Client.
@@ -45,14 +49,10 @@ export default class Client extends EventEmitter implements IClient {
 		super();
 		this.token = clientOptions.clientAuthentication.token;
 		this.initializedOptions = clientOptions;
-		this.bot = undefined;
 		this.guilds = new Map();
 		this.channels = new Map();
 		this.HTTP = new HTTP(this.token, this);
 		this.getAllMembers = clientOptions.getAllMembers || false;
-		// this.commands = {
-		// 	set: this.setComamnd,
-		// };
 	}
 	/**
 	 * Connects to Discord.
@@ -72,11 +72,11 @@ export default class Client extends EventEmitter implements IClient {
 	 * @returns {IGuild | undefined}
 	 */
 
-	getGuildByID(guildID: string | Snowflake): Guild | undefined {
+	getGuildByID(guildID: string | Snowflake) {
 		return this.guilds.get(guildID.toString());
 	}
 
-	getChannelByID(channelId: string | Snowflake): IChannel | undefined {
+	getChannelByID(channelId: string | Snowflake) {
 		return this.channels.get(channelId.toString());
 	}
 
