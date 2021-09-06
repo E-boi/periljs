@@ -6,6 +6,9 @@ import { IApplicationCommand } from '../intf/IApplicationCommand';
 import { ApplicationCommandOptionType, ApplicationCommandTypes } from '../const/discord/interaction';
 import { IMessageCommandCreate, ISlashCreate, IUserCommandCreate } from '../intf/IInteraction';
 import Client from './client';
+import Message from './Message';
+import IChannel from '../intf/IChannel';
+import IGuildMember from '../intf/guild/IGuildMember';
 
 export default class HTTP {
 	private base_url: string;
@@ -23,22 +26,52 @@ export default class HTTP {
 		};
 	}
 
-	post(url: string, body: BodyInit) {
-		return fetch(`${this.base_url}${url}`, { method: 'POST', body, headers: this.headers });
+	post(url: string, body: BodyInit, headers?: HeadersInit) {
+		return fetch(`${this.base_url}${url}`, { method: 'POST', body, headers: { ...this.headers, ...headers } });
 	}
 
-	get(url: string): Promise<Response> {
-		return fetch(`${this.base_url}${url}`, { method: 'GET', headers: this.headers });
+	get(url: string, headers?: HeadersInit): Promise<Response> {
+		return fetch(`${this.base_url}${url}`, { method: 'GET', headers: { ...this.headers, ...headers } });
 	}
 
-	put(url: string, body: BodyInit) {
-		return fetch(`${this.base_url}${url}`, { method: 'PUT', headers: this.headers, body });
+	put(url: string, body: BodyInit, headers?: HeadersInit) {
+		return fetch(`${this.base_url}${url}`, { method: 'PUT', headers: { ...this.headers, ...headers }, body });
+	}
+
+	delete(url: string, headers?: HeadersInit) {
+		return fetch(`${this.base_url}${url}`, { method: 'DELETE', headers: { ...this.headers, ...headers } });
 	}
 
 	async sendMessage(message: IMessageCreate, channel_id: string): Promise<IMessage> {
 		const messageReq = await this.post(`/channels/${channel_id}/messages`, JSON.stringify(message));
 		const messageObj: IMessage = (await messageReq.json()) as IMessage;
 		return messageObj;
+	}
+
+	async getMessage(message_id: string, channel_id: string): Promise<Message | undefined> {
+		const messageReq = await this.get(`/channels/${channel_id}/messages/${message_id}`);
+		if (!messageReq.ok) return undefined;
+		const message: Message = new Message((await messageReq.json()) as IMessage, this.bot);
+		return message;
+	}
+
+	async getMessages(channel_id: string, limit: number = 50): Promise<IMessage[] | undefined> {
+		const messagesReq = await this.get(`/channels/${channel_id}/messages?limit=${limit}`);
+		if (!messagesReq.ok) return undefined;
+		const messages: IMessage[] = (await messagesReq.json()) as IMessage[];
+		return messages;
+	}
+
+	async deleteMessage(message_id: string, channel_id: string, headers?: { 'X-Audit-Log-Reason'?: string }): Promise<boolean> {
+		const messageReq = await this.delete(`/channels/${channel_id}/messages/${message_id}`, JSON.stringify(headers));
+		if (!messageReq.ok) return false;
+		return true;
+	}
+
+	async getChannel(channel_id: string) {
+		const channelReq = await this.get(`/channels/${channel_id}`);
+		if (!channelReq.ok) return;
+		return (await channelReq.json()) as IChannel;
 	}
 
 	async getIntercationCommands() {
@@ -97,5 +130,11 @@ export default class HTTP {
 				});
 			return this.post(`/applications/${this.bot.bot!.id}/guilds/${guild}/commands`, JSON.stringify(command));
 		}
+	}
+
+	async fetchGuildUser(user_id: string, guild_id: string) {
+		const userReq = await this.get(`/guilds/${guild_id}/members/${user_id}`);
+		if (!userReq.ok) return;
+		return (await userReq.json()) as IGuildMember;
 	}
 }

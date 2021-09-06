@@ -2,6 +2,10 @@ import WebSocket from 'ws';
 import { WS_URI } from '../../constants';
 import { IClientOptions } from '../intf/IClientOptions';
 import IMessage from '../intf/IMessage';
+import Category from './channels/Category';
+import DMChannel from './channels/DMChannel';
+import TextChannel from './channels/TextChannel';
+import VoiceChannel from './channels/VoiceChannel';
 import Client from './client';
 import Guild from './guild/Guild';
 import intentCalculator from './intents';
@@ -10,6 +14,7 @@ import MessageInteraction from './interactions/MessageInteraction';
 import SelectMenuInteraction from './interactions/SelectMenuInteraction';
 import SlashInteraction from './interactions/SlashInteraction';
 import UserInteraction from './interactions/UserInteraction';
+import Message from './Message';
 
 export default class Peril extends WebSocket {
 	options: IClientOptions;
@@ -29,7 +34,7 @@ export default class Peril extends WebSocket {
 							this.bot.emit('ready', this.bot.bot);
 							break;
 						case 'GUILD_CREATE':
-							const createdGuild: Guild = new Guild(data.d);
+							const createdGuild: Guild = new Guild(data.d, this.bot.HTTP);
 							this.bot.guilds.set(createdGuild.id.toString(), createdGuild);
 							createdGuild.channels.forEach(channel => this.bot.channels.set(channel.id.toString(), channel));
 							if (this.bot.getAllMembers) this.send(JSON.stringify({ op: 8, d: { guild_id: [data.d.id], query: '', limit: 0 } }));
@@ -41,12 +46,26 @@ export default class Peril extends WebSocket {
 							this.bot.emit('guild.delete', guild);
 							break;
 						case 'MESSAGE_CREATE':
-							const message: IMessage = data.d;
-							if (message.author.id === this.bot.bot?.id) return;
-							this.bot.emit('message.create', message);
+							if (!this.bot.channels.has(data.d.channel_id)) {
+								this.bot.HTTP.getChannel(data.d.channel_id).then(c => {
+									if (!c) return;
+									if (c.type === 0) this.bot.channels.set(c.id.toString(), new TextChannel(c as any, this.bot.HTTP));
+									else if (c.type === 1) this.bot.channels.set(c.id.toString(), new DMChannel(c as any, this.bot.HTTP));
+									else if (c.type === 2) this.bot.channels.set(c.id.toString(), new VoiceChannel(c as any));
+									else if (c.type === 4) this.bot.channels.set(c.id.toString(), new Category(c as any));
+									else return;
+									if (data.d.author.id === this.bot.bot?.id) return;
+									const message: Message = new Message(data.d, this.bot);
+									this.bot.emit('message.create', message);
+								});
+							} else {
+								if (data.d.author.id === this.bot.bot?.id) return;
+								const message: Message = new Message(data.d, this.bot);
+								this.bot.emit('message.create', message);
+							}
 							break;
 						case 'MESSAGE_UPDATE':
-							const updatedMessage: IMessage = data.d;
+							const updatedMessage: Message = new Message(data.d, this.bot);
 							this.bot.emit('message.update', updatedMessage);
 							break;
 						case 'MESSAGE_DELETE':
