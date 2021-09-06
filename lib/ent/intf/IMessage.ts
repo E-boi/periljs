@@ -31,7 +31,7 @@ export default interface IMessage {
 	edited_timestamp: string;
 	tts: boolean;
 	mention_everyone: boolean;
-	mentions: IUser[] & IPartialGuildMember[];
+	mentions: (IPartialGuildMember & IUser)[];
 	mention_roles: Snowflake[];
 	mention_channels?: IChannelMention[];
 	attachments: IAttachment[];

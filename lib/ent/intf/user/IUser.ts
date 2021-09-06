@@ -1,8 +1,7 @@
 import { PremiumTypes, UserFlags } from '../../const/discord/user/flags';
-import { Snowflake } from '../../const/Snowflake';
 
 export interface IUser {
-	id: Snowflake;
+	id: string;
 	username: string;
 	discriminator: string;
 	avatar?: string;

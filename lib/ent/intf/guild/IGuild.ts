@@ -8,7 +8,7 @@ import {
 } from '../../const/discord/guild/features';
 import { NSFWLevel, PremiumTypes } from '../../const/discord/guild/level';
 import { Snowflake } from '../../const/Snowflake';
-import IChannel from '../IChannel';
+import IChannel, { IThreadChannel } from '../IChannel';
 import IEmoji from './IEmoji';
 import IGuildMember from './IGuildMember';
 import IPresenceUpdate from '../IPresenceUpdate';
@@ -49,7 +49,7 @@ export default interface IGuild {
 	voice_states?: IVoiceStates[];
 	members?: IGuildMember[];
 	channels: IChannel[];
-	threads: IChannel[];
+	threads: IThreadChannel[];
 	presences?: IPresenceUpdate[];
 	max_presences?: number;
 	vanity_url_code?: string;
