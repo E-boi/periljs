@@ -15,7 +15,7 @@ export class PartialGuildMember {
 		this.nick = member.nick;
 		this.roles = member.roles.map(role => new Snowflake(role));
 		this.joinedAt = new Date(member.joined_at);
-		this.premiumSince = (member.premium_since && getDateFromID(member.premium_since)) || undefined;
+		this.premiumSince = (member.premium_since && new Date(member.premium_since)) || undefined;
 		this.pending = member.pending;
 		this.permissions = member.permissions;
 	}
