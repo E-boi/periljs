@@ -1,4 +1,4 @@
-import { Client } from '../..';
+import { Client } from '../../..';
 import { MessageFlags, MessageTypes } from '../const/discord/message';
 import { Snowflake } from '../const/Snowflake';
 import { IStickerItem } from '../intf/guild/ISticker';
