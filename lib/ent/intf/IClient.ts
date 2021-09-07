@@ -1,6 +1,6 @@
 import { IUser } from './user/IUser';
 import { ISuccess } from './ISuccess';
-import { Guild } from '../..';
+import { Guild } from '../../..';
 
 export interface IClient {
 	connect(): void;

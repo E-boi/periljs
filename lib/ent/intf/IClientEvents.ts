@@ -6,7 +6,7 @@ import UserInteraction from '../impl/interactions/UserInteraction';
 import MessageInteraction from '../impl/interactions/MessageInteraction';
 import ButtonInteraction from '../impl/interactions/ButtonInteraction';
 import SelectMenuInteraction from '../impl/interactions/SelectMenuInteraction';
-import { Guild } from '../..';
+import { Guild } from '../../..';
 import Message from '../impl/Message';
 import TextChannel from '../impl/channels/TextChannel';
 import VoiceChannel from '../impl/channels/VoiceChannel';
