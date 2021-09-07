@@ -15,6 +15,7 @@ import SelectMenuInteraction from './interactions/SelectMenuInteraction';
 import SlashInteraction from './interactions/SlashInteraction';
 import UserInteraction from './interactions/UserInteraction';
 import Message from './Message';
+import { createChannelClass } from './util/channel';
 
 export default class Peril extends WebSocket {
 	options: IClientOptions;
@@ -49,11 +50,9 @@ export default class Peril extends WebSocket {
 							if (!this.bot.channels.has(data.d.channel_id)) {
 								this.bot.HTTP.getChannel(data.d.channel_id).then(c => {
 									if (!c) return;
-									if (c.type === 0) this.bot.channels.set(c.id.toString(), new TextChannel(c as any, this.bot.HTTP));
-									else if (c.type === 1) this.bot.channels.set(c.id.toString(), new DMChannel(c as any, this.bot.HTTP));
-									else if (c.type === 2) this.bot.channels.set(c.id.toString(), new VoiceChannel(c as any));
-									else if (c.type === 4) this.bot.channels.set(c.id.toString(), new Category(c as any));
-									else return;
+									const channel = createChannelClass(c, this.bot.HTTP);
+									if (!channel) return;
+									this.bot.channels.set(channel.id.toString(), channel);
 									if (data.d.author.id === this.bot.bot?.id) return;
 									const message: Message = new Message(data.d, this.bot);
 									this.bot.emit('message.create', message);
@@ -81,6 +80,45 @@ export default class Peril extends WebSocket {
 								if (data.d.data.component_type === 2) this.bot.emit('interaction.button', new ButtonInteraction(this.bot, data.d));
 								if (data.d.data.component_type === 3) this.bot.emit('interaction.selectMenu', new SelectMenuInteraction(this.bot, data.d));
 							}
+							break;
+
+						case 'CHANNEL_CREATE':
+							const createdChannel = createChannelClass(data.d, this.bot.HTTP);
+							if (!createdChannel) return;
+							this.bot.channels.set(createdChannel.id.toString(), createdChannel);
+							this.bot.emit('channel.create', createdChannel);
+							break;
+						case 'CHANNEL_UPDATE':
+							const channel = this.bot.channels.get(data.d.id);
+							const updatedChannel = createChannelClass(data.d, this.bot.HTTP);
+							if (!updatedChannel) return;
+							this.bot.emit('channel.update', channel, updatedChannel);
+							this.bot.channels.set(updatedChannel.id.toString(), updatedChannel);
+							break;
+						case 'CHANNEL_DELETE':
+							const deletedChannel = createChannelClass(data.d, this.bot.HTTP);
+							if (!deletedChannel) return;
+							this.bot.channels.delete(deletedChannel.id.toString());
+							this.bot.emit('channel.delete', deletedChannel);
+							break;
+
+						case 'THREAD_CREATE':
+							const threadCreated = createChannelClass(data.d, this.bot.HTTP);
+							if (!threadCreated) return;
+							this.bot.channels.set(threadCreated.id.toString(), threadCreated);
+							this.bot.emit('thread.create', threadCreated);
+							break;
+						case 'THREAD_UPDATE':
+							const threadUpdated = createChannelClass(data.d, this.bot.HTTP);
+							const beforeThreadUpdated = this.bot.channels.get(data.d.id);
+							if (!threadUpdated) return;
+							this.bot.channels.set(threadUpdated.id.toString(), threadUpdated);
+							this.bot.emit('thread.update', beforeThreadUpdated, threadUpdated);
+							break;
+						case 'THREAD_DELETE':
+							const threadDeleted = this.bot.channels.get(data.d.id);
+							this.bot.emit('thread.delete', threadDeleted);
+							this.bot.channels.delete(data.d.id);
 							break;
 						default:
 							console.log(data);

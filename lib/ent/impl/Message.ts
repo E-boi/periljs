@@ -53,7 +53,7 @@ export default class Message {
 		this.tts = message.tts;
 		this.mentionEveryone = message.mention_everyone;
 		this.mentions = message.mentions?.map(mention => new UserMention(mention));
-		this.mentionRoles = message.mention_roles.map(mention => new Snowflake(mention));
+		this.mentionRoles = message.mention_roles?.map(mention => new Snowflake(mention));
 		this.attachments = message.attachments;
 		this.embeds = message.embeds;
 		this.pinned = message.pinned;
