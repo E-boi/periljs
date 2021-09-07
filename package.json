@@ -1,14 +1,18 @@
 {
   "name": "periljs",
   "version": "1.0.0",
-  "description": "",
+  "description": "A api wrapper for discord!",
   "main": "index.js",
   "scripts": {
     "gendoc": "jsdoc -c .jsdoc.json lib/*"
   },
   "keywords": [],
-  "author": "",
-  "license": "ISC",
+  "author": "E-boi",
+  "license": "BSD-3-Clause",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/E-boi/periljs"
+  },
   "dependencies": {
     "better-docs": "^2.3.2",
     "node-fetch": "^3.0.0",
