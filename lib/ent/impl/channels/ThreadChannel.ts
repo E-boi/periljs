@@ -12,6 +12,7 @@ export default class ThreadChannel extends BaseTextChannel {
 	type: 'GUILD_PUBLIC_THREAD' | 'GUILD_PRIVATE_THREAD' = 'GUILD_PUBLIC_THREAD';
 	parentId: Snowflake;
 	guildId: Snowflake;
+	rateLimitPerUser: number;
 	private HTTPS: HTTP;
 	constructor(channel: IThreadChannel, http: HTTP) {
 		super(channel as any, http);
@@ -21,6 +22,7 @@ export default class ThreadChannel extends BaseTextChannel {
 		this.messageCount = channel.message_count;
 		this.threadMetadata = channel.thread_metadata;
 		this.guildId = new Snowflake(channel.guild_id);
+		this.rateLimitPerUser = channel.rate_limit_per_user;
 
 		this.HTTPS = http;
 	}
