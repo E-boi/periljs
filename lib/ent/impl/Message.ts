@@ -37,7 +37,7 @@ export default class Message {
 	application?: IApplication;
 	applicationId?: Snowflake;
 	message_reference?: IMessageReference;
-	flags?: MessageFlags;
+	flags?: keyof typeof MessageFlags;
 	referencedMessage?: IMessage;
 	interaction?: IMessageIntercation;
 	// thread?: IChannel;
@@ -69,7 +69,7 @@ export default class Message {
 		this.application = message.application;
 		this.applicationId = message.application_id;
 		this.message_reference = message.message_reference;
-		this.flags = message.flags;
+		this.flags = message.flags && (MessageFlags[message.flags] as any);
 		this.referencedMessage = message.referenced_message;
 		this.interaction = message.interaction;
 		this.components = message.components?.map(component => {
