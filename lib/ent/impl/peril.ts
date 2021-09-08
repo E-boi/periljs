@@ -2,19 +2,12 @@ import WebSocket from 'ws';
 import { WS_URI } from '../../constants';
 import { IClientOptions } from '../intf/IClientOptions';
 import IMessage from '../intf/IMessage';
-import Category from './channels/Category';
-import DMChannel from './channels/DMChannel';
-import TextChannel from './channels/TextChannel';
-import VoiceChannel from './channels/VoiceChannel';
 import Client from './client';
 import Guild from './guild/Guild';
 import intentCalculator from './intents';
-import ButtonInteraction from './interactions/ButtonInteraction';
-import MessageInteraction from './interactions/MessageInteraction';
-import SelectMenuInteraction from './interactions/SelectMenuInteraction';
-import SlashInteraction from './interactions/SlashInteraction';
-import UserInteraction from './interactions/UserInteraction';
+import { ButtonInteraction, MessageInteraction, SelectMenuInteraction, SlashInteraction, UserInteraction } from './interactions';
 import Message from './Message';
+import User from './User';
 import { createChannelClass } from './util/channel';
 
 export default class Peril extends WebSocket {
@@ -46,6 +39,17 @@ export default class Peril extends WebSocket {
 							if (!data.d.unavailible) this.bot.guilds.delete(data.d.id);
 							this.bot.emit('guild.delete', guild);
 							break;
+						case 'GUILD_BAN_ADD':
+							const bannedFrom = this.bot.guilds.get(data.d.guild_id);
+							const bannedMember = new User(data.d.user);
+							this.bot.emit('guild.ban.add', bannedMember, bannedFrom);
+							break;
+						case 'GUILD_BAN_REMOVE':
+							const unbannedFrom = this.bot.guilds.get(data.d.guild_id);
+							const unbannedMember = new User(data.d.user);
+							this.bot.emit('guild.ban.remove', unbannedMember, unbannedFrom);
+							break;
+
 						case 'MESSAGE_CREATE':
 							if (!this.bot.channels.has(data.d.channel_id)) {
 								this.bot.HTTP.getChannel(data.d.channel_id).then(c => {
