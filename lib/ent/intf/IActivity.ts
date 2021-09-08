@@ -6,15 +6,15 @@ export default interface IActivity {
 	name: string;
 	type: ActivtyTypes;
 	url?: string;
-	created_at: number;
-	timestamps: ITimestamps;
+	created_at?: number;
+	timestamps?: ITimestamps;
 	application_id?: Snowflake;
 	details?: string;
 	state?: string;
 	emoji?: IActivityEmoji;
 	party?: IParty;
 	assets?: IAssets;
-	secrets: ISecrets;
+	secrets?: ISecrets;
 	instance?: boolean;
 	flags?: ActivityFlags;
 	buttons?: IButton[];
@@ -52,4 +52,18 @@ export interface ISecrets {
 export interface IButton {
 	label: string;
 	url: string;
+}
+
+export interface IActivityCreate {
+	name: string;
+	type: ActivtyTypes;
+	url?: string;
+	timestamps?: ITimestamps;
+	details?: string;
+	state?: string;
+	emoji?: IActivityEmoji;
+	assets?: IAssets;
+	secrets?: ISecrets;
+	flags?: ActivityFlags;
+	buttons?: IButton[];
 }

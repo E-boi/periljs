@@ -2,7 +2,6 @@ import { Permissions } from '../../../constants';
 import { Snowflake } from '../../const/Snowflake';
 import IGuildMember, { IPartialGuildMember } from '../../intf/guild/IGuildMember';
 import { IUser } from '../../intf/user/IUser';
-import { getDateFromID } from '../util/snowflake';
 
 export class PartialGuildMember {
 	nick?: string;

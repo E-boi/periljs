@@ -12,11 +12,8 @@ import { IApplicationCommand } from '../intf/IApplicationCommand';
 import { IMessageCommandCreate, ISlashCreate, IUserCommandCreate } from '../intf/IInteraction';
 import { transformComponents } from './util/components';
 import Guild from './guild/Guild';
-import TextChannel from './channels/TextChannel';
-import VoiceChannel from './channels/VoiceChannel';
-import Category from './channels/Category';
-import ThreadChannel from './channels/ThreadChannel';
-import DMChannel from './channels/DMChannel';
+import { TextChannel, Category, DMChannel, ThreadChannel, VoiceChannel } from './channels';
+import { IActivityCreate } from '../intf/IActivity';
 
 /**
  * Discord API Client
@@ -121,6 +118,11 @@ export default class Client extends EventEmitter implements IClient {
 	) {
 		if (!this.bot) throw Error('Cannot set command before logging in!');
 		return this.HTTP.setCommand(command);
+	}
+
+	setActivity(activity: IActivityCreate) {
+		if (!this.ws) return;
+		this.ws.send(JSON.stringify({ op: 3, d: { since: 0, activities: [activity], status: 'online', afk: false } }));
 	}
 	// _buildPayload(opcode: any, payload: any): Promise<ISuccess> {
 	// 	opcode;
