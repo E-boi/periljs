@@ -10,7 +10,6 @@ import {
 import { Snowflake } from '../../const/Snowflake';
 import IEmoji from '../../intf/guild/IEmoji';
 import IGuild from '../../intf/guild/IGuild';
-import IRole from '../../intf/guild/IRole';
 import IStageInstance from '../../intf/guild/IStageInstance';
 import ISticker from '../../intf/guild/ISticker';
 import IWelcomeScreen from '../../intf/guild/IWelcomeScreen';
@@ -23,6 +22,7 @@ import VoiceChannel from '../channels/VoiceChannel';
 import HTTP from '../HTTP';
 import { getDateFromID } from '../util/snowflake';
 import { GuildMember } from './GuildMember';
+import Role from './Role';
 
 export default class Guild {
 	id: Snowflake;
@@ -31,7 +31,7 @@ export default class Guild {
 	verificationLevel: keyof typeof VerificationLevel;
 	defaultMessageNotifications: keyof typeof DefaultMessageNotificationsLevel;
 	explicitContentFilter: ExplicitContentFilterLevel;
-	roles: IRole[];
+	roles: Map<string, Role> = new Map();
 	emojis: IEmoji[];
 	features: GuildFeatures[];
 	mfaLevel: keyof typeof MFALevel;
@@ -79,7 +79,6 @@ export default class Guild {
 		this.verificationLevel = VerificationLevel[guild.verification_level] as keyof typeof VerificationLevel;
 		this.defaultMessageNotifications = DefaultMessageNotificationsLevel[guild.default_message_notifications] as any;
 		this.explicitContentFilter = ExplicitContentFilterLevel[guild.explicit_content_filter] as any;
-		this.roles = guild.roles;
 		this.emojis = guild.emojis;
 		this.features = guild.features;
 		this.mfaLevel = MFALevel[guild.mfa_level] as keyof typeof MFALevel;
@@ -126,6 +125,7 @@ export default class Guild {
 
 		guild.members?.forEach(member => this.members.set(member.user.id, new GuildMember(member)));
 		guild.threads.forEach(thread => this.threads.set(thread.id, new ThreadChannel(thread, http)));
+		guild.roles.forEach(role => this.roles.set(role.id, new Role(role)));
 
 		this.HTTP = http;
 	}

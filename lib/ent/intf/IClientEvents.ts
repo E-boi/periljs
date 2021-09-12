@@ -6,17 +6,27 @@ import UserInteraction from '../impl/interactions/UserInteraction';
 import MessageInteraction from '../impl/interactions/MessageInteraction';
 import ButtonInteraction from '../impl/interactions/ButtonInteraction';
 import SelectMenuInteraction from '../impl/interactions/SelectMenuInteraction';
-import { Guild } from '../../..';
+import { Guild, GuildMember } from '../../..';
 import Message from '../impl/Message';
 import TextChannel from '../impl/channels/TextChannel';
 import VoiceChannel from '../impl/channels/VoiceChannel';
 import ThreadChannel from '../impl/channels/ThreadChannel';
 import Category from '../impl/channels/Category';
+import User from '../impl/User';
+import Role from '../impl/guild/Role';
 
 export default interface IClientEvents<T> {
 	(event: 'ready', listener: (user: IUser) => void): T;
 	(event: 'guild.create', listener: (guild: Guild) => void): T;
 	(event: 'guild.delete', listener: (guild: Guild) => void): T;
+	(event: 'guild.ban.add', listener: (user: User, guild: Guild) => void): T;
+	(event: 'guild.ban.remove', listener: (user: User, guild: Guild) => void): T;
+	(event: 'guild.member.join', listener: (member: GuildMember, guild: Guild) => void): T;
+	(event: 'guild.member.leave', listener: (user: User, guild: Guild) => void): T;
+	(event: 'guild.member.update', listener: (before: GuildMember, now: GuildMember, guild: Guild) => void): T;
+	(event: 'guild.role.create', listener: (role: Role, guild: Guild) => void): T;
+	(event: 'guild.role.update', listener: (before: Role, now: Role, guild: Guild) => void): T;
+	(event: 'guild.role.delete', listener: (role: Role, guild: Guild) => void): T;
 	(event: 'channel.create', listener: (channel: TextChannel | VoiceChannel | ThreadChannel | Category) => void): T;
 	(
 		event: 'channel.update',

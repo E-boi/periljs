@@ -1,8 +1,7 @@
 import { Permissions } from '../../const/discord/permissions';
-import { Snowflake } from '../../const/Snowflake';
 
 export default interface IRole {
-	id: Snowflake;
+	id: string;
 	name: string;
 	color: number;
 	hoist: boolean;
@@ -10,11 +9,11 @@ export default interface IRole {
 	permissions: Permissions;
 	managed: boolean;
 	mentionable: boolean;
-	tags: IRoleTags[];
+	tags?: IRoleTags;
 }
 
 export interface IRoleTags {
-	bot_id?: Snowflake;
-	integration_id?: Snowflake;
+	bot_id?: string;
+	integration_id?: string;
 	premium_subscriber?: null;
 }

@@ -23,4 +23,8 @@ export default class TextChannel extends BaseTextChannel {
 		this.parentId = (channel.parent_id && new Snowflake(channel.parent_id)) || undefined;
 		this.topic = channel.topic;
 	}
+
+	toString() {
+		return `<#${this.id}>`;
+	}
 }

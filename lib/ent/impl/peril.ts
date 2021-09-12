@@ -1,9 +1,12 @@
 import WebSocket from 'ws';
+import { GuildMember } from '../../..';
 import { WS_URI } from '../../constants';
+import IGuildMember from '../intf/guild/IGuildMember';
 import { IClientOptions } from '../intf/IClientOptions';
 import IMessage from '../intf/IMessage';
 import Client from './client';
 import Guild from './guild/Guild';
+import Role from './guild/Role';
 import intentCalculator from './intents';
 import { ButtonInteraction, MessageInteraction, SelectMenuInteraction, SlashInteraction, UserInteraction } from './interactions';
 import Message from './Message';
@@ -48,6 +51,48 @@ export default class Peril extends WebSocket {
 							const unbannedFrom = this.bot.guilds.get(data.d.guild_id);
 							const unbannedMember = new User(data.d.user);
 							this.bot.emit('guild.ban.remove', unbannedMember, unbannedFrom);
+							break;
+						case 'GUILD_MEMBER_ADD':
+							const addedMember = new GuildMember(data.d);
+							const guildJoined = this.bot.guilds.get(data.d.guild_id);
+							guildJoined?.members.set(addedMember.user.id, addedMember);
+							this.bot.emit('guild.member.join', addedMember, guildJoined);
+							break;
+						case 'GUILD_MEMBER_REMOVE':
+							const leftedMember = new User(data.d.user);
+							const guildLefted = this.bot.guilds.get(data.d.guild_id);
+							guildLefted?.members.delete(leftedMember.id);
+							this.bot.emit('guild.member.leave', leftedMember, guildLefted);
+							break;
+						case 'GUILD_MEMBER_UPDATE':
+							const updatedFrom = this.bot.guilds.get(data.d.guild_id);
+							const memberBefore = updatedFrom?.members.get(data.d.user.id);
+							const memberNow = new GuildMember(data.d);
+							this.bot.emit('guild.member.update', memberBefore, memberNow, updatedFrom);
+							updatedFrom?.members.set(memberNow.user.id, memberNow);
+							break;
+						case 'GUILD_MEMBERS_CHUNK':
+							const updateMembersFrom = this.bot.guilds.get(data.d.guild_id);
+							data.d.members.map((member: IGuildMember) => updateMembersFrom?.members.set(member.user.id, new GuildMember(member)));
+							break;
+						case 'GUILD_ROLE_CREATE':
+							const createdRole = new Role(data.d.role);
+							const createdAt = this.bot.guilds.get(data.d.guild_id);
+							this.bot.emit('guild.role.create', createdRole, createdAt);
+							createdAt?.roles.set(createdRole.id.toString(), createdRole);
+							break;
+						case 'GUILD_ROLE_UPDATE':
+							const updatedAt = this.bot.guilds.get(data.d.guild_id);
+							const updatedRole = new Role(data.d.role);
+							const beforeRole = updatedAt?.roles.get(data.d.role.id);
+							this.bot.emit('guild.role.update', beforeRole, updatedRole, updatedAt);
+							updatedAt?.roles.set(updatedRole.id.toString(), updatedRole);
+							break;
+						case 'GUILD_ROLE_DELETE':
+							const deletedAt = this.bot.guilds.get(data.d.guild_id);
+							const deletedRole = deletedAt?.roles.get(data.d.role_id);
+							this.bot.emit('guild.role.delete', deletedRole, deletedAt);
+							if (deletedRole) deletedAt?.roles.delete(deletedRole.id.toString());
 							break;
 
 						case 'MESSAGE_CREATE':

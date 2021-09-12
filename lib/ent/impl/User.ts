@@ -30,4 +30,8 @@ export default class User {
 	get tag() {
 		return `${this.username}#${this.discriminator}`;
 	}
+
+	toString() {
+		return `<@${this.id}>`;
+	}
 }

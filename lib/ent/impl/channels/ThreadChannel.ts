@@ -34,4 +34,8 @@ export default class ThreadChannel extends BaseTextChannel {
 	get guild() {
 		return this.HTTPS.bot.getGuildByID(this.guildId);
 	}
+
+	toString() {
+		return `<#${this.id}>`;
+	}
 }

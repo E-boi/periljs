@@ -1,7 +1,7 @@
 import { Permissions } from '../../../constants';
 import { Snowflake } from '../../const/Snowflake';
 import IGuildMember, { IPartialGuildMember } from '../../intf/guild/IGuildMember';
-import { IUser } from '../../intf/user/IUser';
+import User from '../User';
 
 export class PartialGuildMember {
 	nick?: string;
@@ -21,13 +21,17 @@ export class PartialGuildMember {
 }
 
 export class GuildMember extends PartialGuildMember {
-	user: IUser;
+	user: User;
 	deaf: boolean;
 	mute: boolean;
 	constructor(member: IGuildMember) {
 		super(member as any);
-		this.user = member.user;
-		this.deaf = member.deaf;
-		this.mute = member.mute;
+		this.user = new User(member.user);
+		this.deaf = member.deaf ?? false;
+		this.mute = member.mute ?? false;
+	}
+
+	toString() {
+		return `<@${this.user.id}>`;
 	}
 }
