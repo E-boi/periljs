@@ -8,7 +8,6 @@ import {
 	SystemChannelFlags,
 } from '../../const/discord/guild/features';
 import { Snowflake } from '../../const/Snowflake';
-import IEmoji from '../../intf/guild/IEmoji';
 import IGuild from '../../intf/guild/IGuild';
 import IStageInstance from '../../intf/guild/IStageInstance';
 import ISticker from '../../intf/guild/ISticker';
@@ -21,6 +20,7 @@ import ThreadChannel from '../channels/ThreadChannel';
 import VoiceChannel from '../channels/VoiceChannel';
 import HTTP from '../HTTP';
 import { getDateFromID } from '../util/snowflake';
+import Emoji from './GuildEmoji';
 import { GuildMember } from './GuildMember';
 import Role from './Role';
 
@@ -32,7 +32,7 @@ export default class Guild {
 	defaultMessageNotifications: keyof typeof DefaultMessageNotificationsLevel;
 	explicitContentFilter: ExplicitContentFilterLevel;
 	roles: Map<string, Role> = new Map();
-	emojis: IEmoji[];
+	emojis: Map<string, Emoji> = new Map();
 	features: GuildFeatures[];
 	mfaLevel: keyof typeof MFALevel;
 	nsfwLevel: keyof typeof NSFWLevel;
@@ -79,7 +79,6 @@ export default class Guild {
 		this.verificationLevel = VerificationLevel[guild.verification_level] as keyof typeof VerificationLevel;
 		this.defaultMessageNotifications = DefaultMessageNotificationsLevel[guild.default_message_notifications] as any;
 		this.explicitContentFilter = ExplicitContentFilterLevel[guild.explicit_content_filter] as any;
-		this.emojis = guild.emojis;
 		this.features = guild.features;
 		this.mfaLevel = MFALevel[guild.mfa_level] as keyof typeof MFALevel;
 		this.nsfwLevel = NSFWLevel[guild.nsfw_level] as keyof typeof NSFWLevel;
@@ -126,6 +125,7 @@ export default class Guild {
 		guild.members?.forEach(member => this.members.set(member.user.id, new GuildMember(member)));
 		guild.threads.forEach(thread => this.threads.set(thread.id, new ThreadChannel(thread, http)));
 		guild.roles.forEach(role => this.roles.set(role.id, new Role(role)));
+		guild.emojis.map(emoji => this.emojis.set(emoji.id, new Emoji(emoji)));
 
 		this.HTTP = http;
 	}

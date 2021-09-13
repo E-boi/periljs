@@ -1,7 +1,9 @@
 import WebSocket from 'ws';
 import { GuildMember } from '../../..';
 import { WS_URI } from '../../constants';
+import { Snowflake } from '../const/Snowflake';
 import IGuildMember from '../intf/guild/IGuildMember';
+import { DeletedMessage, DeletedMessages } from '../intf/IClientEvents';
 import { IClientOptions } from '../intf/IClientOptions';
 import IMessage from '../intf/IMessage';
 import Client from './client';
@@ -9,6 +11,7 @@ import Guild from './guild/Guild';
 import Role from './guild/Role';
 import intentCalculator from './intents';
 import { ButtonInteraction, MessageInteraction, SelectMenuInteraction, SlashInteraction, UserInteraction } from './interactions';
+import Invite, { DeletedInvite } from './Invite';
 import Message from './Message';
 import User from './User';
 import { createChannelClass } from './util/channel';
@@ -95,6 +98,15 @@ export default class Peril extends WebSocket {
 							if (deletedRole) deletedAt?.roles.delete(deletedRole.id.toString());
 							break;
 
+						case 'INVITE_CREATE':
+							const createdInvite = new Invite(data.d, this.bot);
+							this.bot.emit('invite.create', createdInvite);
+							break;
+						case 'INVITE_DELETE':
+							const deletedInvite = new DeletedInvite(data.d, this.bot);
+							this.bot.emit('invite.delete', deletedInvite);
+							break;
+
 						case 'MESSAGE_CREATE':
 							if (!this.bot.channels.has(data.d.channel_id)) {
 								this.bot.HTTP.getChannel(data.d.channel_id).then(c => {
@@ -117,9 +129,22 @@ export default class Peril extends WebSocket {
 							this.bot.emit('message.update', updatedMessage);
 							break;
 						case 'MESSAGE_DELETE':
-							const deletedMessages: IMessage = data.d;
-							this.bot.emit('message.delete', deletedMessages);
+							const deletedMessage: DeletedMessage = {
+								id: new Snowflake(data.d.id),
+								channelId: new Snowflake(data.d.channel_id),
+								guildId: new Snowflake(data.d.guild_id),
+							};
+							this.bot.emit('message.delete', deletedMessage);
 							break;
+						case 'MESSAGE_DELETE_MESSAGE':
+							const deletedMessages: DeletedMessages = {
+								ids: data.d.id.map((id: string) => new Snowflake(id)),
+								channelId: new Snowflake(data.d.channel_id),
+								guildId: new Snowflake(data.d.guild_id),
+							};
+							this.bot.emit('message.bulk.delete', deletedMessages);
+							break;
+
 						case 'INTERACTION_CREATE':
 							if (data.d.type === 2) {
 								if (data.d.data.type === 1) this.bot.emit('interaction.slash', new SlashInteraction(this.bot, data.d));
