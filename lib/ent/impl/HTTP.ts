@@ -34,8 +34,9 @@ export default class HTTP {
 		return fetch(`${this.base_url}${url}`, { method: 'GET', headers: { ...this.headers, ...headers } });
 	}
 
-	put(url: string, body: BodyInit, headers?: HeadersInit) {
-		return fetch(`${this.base_url}${url}`, { method: 'PUT', headers: { ...this.headers, ...headers }, body });
+	put(url: string, body?: BodyInit, headers?: HeadersInit) {
+		if (!body) body = JSON.stringify({});
+		return fetch(`${this.base_url}${url}`, { method: 'PUT', headers: { ...this.headers, ...(headers || {}) }, body });
 	}
 
 	delete(url: string, headers?: HeadersInit) {
@@ -63,7 +64,7 @@ export default class HTTP {
 	}
 
 	async deleteMessage(message_id: string, channel_id: string, headers?: { 'X-Audit-Log-Reason'?: string }): Promise<boolean> {
-		const messageReq = await this.delete(`/channels/${channel_id}/messages/${message_id}`, JSON.stringify(headers));
+		const messageReq = await this.delete(`/channels/${channel_id}/messages/${message_id}`, headers);
 		if (!messageReq.ok) return false;
 		return true;
 	}
@@ -136,5 +137,17 @@ export default class HTTP {
 		const userReq = await this.get(`/guilds/${guild_id}/members/${user_id}`);
 		if (!userReq.ok) return;
 		return (await userReq.json()) as IGuildMember;
+	}
+
+	async banUser(user_id: string, guild_id: string, reason?: string) {
+		const banReq = await this.put(`/guilds/${guild_id}/bans/${user_id}`, undefined, reason && { 'X-Audit-Log-Reason': reason });
+		if (!banReq.ok) throw Error("Can't ban a user without BAN_MEMBERS permission");
+		return true;
+	}
+
+	async kickUser(user_id: string, guild_id: string, reason?: string) {
+		const kickReq = await this.delete(`/guilds/${guild_id}/members/${user_id}`, reason && { 'X-Audit-Log-Reason': reason });
+		if (!kickReq.ok) throw Error("Can't kick a user without KICK_MEMBERS permission");
+		return true;
 	}
 }

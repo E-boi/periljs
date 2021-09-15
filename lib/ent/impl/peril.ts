@@ -5,7 +5,6 @@ import { Snowflake } from '../const/Snowflake';
 import IGuildMember from '../intf/guild/IGuildMember';
 import { DeletedMessage, DeletedMessages } from '../intf/IClientEvents';
 import { IClientOptions } from '../intf/IClientOptions';
-import IMessage from '../intf/IMessage';
 import Client from './client';
 import Guild from './guild/Guild';
 import Role from './guild/Role';
@@ -56,8 +55,9 @@ export default class Peril extends WebSocket {
 							this.bot.emit('guild.ban.remove', unbannedMember, unbannedFrom);
 							break;
 						case 'GUILD_MEMBER_ADD':
-							const addedMember = new GuildMember(data.d);
 							const guildJoined = this.bot.guilds.get(data.d.guild_id);
+							if (!guildJoined) return;
+							const addedMember = new GuildMember(data.d, guildJoined);
 							guildJoined?.members.set(addedMember.user.id, addedMember);
 							this.bot.emit('guild.member.join', addedMember, guildJoined);
 							break;
@@ -70,13 +70,16 @@ export default class Peril extends WebSocket {
 						case 'GUILD_MEMBER_UPDATE':
 							const updatedFrom = this.bot.guilds.get(data.d.guild_id);
 							const memberBefore = updatedFrom?.members.get(data.d.user.id);
-							const memberNow = new GuildMember(data.d);
+							if (!updatedFrom) return;
+							const memberNow = new GuildMember(data.d, updatedFrom);
 							this.bot.emit('guild.member.update', memberBefore, memberNow, updatedFrom);
 							updatedFrom?.members.set(memberNow.user.id, memberNow);
 							break;
 						case 'GUILD_MEMBERS_CHUNK':
 							const updateMembersFrom = this.bot.guilds.get(data.d.guild_id);
-							data.d.members.map((member: IGuildMember) => updateMembersFrom?.members.set(member.user.id, new GuildMember(member)));
+							data.d.members.map((member: IGuildMember) =>
+								updateMembersFrom?.members.set(member.user.id, new GuildMember(member, updateMembersFrom))
+							);
 							break;
 						case 'GUILD_ROLE_CREATE':
 							const createdRole = new Role(data.d.role);

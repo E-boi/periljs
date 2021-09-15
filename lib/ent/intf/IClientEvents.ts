@@ -1,5 +1,4 @@
 import { IUser } from './user/IUser';
-import IMessage from './IMessage';
 // import IGuild from './guild/IGuild';
 import SlashInteraction from '../impl/interactions/SlashInteraction';
 import UserInteraction from '../impl/interactions/UserInteraction';

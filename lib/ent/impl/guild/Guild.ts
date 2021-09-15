@@ -122,7 +122,7 @@ export default class Guild {
 			else return;
 		});
 
-		guild.members?.forEach(member => this.members.set(member.user.id, new GuildMember(member)));
+		guild.members?.forEach(member => this.members.set(member.user.id, new GuildMember(member, this)));
 		guild.threads.forEach(thread => this.threads.set(thread.id, new ThreadChannel(thread, http)));
 		guild.roles.forEach(role => this.roles.set(role.id, new Role(role)));
 		guild.emojis.map(emoji => this.emojis.set(emoji.id, new Emoji(emoji)));
@@ -134,8 +134,16 @@ export default class Guild {
 		if (this.members.has(user_id)) return this.members.get(user_id);
 		const user = await this.HTTP.fetchGuildUser(user_id, this.id.toString());
 		if (!user) return;
-		const member = new GuildMember(user);
+		const member = new GuildMember(user, this);
 		this.members.set(user_id, member);
 		return member;
+	}
+
+	async ban(id: string, reason?: string) {
+		return this.HTTP.banUser(id, this.id.toString(), reason);
+	}
+
+	async kick(id: string, reason?: string) {
+		return this.HTTP.kickUser(id, this.id.toString(), reason);
 	}
 }
