@@ -12,6 +12,7 @@ import IGuild from '../../intf/guild/IGuild';
 import IStageInstance from '../../intf/guild/IStageInstance';
 import ISticker from '../../intf/guild/ISticker';
 import IWelcomeScreen from '../../intf/guild/IWelcomeScreen';
+import { ICreateCategory, ICreateTextChannel, ICreateVoiceChannel } from '../../intf/ICreateChannel';
 import IPresenceUpdate from '../../intf/IPresenceUpdate';
 import IVoiceStates from '../../intf/IVoiceStates';
 import Category from '../channels/Category';
@@ -145,5 +146,9 @@ export default class Guild {
 
 	async kick(id: string, reason?: string) {
 		return this.HTTP.kickUser(id, this.id.toString(), reason);
+	}
+
+	async createChannel(channel: ICreateTextChannel | ICreateVoiceChannel | ICreateCategory) {
+		return this.HTTP.createGuildChannel(this.id.toString(), channel);
 	}
 }

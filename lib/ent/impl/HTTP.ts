@@ -9,6 +9,9 @@ import Client from './client';
 import Message from './Message';
 import IChannel from '../intf/IChannel';
 import IGuildMember from '../intf/guild/IGuildMember';
+import { ICreateCategory, ICreateTextChannel, ICreateVoiceChannel } from '../intf/ICreateChannel';
+import { ChannelTypes } from '../const/discord/channel';
+import { createChannelClass } from './util/channel';
 
 export default class HTTP {
 	private base_url: string;
@@ -149,5 +152,12 @@ export default class HTTP {
 		const kickReq = await this.delete(`/guilds/${guild_id}/members/${user_id}`, reason && { 'X-Audit-Log-Reason': reason });
 		if (!kickReq.ok) throw Error("Can't kick a user without KICK_MEMBERS permission");
 		return true;
+	}
+
+	async createGuildChannel(guild_id: string, channel: ICreateTextChannel | ICreateVoiceChannel | ICreateCategory) {
+		channel.type = ChannelTypes[channel.type] as any;
+		const channelReq = await this.post(`/guilds/${guild_id}/channels`, JSON.stringify(channel));
+		if (!channelReq.ok) throw Error(await channelReq.text());
+		return createChannelClass((await channelReq.json()) as IChannel, this);
 	}
 }
