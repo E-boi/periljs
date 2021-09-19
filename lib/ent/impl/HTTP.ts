@@ -7,11 +7,13 @@ import { ApplicationCommandOptionType, ApplicationCommandTypes } from '../const/
 import { IMessageCommandCreate, ISlashCreate, IUserCommandCreate } from '../intf/IInteraction';
 import Client from './client';
 import Message from './Message';
-import IChannel from '../intf/IChannel';
+import IChannel, { IThreadChannel } from '../intf/IChannel';
 import IGuildMember from '../intf/guild/IGuildMember';
 import { ICreateCategory, ICreateTextChannel, ICreateVoiceChannel } from '../intf/ICreateChannel';
 import { ChannelTypes } from '../const/discord/channel';
 import { createChannelClass } from './util/channel';
+import { ThreadChannel } from './channels';
+import IThreadMember from '../intf/IThreadMember';
 
 export default class HTTP {
 	private base_url: string;
@@ -76,6 +78,42 @@ export default class HTTP {
 		const channelReq = await this.get(`/channels/${channel_id}`);
 		if (!channelReq.ok) return;
 		return (await channelReq.json()) as IChannel;
+	}
+
+	async startThreadWithMessage(channel_id: string, name: string, message_id: string) {
+		const threadReq = await this.post(`/channels/${channel_id}/messages/${message_id}/threads`, JSON.stringify({ name }));
+		if (!threadReq.ok) throw Error(await threadReq.text());
+		return new ThreadChannel((await threadReq.json()) as IThreadChannel, this);
+	}
+
+	async startThread(channel_id: string, name: string) {
+		const threadReq = await this.post(`/channels/${channel_id}/threads`, JSON.stringify({ name, type: 11 }));
+		if (!threadReq.ok) throw Error(await threadReq.text());
+		return new ThreadChannel((await threadReq.json()) as IThreadChannel, this);
+	}
+
+	async addThreadMember(channel_id: string, user_id: string) {
+		const threadReq = await this.put(`/channels/${channel_id}/thread-members/${user_id}`);
+		if (!threadReq.ok) throw Error(await threadReq.text());
+		return;
+	}
+
+	async removeThreadMember(channel_id: string, useer_id: string) {
+		const threadReq = await this.delete(`/channels/${channel_id}/thread-members/${useer_id}`);
+		if (!threadReq.ok) throw Error(await threadReq.text());
+		return;
+	}
+
+	async listThreadMembers(channel_id: string) {
+		const threadReq = await this.get(`/channels/${channel_id}/thread-members`);
+		if (!threadReq.ok) throw Error(await threadReq.text());
+		return (await threadReq.json()) as IThreadMember[];
+	}
+
+	async listActiveThreads(channel_id: string) {
+		const threadReq = await this.get(`/channels/${channel_id}/threads/active`);
+		if (!threadReq.ok) throw Error(await threadReq.text());
+		return (await threadReq.json()) as { threads: IThreadChannel[]; members: IThreadMember[]; has_more: boolean };
 	}
 
 	async getIntercationCommands() {

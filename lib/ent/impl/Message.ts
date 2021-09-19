@@ -59,7 +59,7 @@ export default class Message {
 		this.pinned = message.pinned;
 		this.type = MessageTypes[message.type] as keyof typeof MessageTypes;
 		this.guildId = message.guild_id;
-		this.member = this.guild?.members.get(message.author.id);
+		this.member = this.guild?.members.get(message.author?.id);
 		this.editedTimestamp = (message.edited_timestamp && new Date(message.edited_timestamp)) || undefined;
 		this.mentionChannels = message.mention_channels;
 		this.reactions = message.reactions;
@@ -80,7 +80,7 @@ export default class Message {
 
 	get channel() {
 		const channel = this.bot.getChannelByID(this.channelId);
-		if (!channel || (channel.type !== 'GUILD_TEXT' && channel.type !== 'DM')) return;
+		if (!channel || (channel.type !== 'GUILD_TEXT' && channel.type !== 'DM' && channel.type !== 'GUILD_PUBLIC_THREAD')) return;
 		return channel;
 	}
 

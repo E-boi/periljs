@@ -2,6 +2,7 @@ import { ChannelTypes } from '../../const/discord/channel';
 import { Snowflake } from '../../const/Snowflake';
 import { IThreadChannel } from '../../intf/IChannel';
 import IThreadMetadata from '../../intf/IThreadMetadata';
+import { ThreadMember } from '../guild/GuildMember';
 import HTTP from '../HTTP';
 import BaseTextChannel from './BaseTextChannel';
 
@@ -33,6 +34,19 @@ export default class ThreadChannel extends BaseTextChannel {
 
 	get guild() {
 		return this.HTTPS.bot.getGuildByID(this.guildId);
+	}
+
+	async addMember(user_id: string) {
+		return this.HTTPS.addThreadMember(this.id.toString(), user_id);
+	}
+
+	async removeMember(user_id: string) {
+		return this.HTTPS.removeThreadMember(this.id.toString(), user_id);
+	}
+
+	async fetchMembers() {
+		const members = await this.HTTPS.listThreadMembers(this.id.toString());
+		return members.map(member => new ThreadMember(member));
 	}
 
 	toString() {

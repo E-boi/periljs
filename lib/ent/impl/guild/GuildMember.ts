@@ -1,6 +1,7 @@
 import { Permissions } from '../../../constants';
 import { Snowflake } from '../../const/Snowflake';
 import IGuildMember, { IPartialGuildMember } from '../../intf/guild/IGuildMember';
+import IThreadMember from '../../intf/IThreadMember';
 import User from '../User';
 import Guild from './Guild';
 
@@ -44,5 +45,22 @@ export class GuildMember extends PartialGuildMember {
 
 	async ban(reason?: string) {
 		return this.guild.ban(this.user.id, reason);
+	}
+}
+
+export class ThreadMember {
+	id?: Snowflake;
+	userId?: Snowflake;
+	joinTimestamp: Date;
+	flags: number;
+	constructor(member: IThreadMember) {
+		this.id = new Snowflake(member.id);
+		this.userId = new Snowflake(member.id);
+		this.joinTimestamp = new Date(member.join_timestamp);
+		this.flags = member.flags;
+	}
+
+	toString() {
+		return `<@${this.userId}>`;
 	}
 }

@@ -12,9 +12,9 @@ import IGuild from '../../intf/guild/IGuild';
 import IStageInstance from '../../intf/guild/IStageInstance';
 import ISticker from '../../intf/guild/ISticker';
 import IWelcomeScreen from '../../intf/guild/IWelcomeScreen';
-import { ICreateCategory, ICreateTextChannel, ICreateVoiceChannel } from '../../intf/ICreateChannel';
 import IPresenceUpdate from '../../intf/IPresenceUpdate';
 import IVoiceStates from '../../intf/IVoiceStates';
+import Channels from '../Channels';
 import Category from '../channels/Category';
 import TextChannel from '../channels/TextChannel';
 import ThreadChannel from '../channels/ThreadChannel';
@@ -38,7 +38,7 @@ export default class Guild {
 	mfaLevel: keyof typeof MFALevel;
 	nsfwLevel: keyof typeof NSFWLevel;
 	premiumTier: keyof typeof PremiumTypes;
-	channels: Map<string, TextChannel | VoiceChannel | Category> = new Map();
+	channels: Channels<string, TextChannel | VoiceChannel | Category>;
 	threads: Map<string, ThreadChannel> = new Map();
 	preferredLocale: string;
 	icon?: string;
@@ -115,6 +115,7 @@ export default class Guild {
 		this.stageInstances = guild.stage_instances;
 		this.stickers = guild.stickers;
 		this.createdAt = getDateFromID(this.id);
+		this.channels = new Channels(this.id.toString(), http);
 
 		guild.channels.forEach(channel => {
 			if (channel.type === 0) return this.channels.set(channel.id, new TextChannel(channel as any, http));
@@ -146,9 +147,5 @@ export default class Guild {
 
 	async kick(id: string, reason?: string) {
 		return this.HTTP.kickUser(id, this.id.toString(), reason);
-	}
-
-	async createChannel(channel: ICreateTextChannel | ICreateVoiceChannel | ICreateCategory) {
-		return this.HTTP.createGuildChannel(this.id.toString(), channel);
 	}
 }
