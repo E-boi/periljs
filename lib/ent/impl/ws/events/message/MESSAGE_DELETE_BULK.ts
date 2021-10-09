@@ -1,6 +1,6 @@
 import { DeletedMessages } from '../../../../intf/IClientEvents';
 import { DMChannel, TextChannel } from '../../../channels';
-import Peril from '../../../peril';
+import Peril from '../../peril';
 
 export default function MESSAGE_DELETE({ bot }: Peril, data: { id: string[]; channel_id: string; guild_id?: string }) {
 	const deletedMessages: DeletedMessages = {

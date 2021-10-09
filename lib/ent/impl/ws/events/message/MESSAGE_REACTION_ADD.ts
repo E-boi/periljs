@@ -5,7 +5,7 @@ import Guild from '../../../guild/Guild';
 import Emoji from '../../../guild/GuildEmoji';
 import { GuildMember } from '../../../guild/GuildMember';
 import Message from '../../../Message';
-import Peril from '../../../peril';
+import Peril from '../../peril';
 import User from '../../../User';
 
 export type ReactionAdd = {
