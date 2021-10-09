@@ -3,7 +3,7 @@ import IEmoji from '../../intf/guild/IEmoji';
 import User from '../User';
 
 export default class Emoji {
-	id: Snowflake;
+	id?: Snowflake;
 	name: string;
 	roles?: Snowflake[];
 	user?: User;
@@ -23,6 +23,7 @@ export default class Emoji {
 	}
 
 	toString() {
-		return `<:${this.name}:${this.id}>`;
+		if (this.id) return `<:${this.name}:${this.id}>`;
+		else return `:${this.name}:`;
 	}
 }

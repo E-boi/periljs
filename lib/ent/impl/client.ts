@@ -1,7 +1,7 @@
 import { EventEmitter } from 'events';
 import { IClientOptions } from '../intf/IClientOptions';
 import { IClient } from '../intf/IClient';
-import Peril from './peril';
+import Peril from './ws/peril';
 import { IUser } from '../intf/user/IUser';
 import HTTP from './HTTP';
 import IMessage, { IMessageCreate } from '../intf/IMessage';
@@ -14,6 +14,7 @@ import { transformComponents } from './util/components';
 import Guild from './guild/Guild';
 import { TextChannel, Category, DMChannel, ThreadChannel, VoiceChannel } from './channels';
 import { IActivityCreate } from '../intf/IActivity';
+import User from './User';
 
 /**
  * Discord API Client
@@ -83,10 +84,10 @@ export default class Client extends EventEmitter implements IClient {
 	 * @returns {Promise<IUser | null>}
 	 */
 
-	async getUserByID(userID: string): Promise<IUser | null> {
+	async getUserByID(userID: string): Promise<User | null> {
 		const userReq = await this.HTTP.get(`/users/${userID}`);
 		if (!userReq.ok) return null;
-		return userReq.json() as Promise<IUser | null>;
+		return new User((await userReq.json()) as IUser);
 	}
 
 	/**

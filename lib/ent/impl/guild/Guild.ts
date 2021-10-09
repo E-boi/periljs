@@ -127,7 +127,7 @@ export default class Guild {
 		guild.members?.forEach(member => this.members.set(member.user.id, new GuildMember(member, this)));
 		guild.threads.forEach(thread => this.threads.set(thread.id, new ThreadChannel(thread, http)));
 		guild.roles.forEach(role => this.roles.set(role.id, new Role(role)));
-		guild.emojis.map(emoji => this.emojis.set(emoji.id, new Emoji(emoji)));
+		guild.emojis.map(emoji => this.emojis.set(emoji.id as string, new Emoji(emoji)));
 
 		this.HTTP = http;
 	}

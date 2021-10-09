@@ -1,7 +1,7 @@
 import { IUser } from '../user/IUser';
 
 export default interface IEmoji {
-	id: string;
+	id?: string;
 	name: string;
 	roles?: string[];
 	user?: IUser;

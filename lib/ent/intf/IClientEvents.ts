@@ -5,7 +5,7 @@ import UserInteraction from '../impl/interactions/UserInteraction';
 import MessageInteraction from '../impl/interactions/MessageInteraction';
 import ButtonInteraction from '../impl/interactions/ButtonInteraction';
 import SelectMenuInteraction from '../impl/interactions/SelectMenuInteraction';
-import { Guild, GuildMember } from '../../..';
+import { DMChannel, Guild, GuildMember } from '../../..';
 import Message from '../impl/Message';
 import TextChannel from '../impl/channels/TextChannel';
 import VoiceChannel from '../impl/channels/VoiceChannel';
@@ -14,18 +14,21 @@ import Category from '../impl/channels/Category';
 import User from '../impl/User';
 import Role from '../impl/guild/Role';
 import Invite, { DeletedInvite } from '../impl/Invite';
-import { Snowflake } from '../const/Snowflake';
 
 export interface DeletedMessage {
-	id: Snowflake;
-	channelId: Snowflake;
-	guildId?: Snowflake;
+	id: string;
+	channelId: string;
+	guildId?: string;
+	guild?: Guild;
+	channel?: TextChannel | DMChannel;
 }
 
 export interface DeletedMessages {
-	ids: Snowflake[];
-	channelId: Snowflake;
-	guildId?: Snowflake;
+	ids: string[];
+	channelId: string;
+	guildId?: string;
+	guild?: Guild;
+	channel?: TextChannel | DMChannel;
 }
 
 export default interface IClientEvents<T> {
