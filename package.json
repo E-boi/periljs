@@ -1,5 +1,5 @@
 {
-  "name": "periljs",
+  "name": "@e-boi/periljs",
   "version": "1.0.0",
   "description": "A api wrapper for discord!",
   "main": "index.js",
