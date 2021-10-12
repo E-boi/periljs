@@ -1,7 +1,7 @@
 // this example will show using components specifically buttons in slash commands
 // one neat thing is that periljs will automatically wrap your components in the "Action Row" component
 
-import { Client, Intents } from 'periljs';
+import { Client, Intents } from '@e-boi/periljs';
 
 const client = new Client({ clientAuthentication: { token: 'a token here' }, intents: [Intents.GUILDS] });
 

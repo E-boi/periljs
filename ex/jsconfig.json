@@ -1,7 +1,7 @@
 {
 	"compilerOptions": {
 		"paths": {
-			"periljs": ["../lib"]
+			"@e-boi/periljs": ["../lib"]
 		}
 	}
 }

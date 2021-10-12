@@ -1,6 +1,6 @@
 // this example shows a basic usage of slash commands
 
-import { Client, Intents } from 'periljs';
+import { Client, Intents } from '@e-boi/periljs';
 
 const client = new Client({ clientAuthentication: { token: 'a token here' }, intents: [Intents.GUILDS] });
 

@@ -200,13 +200,13 @@ export default class HTTP {
 	}
 
 	async banUser(user_id: string, guild_id: string, reason?: string) {
-		const banReq = await this.put(`/guilds/${guild_id}/bans/${user_id}`, undefined, reason && { 'X-Audit-Log-Reason': reason });
+		const banReq = await this.put(`/guilds/${guild_id}/bans/${user_id}`, undefined, reason ? { 'X-Audit-Log-Reason': reason } : {});
 		if (!banReq.ok) throw Error("Can't ban a user without BAN_MEMBERS permission");
 		return true;
 	}
 
 	async kickUser(user_id: string, guild_id: string, reason?: string) {
-		const kickReq = await this.delete(`/guilds/${guild_id}/members/${user_id}`, reason && { 'X-Audit-Log-Reason': reason });
+		const kickReq = await this.delete(`/guilds/${guild_id}/members/${user_id}`, reason ? { 'X-Audit-Log-Reason': reason } : {});
 		if (!kickReq.ok) throw Error("Can't kick a user without KICK_MEMBERS permission");
 		return true;
 	}
