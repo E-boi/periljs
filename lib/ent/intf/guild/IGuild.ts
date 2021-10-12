@@ -7,7 +7,6 @@ import {
 	VerificationLevel,
 } from '../../const/discord/guild/features';
 import { NSFWLevel, PremiumTypes } from '../../const/discord/guild/level';
-import { Snowflake } from '../../const/Snowflake';
 import IChannel, { IThreadChannel } from '../IChannel';
 import IEmoji from './IEmoji';
 import IGuildMember from './IGuildMember';
@@ -19,9 +18,9 @@ import IStageInstance from './IStageInstance';
 import ISticker from './ISticker';
 
 export default interface IGuild {
-	id: Snowflake;
+	id: string;
 	name: string;
-	owner_id: Snowflake;
+	owner_id: string;
 	verification_level: VerificationLevel;
 	default_message_notifications: DefaultMessageNotificationsLevel;
 	explicit_content_filter: ExplicitContentFilterLevel;
@@ -35,13 +34,13 @@ export default interface IGuild {
 	icon_hash?: string;
 	splash?: string;
 	discovery_splash?: string;
-	afk_channel_id?: Snowflake;
+	afk_channel_id?: string;
 	widget_enabled?: boolean;
-	widget_channel_id?: Snowflake;
-	application_id?: Snowflake;
-	system_channel_id?: Snowflake;
+	widget_channel_id?: string;
+	application_id?: string;
+	system_channel_id?: string;
 	system_channel_flags: SystemChannelFlags;
-	rules_channel_id?: Snowflake;
+	rules_channel_id?: string;
 	joined_at?: string;
 	large?: boolean;
 	unavailable?: boolean;
@@ -57,7 +56,7 @@ export default interface IGuild {
 	banner?: string;
 	premium_subscription_count?: number;
 	preferred_locale: string;
-	public_updates_channel_id?: Snowflake;
+	public_updates_channel_id?: string;
 	max_video_channel_users?: number;
 	approximate_member_count?: number;
 	approximate_presence_count?: number;

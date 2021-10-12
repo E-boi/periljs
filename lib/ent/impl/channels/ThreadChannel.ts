@@ -49,6 +49,10 @@ export default class ThreadChannel extends BaseTextChannel {
 		return members.map(member => new ThreadMember(member));
 	}
 
+	async join() {
+		return await this.HTTPS.joinThread(this.id.toString());
+	}
+
 	toString() {
 		return `<#${this.id}>`;
 	}

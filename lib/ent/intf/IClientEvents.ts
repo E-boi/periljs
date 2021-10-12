@@ -34,6 +34,7 @@ export interface DeletedMessages {
 export default interface IClientEvents<T> {
 	(event: 'ready', listener: (user: IUser) => void): T;
 	(event: 'guild.create', listener: (guild: Guild) => void): T;
+	(event: 'guild.update', listener: (before: Guild, now: Guild) => void): T;
 	(event: 'guild.delete', listener: (guild: Guild) => void): T;
 	(event: 'guild.ban.add', listener: (user: User, guild: Guild) => void): T;
 	(event: 'guild.ban.remove', listener: (user: User, guild: Guild) => void): T;

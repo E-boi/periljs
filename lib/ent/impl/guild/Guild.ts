@@ -7,7 +7,6 @@ import {
 	GuildFeatures,
 	SystemChannelFlags,
 } from '../../const/discord/guild/features';
-import { Snowflake } from '../../const/Snowflake';
 import IGuild from '../../intf/guild/IGuild';
 import IStageInstance from '../../intf/guild/IStageInstance';
 import ISticker from '../../intf/guild/ISticker';
@@ -26,9 +25,9 @@ import { GuildMember } from './GuildMember';
 import Role from './Role';
 
 export default class Guild {
-	id: Snowflake;
+	id: string;
 	name: string;
-	owner_id: Snowflake;
+	owner_id: string;
 	verificationLevel: keyof typeof VerificationLevel;
 	defaultMessageNotifications: keyof typeof DefaultMessageNotificationsLevel;
 	explicitContentFilter: ExplicitContentFilterLevel;
@@ -45,13 +44,13 @@ export default class Guild {
 	iconHash?: string;
 	splash?: string;
 	discoverySplash?: string;
-	afkChannelId?: Snowflake;
+	afkChannelId?: string;
 	widgetEnabled?: boolean;
-	widgetChannelId?: Snowflake;
-	applicationId?: Snowflake;
-	systemChannelId?: Snowflake;
+	widgetChannelId?: string;
+	applicationId?: string;
+	systemChannelId?: string;
 	systemChannelFlags: keyof typeof SystemChannelFlags;
-	rulesChannelId?: Snowflake;
+	rulesChannelId?: string;
 	joinedAt?: Date;
 	createdAt: Date;
 	large?: boolean;
@@ -65,7 +64,7 @@ export default class Guild {
 	description?: string;
 	banner?: string;
 	premiumSubscriptionCount?: number;
-	publicUpdatesChannelId?: Snowflake;
+	publicUpdatesChannelId?: string;
 	maxVideoChannelUsers?: number;
 	// approximateMemberCount?: number;
 	// approximatePresenceCount?: number;
@@ -74,9 +73,9 @@ export default class Guild {
 	stickers?: ISticker[];
 	private HTTP: HTTP;
 	constructor(guild: IGuild, http: HTTP) {
-		this.id = new Snowflake(guild.id);
+		this.id = guild.id;
 		this.name = guild.name;
-		this.owner_id = new Snowflake(guild.owner_id);
+		this.owner_id = guild.owner_id;
 		this.verificationLevel = VerificationLevel[guild.verification_level] as keyof typeof VerificationLevel;
 		this.defaultMessageNotifications = DefaultMessageNotificationsLevel[guild.default_message_notifications] as any;
 		this.explicitContentFilter = ExplicitContentFilterLevel[guild.explicit_content_filter] as any;
@@ -91,10 +90,10 @@ export default class Guild {
 		this.afkChannelId = guild.afk_channel_id;
 		this.widgetEnabled = guild.widget_enabled;
 		this.widgetChannelId = guild.widget_channel_id;
-		this.applicationId = guild.application_id && new Snowflake(guild.application_id);
-		this.systemChannelId = guild.system_channel_id && new Snowflake(guild.system_channel_id);
+		this.applicationId = guild.application_id && guild.application_id;
+		this.systemChannelId = guild.system_channel_id && guild.system_channel_id;
 		this.systemChannelFlags = SystemChannelFlags[guild.system_channel_flags] as keyof typeof SystemChannelFlags;
-		this.rulesChannelId = guild.rules_channel_id && new Snowflake(guild.rules_channel_id);
+		this.rulesChannelId = guild.rules_channel_id && guild.rules_channel_id;
 		this.joinedAt = (guild.joined_at && new Date(guild.joined_at)) || undefined;
 		this.large = guild.large;
 		this.unavailable = guild.unavailable;
@@ -117,7 +116,8 @@ export default class Guild {
 		this.createdAt = getDateFromID(this.id);
 		this.channels = new Channels(this.id.toString(), http);
 
-		guild.channels.forEach(channel => {
+		guild.channels?.forEach(channel => {
+			if (!channel.guild_id) channel.guild_id = this.id;
 			if (channel.type === 0) return this.channels.set(channel.id, new TextChannel(channel as any, http));
 			else if (channel.type === 2) return this.channels.set(channel.id, new VoiceChannel(channel as any));
 			else if (channel.type === 4) return this.channels.set(channel.id, new Category(channel as any));
@@ -125,9 +125,9 @@ export default class Guild {
 		});
 
 		guild.members?.forEach(member => this.members.set(member.user.id, new GuildMember(member, this)));
-		guild.threads.forEach(thread => this.threads.set(thread.id, new ThreadChannel(thread, http)));
-		guild.roles.forEach(role => this.roles.set(role.id, new Role(role)));
-		guild.emojis.map(emoji => this.emojis.set(emoji.id as string, new Emoji(emoji)));
+		guild.threads?.forEach(thread => this.threads.set(thread.id, new ThreadChannel(thread, http)));
+		guild.roles?.forEach(role => this.roles.set(role.id, new Role(role)));
+		guild.emojis?.map(emoji => this.emojis.set(emoji.id as string, new Emoji(emoji)));
 
 		this.HTTP = http;
 	}

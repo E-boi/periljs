@@ -3,6 +3,7 @@ import { Snowflake } from '../../const/Snowflake';
 import { ITextChannel } from '../../intf/IChannel';
 import IOverwrite from '../../intf/IOverwrite';
 import HTTP from '../HTTP';
+import Message from '../Message';
 import BaseTextChannel from './BaseTextChannel';
 
 export default class TextChannel extends BaseTextChannel {
@@ -35,6 +36,11 @@ export default class TextChannel extends BaseTextChannel {
 	async fetchActiveThreads() {
 		const { threads } = await this.http.listActiveThreads(this.id.toString());
 		return threads.map(thread => new ThreadChannel(thread, this.http));
+	}
+
+	async fetchPins() {
+		const pins = await this.http.getPinsMessages(this.id.toString());
+		return pins.map(message => new Message(message, this.http.bot));
 	}
 
 	toString() {

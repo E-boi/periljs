@@ -17,6 +17,7 @@ import GUILD_MEMBER_UPDATE from './events/guild/GUILD_MEMBER_UPDATE';
 import GUILD_ROLE_CREATE from './events/guild/GUILD_ROLE_CREATE';
 import GUILD_ROLE_DELETE from './events/guild/GUILD_ROLE_DELETE';
 import GUILD_ROLE_UPDATE from './events/guild/GUILD_ROLE_UPDATE';
+// import GUILD_UPDATE from './events/guild/GUILD_UPDATE';
 import INTERACTION_CREATE from './events/INTERACTION_CREATE';
 import INVITE_CREATE from './events/INVITE_CREATE';
 import INVITE_DELETE from './events/INVITE_DELETE';
@@ -49,6 +50,9 @@ export default class Peril extends WebSocket {
 						case 'GUILD_CREATE':
 							GUILD_CREATE(this, data.d);
 							break;
+						// case 'GUILD_UPDATE':
+						// 	GUILD_UPDATE(this, data.d);
+						// 	break;
 						case 'GUILD_DELETE':
 							GUILD_DELETE(this, data.d);
 							break;
@@ -125,6 +129,9 @@ export default class Peril extends WebSocket {
 							break;
 						case 'THREAD_DELETE':
 							THREAD_DELETE(this, data.d);
+							break;
+						case 'THREAD_LIST_SYNC':
+							console.log(data.d);
 							break;
 						default:
 							console.log(data);

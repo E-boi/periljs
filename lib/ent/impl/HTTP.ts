@@ -50,34 +50,47 @@ export default class HTTP {
 
 	async sendMessage(message: IMessageCreate, channel_id: string): Promise<IMessage> {
 		const messageReq = await this.post(`/channels/${channel_id}/messages`, JSON.stringify(message));
+		if (!messageReq.ok) throw Error(await messageReq.text());
 		const messageObj: IMessage = (await messageReq.json()) as IMessage;
 		return messageObj;
 	}
 
 	async getMessage(message_id: string, channel_id: string): Promise<Message | undefined> {
 		const messageReq = await this.get(`/channels/${channel_id}/messages/${message_id}`);
-		if (!messageReq.ok) return undefined;
+		if (!messageReq.ok) throw Error(await messageReq.text());
 		const message: Message = new Message((await messageReq.json()) as IMessage, this.bot);
 		return message;
 	}
 
 	async getMessages(channel_id: string, limit: number = 50): Promise<IMessage[] | undefined> {
 		const messagesReq = await this.get(`/channels/${channel_id}/messages?limit=${limit}`);
-		if (!messagesReq.ok) return undefined;
+		if (!messagesReq.ok) throw Error(await messagesReq.text());
 		const messages: IMessage[] = (await messagesReq.json()) as IMessage[];
 		return messages;
 	}
 
 	async deleteMessage(message_id: string, channel_id: string, headers?: { 'X-Audit-Log-Reason'?: string }): Promise<boolean> {
 		const messageReq = await this.delete(`/channels/${channel_id}/messages/${message_id}`, headers);
-		if (!messageReq.ok) return false;
+		if (!messageReq.ok) throw Error(await messageReq.text());
 		return true;
+	}
+
+	async getPinsMessages(channel_id: string) {
+		const channelReq = await this.get(`/channels/${channel_id}/pins`);
+		if (!channelReq.ok) throw Error(await channelReq.text());
+		return (await channelReq.json()) as IMessage[];
 	}
 
 	async getChannel(channel_id: string) {
 		const channelReq = await this.get(`/channels/${channel_id}`);
 		if (!channelReq.ok) return;
 		return (await channelReq.json()) as IChannel;
+	}
+
+	async triggerTyping(channel_id: string) {
+		const channelReq = await this.post(`/channels/${channel_id}/typing`, JSON.stringify({}));
+		if (!channelReq.ok) throw Error(await channelReq.text());
+		return true;
 	}
 
 	async startThreadWithMessage(channel_id: string, name: string, message_id: string) {
@@ -90,6 +103,12 @@ export default class HTTP {
 		const threadReq = await this.post(`/channels/${channel_id}/threads`, JSON.stringify({ name, type: 11 }));
 		if (!threadReq.ok) throw Error(await threadReq.text());
 		return new ThreadChannel((await threadReq.json()) as IThreadChannel, this);
+	}
+
+	async joinThread(channel_id: string) {
+		const threadReq = await this.put(`/channels/${channel_id}/thread-members/@me`);
+		if (!threadReq.ok) throw Error(await threadReq.text());
+		return true;
 	}
 
 	async addThreadMember(channel_id: string, user_id: string) {

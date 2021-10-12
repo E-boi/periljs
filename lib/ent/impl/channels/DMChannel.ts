@@ -8,6 +8,6 @@ export default class DMChannel extends BaseTextChannel {
 	recipients: Map<string, User> = new Map();
 	constructor(channel: IDMChannel, http: HTTP) {
 		super(channel as any, http);
-		channel.recipients.map(user => this.recipients.set(user.id, new User(user)));
+		channel.recipients?.map(user => this.recipients.set(user.id, new User(user)));
 	}
 }

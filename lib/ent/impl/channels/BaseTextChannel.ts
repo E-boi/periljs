@@ -36,4 +36,8 @@ export default class BaseTextChannel {
 	async deleteMessage(message_id: string, reason?: string) {
 		return this.HTTP.deleteMessage(message_id, this.id.toString(), { 'X-Audit-Log-Reason': reason });
 	}
+
+	async startTyping() {
+		return await this.HTTP.triggerTyping(this.id.toString());
+	}
 }
