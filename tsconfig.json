@@ -10,7 +10,9 @@
 		"strict": true,
 		"esModuleInterop": true,
 		"skipLibCheck": true,
-		"forceConsistentCasingInFileNames": true
+		"forceConsistentCasingInFileNames": true,
+		"outDir": "dist",
+		"declaration": true
 	},
 	"include": ["./lib/**/*.ts", "index.ts"],
 	"checkJs": true
