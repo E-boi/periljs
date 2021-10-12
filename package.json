@@ -3,8 +3,10 @@
   "version": "1.0.0",
   "description": "A api wrapper for discord!",
   "main": "index.js",
+  "types": "index.d.ts",
   "scripts": {
-    "gendoc": "jsdoc -c .jsdoc.json lib/*"
+    "gendoc": "jsdoc -c .jsdoc.json lib/*",
+    "compile": "tsc"
   },
   "keywords": [],
   "author": "E-boi",
