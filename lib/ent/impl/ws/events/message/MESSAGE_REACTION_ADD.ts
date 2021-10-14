@@ -22,10 +22,10 @@ export default async function (
 	data: { user_id: string; channel_id: string; message_id: string; guild_id?: string; member?: IGuildMember; emoji: IEmoji }
 ) {
 	const channel = bot.channels.get(data.channel_id);
-	const guild = data.guild_id && bot.guilds.get(data.guild_id);
+	const guild = data.guild_id ? bot.guilds.get(data.guild_id) : null;
 	const message = await bot.HTTP.getMessage(data.message_id, data.channel_id);
 	const user = await bot.getUserByID(data.user_id);
-	const member = data.member && guild && new GuildMember(data.member, guild);
+	const member = data.member && guild ? new GuildMember(data.member, guild) : null;
 	const emoji = new Emoji(data.emoji);
 	bot.emit('message.reaction.add', { channel, guild, message, user, member, emoji } as ReactionAdd);
 }

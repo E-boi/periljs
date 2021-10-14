@@ -1,8 +1,6 @@
 import { Intents } from '../const/discord/intents';
-import { IClientAuthentication } from './clientAuthentication';
 
 export interface IClientOptions {
-	allowSlashCommands?: boolean;
 	commandsDir?: string;
 	// @NotImplemented
 	isSharded?: boolean;
@@ -10,6 +8,6 @@ export interface IClientOptions {
 	discordWebsocket?: string;
 
 	intents: Intents[];
-	clientAuthentication: IClientAuthentication;
+	token: string;
 	getAllMembers?: boolean;
 }

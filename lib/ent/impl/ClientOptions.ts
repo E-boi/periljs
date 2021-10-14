@@ -1,5 +1,4 @@
 import { Intents } from '../const/discord/intents';
-import { IClientAuthentication } from '../intf/clientAuthentication';
 import { IClientOptions } from '../intf/IClientOptions';
 
 /**
@@ -17,9 +16,9 @@ export class ClientOptions implements IClientOptions {
 	isSharded?: boolean | undefined;
 	discordWebsocket?: string | undefined;
 	intents: Intents[];
-	clientAuthentication: IClientAuthentication;
+	token: string;
 	constructor(
-		clientAuthentication: IClientAuthentication,
+		token: string,
 		allowSlashCommands: boolean = false,
 		commandsDir: string | undefined = undefined,
 		isSharded: boolean = false,
@@ -31,6 +30,6 @@ export class ClientOptions implements IClientOptions {
 		this.isSharded = isSharded;
 		this.discordWebsocket = discordWebsocket;
 		this.intents = intents;
-		this.clientAuthentication = clientAuthentication;
+		this.token = token;
 	}
 }

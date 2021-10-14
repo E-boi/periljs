@@ -35,3 +35,28 @@ export default class User {
 		return `<@${this.id}>`;
 	}
 }
+
+export class ClientUser {
+	id: string;
+	username: string;
+	discriminator: string;
+	avatar?: string;
+	bot: boolean;
+	system: boolean;
+	constructor(user: IUser) {
+		this.id = user.id;
+		this.username = user.username;
+		this.discriminator = user.discriminator;
+		this.avatar = user.avatar;
+		this.bot = user.bot ?? false;
+		this.system = user.system ?? false;
+	}
+
+	get tag() {
+		return `${this.username}#${this.discriminator}`;
+	}
+
+	toString() {
+		return `<@${this.id}>`;
+	}
+}

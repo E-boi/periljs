@@ -15,14 +15,12 @@ npm i @e-boi/periljs
 
 import { Client, Intents } from '@e-boi/periljs';
 
-const client = new Client({ clientAuthentication: { token: 'a token here' }, intents: [Intents.GUILDS] });
+const client = new Client({ token: 'a token here', intents: [Intents.GUILDS] });
 
 client.on('ready', () => {
-	client.setCommand({ type: 'CHAT_INPUT', name: 'example', description: 'example slash command made with periljs' });
-});
-
-client.on('interaction.slash', interaction => {
-	if (interaction.command.name === 'example') interaction.reply('hey!');
+	client.commands.set({ type: 'CHAT_INPUT', name: 'example', description: 'example slash command made with periljs' }, interaction => {
+		interaction.reply('hey!!');
+	});
 });
 
 client.connect();

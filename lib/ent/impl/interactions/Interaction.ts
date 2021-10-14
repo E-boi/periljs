@@ -1,11 +1,11 @@
-import { InteractionCallbackFlags } from '../../const/discord/interaction';
+import { InteractionCallbackFlags, InteractionTypes } from '../../const/discord/interaction';
 import { Snowflake } from '../../const/Snowflake';
 import IInteraction, { IInteractionCallbackData } from '../../intf/IInteraction';
 import Client from '../client';
 import { transformComponents } from '../util/components';
 
-export default class interaction {
-	type: IInteraction['type'];
+export default class Interaction {
+	type: keyof typeof InteractionTypes;
 	id: IInteraction['id'];
 	private token: IInteraction['token'];
 	channelId: IInteraction['channel_id'];
@@ -16,7 +16,7 @@ export default class interaction {
 	message: IInteraction['message'];
 	readonly bot: Client;
 	constructor(bot: Client, interaction: IInteraction) {
-		this.type = interaction.type;
+		this.type = InteractionTypes[interaction.type] as any;
 		this.id = interaction.id;
 		this.token = interaction.token;
 		this.guildId = interaction.guild_id && new Snowflake(interaction.guild_id);

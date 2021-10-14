@@ -3,6 +3,7 @@ import { WS_URI } from '../../../constants';
 import { IClientOptions } from '../../intf/IClientOptions';
 import Client from '../client';
 import intentCalculator from '../intents';
+import { ClientUser } from '../User';
 import CHANNEL_CREATE from './events/channel/CHANNEL_CREATE';
 import CHANNEL_DELETE from './events/channel/CHANNEL_DELETE';
 import CHANNEL_UPDATE from './events/channel/CHANNEL_UPDATE';
@@ -25,7 +26,9 @@ import MESSAGE_CREATE from './events/message/MESSAGE_CREATE';
 import MESSAGE_DELETE from './events/message/MESSAGE_DELETE_BULK';
 import MESSAGE_DELETE_BULK from './events/message/MESSAGE_DELETE_BULK';
 import MESSAGE_REACTION_ADD from './events/message/MESSAGE_REACTION_ADD';
+import MESSAGE_REACTION_REMOVE from './events/message/MESSAGE_REACTION_REMOVE';
 import MESSAGE_UPDATE from './events/message/MESSAGE_UPDATE';
+import PRESENCE_UPDATE from './events/PRESENCE_UPDATE';
 import THREAD_CREATE from './events/thread/THREAD_CREATE';
 import THREAD_DELETE from './events/thread/THREAD_DELETE';
 import THREAD_UPDATE from './events/thread/THREAD_UPDATE';
@@ -44,7 +47,7 @@ export default class Peril extends WebSocket {
 				case 0:
 					switch (data.t) {
 						case 'READY':
-							this.bot.bot = data.d.user;
+							this.bot.bot = new ClientUser(data.d.user);
 							this.bot.emit('ready', this.bot.bot);
 							break;
 						case 'GUILD_CREATE':
@@ -106,6 +109,9 @@ export default class Peril extends WebSocket {
 						case 'MESSAGE_REACTION_ADD':
 							MESSAGE_REACTION_ADD(this, data.d);
 							break;
+						case 'MESSAGE_REACTION_REMOVE':
+							MESSAGE_REACTION_REMOVE(this, data.d);
+							break;
 
 						case 'INTERACTION_CREATE':
 							INTERACTION_CREATE(this, data.d);
@@ -133,6 +139,11 @@ export default class Peril extends WebSocket {
 						case 'THREAD_LIST_SYNC':
 							console.log(data.d);
 							break;
+
+						case 'PRESENCE_UPDATE':
+							PRESENCE_UPDATE(this, data.d);
+							break;
+
 						default:
 							console.log(data);
 					}
@@ -142,7 +153,7 @@ export default class Peril extends WebSocket {
 						JSON.stringify({
 							op: 2,
 							d: {
-								token: this.options.clientAuthentication.token,
+								token: this.options.token,
 								intents: intentCalculator(this.options.intents),
 								properties: { $os: process.platform, $browser: 'Peril', $device: 'periljs' },
 							},

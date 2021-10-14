@@ -8,13 +8,12 @@ import IMessage, { IMessageCreate } from '../intf/IMessage';
 import IClientEvents from '../intf/IClientEvents';
 import { Snowflake } from '../const/Snowflake';
 import { ISuccess } from '../intf/ISuccess';
-import { IApplicationCommand } from '../intf/IApplicationCommand';
-import { IMessageCommandCreate, ISlashCreate, IUserCommandCreate } from '../intf/IInteraction';
 import { transformComponents } from './util/components';
 import Guild from './guild/Guild';
 import { TextChannel, Category, DMChannel, ThreadChannel, VoiceChannel } from './channels';
 import { IActivityCreate } from '../intf/IActivity';
-import User from './User';
+import User, { ClientUser } from './User';
+import CommandsClass from './Commands';
 
 /**
  * Discord API Client
@@ -29,10 +28,11 @@ export default class Client extends EventEmitter implements IClient {
 	private token: string;
 	private initializedOptions: IClientOptions;
 	private ws?: Peril;
+	commands: CommandsClass;
 	HTTP: HTTP;
 	declare on: IClientEvents<this>;
 	declare once: IClientEvents<this>;
-	bot?: IUser;
+	bot?: ClientUser;
 	guilds: Map<string, Guild>;
 	channels: Map<string, TextChannel | DMChannel | VoiceChannel | ThreadChannel | Category>;
 	getAllMembers: boolean;
@@ -45,12 +45,13 @@ export default class Client extends EventEmitter implements IClient {
 	 */
 	constructor(clientOptions: IClientOptions) {
 		super();
-		this.token = clientOptions.clientAuthentication.token;
+		this.token = clientOptions.token;
 		this.initializedOptions = clientOptions;
 		this.guilds = new Map();
 		this.channels = new Map();
 		this.HTTP = new HTTP(this.token, this);
 		this.getAllMembers = clientOptions.getAllMembers || false;
+		this.commands = new CommandsClass(this);
 	}
 	/**
 	 * Connects to Discord.
@@ -99,26 +100,6 @@ export default class Client extends EventEmitter implements IClient {
 	async sendMessage(message: IMessageCreate, channel_id: string): Promise<IMessage> {
 		if (message.components) message.components = transformComponents(message.components);
 		return this.HTTP.sendMessage(message, channel_id);
-	}
-
-	async getGlobalCommands(): Promise<IApplicationCommand[]> {
-		if (!this.bot) return [];
-		return this.HTTP.getIntercationCommands();
-	}
-
-	async setGuildCommand(
-		command: (IUserCommandCreate | ISlashCreate | IMessageCommandCreate)[] | (ISlashCreate | IUserCommandCreate | IMessageCommandCreate),
-		guildID: Snowflake | string
-	) {
-		if (!this.bot) throw Error('Cannot set command before logging in!');
-		return this.HTTP.setGuildCommand(command, guildID);
-	}
-
-	async setCommand(
-		command: (IUserCommandCreate | ISlashCreate | IMessageCommandCreate)[] | (ISlashCreate | IUserCommandCreate | IMessageCommandCreate)
-	) {
-		if (!this.bot) throw Error('Cannot set command before logging in!');
-		return this.HTTP.setCommand(command);
 	}
 
 	setActivity(activity: IActivityCreate) {

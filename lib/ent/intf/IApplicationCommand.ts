@@ -2,7 +2,7 @@ import { ApplicationCommandOptionType, ApplicationCommandTypes } from '../const/
 import { Snowflake } from '../const/Snowflake';
 
 export interface IApplicationCommand {
-	id: Snowflake;
+	id: string;
 	type?: ApplicationCommandTypes;
 	application_id: Snowflake;
 	guild_id?: Snowflake;

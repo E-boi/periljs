@@ -136,61 +136,64 @@ export default class HTTP {
 	}
 
 	async getIntercationCommands() {
-		const commandsReq = await this.get(`/applications/${this.bot.bot?.id}/commands`);
+		const commandsReq = await this.get(`/applications/${this.bot.bot!.id}/commands`);
+		if (!commandsReq.ok) throw Error(await commandsReq.text());
 		const commands: IApplicationCommand[] = (await commandsReq.json()) as IApplicationCommand[];
 		commands.map(command => command.type && (command.type = ApplicationCommandTypes[command.type] as any));
 		return commands;
 	}
 
-	async setCommand(
+	async getGuildInteraction(guild_id: string) {
+		const commandsReq = await this.get(`/applications/${this.bot.bot!.id}/guilds/${guild_id}/commands`);
+		if (!commandsReq.ok) throw Error(await commandsReq.text());
+		const commands: IApplicationCommand[] = (await commandsReq.json()) as IApplicationCommand[];
+		commands.map(command => command.type && (command.type = ApplicationCommandTypes[command.type] as any));
+		return commands;
+	}
+
+	async setInteraction(
 		command: (IUserCommandCreate | ISlashCreate | IMessageCommandCreate)[] | (ISlashCreate | IUserCommandCreate | IMessageCommandCreate)
 	) {
-		if (Array.isArray(command)) {
-			command = command.map(c => {
-				if (c.type === 'CHAT_INPUT')
-					c.options = c.options?.map(opt => {
-						opt.type = ApplicationCommandOptionType[opt.type] as any;
-						return opt;
-					});
-				c.type = ApplicationCommandTypes[c.type] as any;
-				return c;
-			});
-			return this.put(`/applications/${this.bot.bot!.id}/commands`, JSON.stringify(command));
-		} else {
-			if (command.type === 'CHAT_INPUT')
-				command.options = command.options?.map(opt => {
+		if (!Array.isArray(command)) command = [command];
+		command = command.map(c => {
+			if (c.type === 'CHAT_INPUT')
+				c.options = c.options?.map(opt => {
 					opt.type = ApplicationCommandOptionType[opt.type] as any;
 					return opt;
 				});
-			command.type = ApplicationCommandTypes[command.type] as any;
-			return this.post(`/applications/${this.bot.bot!.id}/commands`, JSON.stringify(command));
-		}
+			c.type = ApplicationCommandTypes[c.type] as any;
+			return c;
+		});
+		return this.put(`/applications/${this.bot.bot!.id}/commands`, JSON.stringify(command));
 	}
 
-	async setGuildCommand(
+	async setGuildInteraction(
 		command: (IUserCommandCreate | ISlashCreate | IMessageCommandCreate)[] | (ISlashCreate | IUserCommandCreate | IMessageCommandCreate),
 		guild: Snowflake | string
 	) {
-		if (Array.isArray(command)) {
-			command = command.map(c => {
-				if (c.type === 'CHAT_INPUT')
-					c.options = c.options?.map(opt => {
-						opt.type = ApplicationCommandOptionType[opt.type] as any;
-						return opt;
-					});
-				c.type = ApplicationCommandTypes[c.type] as any;
-				return c;
-			});
-			return this.put(`/applications/${this.bot.bot!.id}/guilds/${guild}/commands`, JSON.stringify(command));
-		} else {
-			command.type = ApplicationCommandTypes[command.type] as any;
-			if (command.type === 'CHAT_INPUT')
-				command.options = command.options?.map(opt => {
+		if (!Array.isArray(command)) command = [command];
+		command = command.map(c => {
+			if (c.type === 'CHAT_INPUT')
+				c.options = c.options?.map(opt => {
 					opt.type = ApplicationCommandOptionType[opt.type] as any;
 					return opt;
 				});
-			return this.post(`/applications/${this.bot.bot!.id}/guilds/${guild}/commands`, JSON.stringify(command));
-		}
+			c.type = ApplicationCommandTypes[c.type] as any;
+			return c;
+		});
+		return this.put(`/applications/${this.bot.bot!.id}/guilds/${guild}/commands`, JSON.stringify(command));
+	}
+
+	async deleteInteraction(command_id: string) {
+		const commandReq = await this.delete(`/applications/${this.bot.bot!.id}/commands/${command_id}`);
+		if (!commandReq.ok) throw Error(await commandReq.text());
+		return true;
+	}
+
+	async deleteGuildInteraction(command_id: string, guild_id: string) {
+		const commandReq = await this.delete(`/applications/${this.bot.bot!.id}/guilds/${guild_id}/commands/${command_id}`);
+		if (!commandReq.ok) throw Error(await commandReq.text());
+		return true;
 	}
 
 	async fetchGuildUser(user_id: string, guild_id: string) {

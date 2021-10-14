@@ -79,7 +79,7 @@ export interface IMessageCommandCreate {
 }
 
 export interface ISlashCommand {
-	id: Snowflake;
+	id: string;
 	name: string;
 	type: 'CHAT_INPUT';
 	resolved?: IInteractionData['resolved'];
@@ -87,7 +87,7 @@ export interface ISlashCommand {
 }
 
 export interface IUserCommand {
-	id: Snowflake;
+	id: string;
 	name: string;
 	type: 'USER';
 	resolved: IResolvedData;
@@ -95,7 +95,7 @@ export interface IUserCommand {
 }
 
 export interface IMessageCommand {
-	id: Snowflake;
+	id: string;
 	name: string;
 	type: 'MESSAGE';
 	resolved: IResolvedData;

@@ -1,5 +1,3 @@
-import { IUser } from './user/IUser';
-// import IGuild from './guild/IGuild';
 import SlashInteraction from '../impl/interactions/SlashInteraction';
 import UserInteraction from '../impl/interactions/UserInteraction';
 import MessageInteraction from '../impl/interactions/MessageInteraction';
@@ -11,9 +9,12 @@ import TextChannel from '../impl/channels/TextChannel';
 import VoiceChannel from '../impl/channels/VoiceChannel';
 import ThreadChannel from '../impl/channels/ThreadChannel';
 import Category from '../impl/channels/Category';
-import User from '../impl/User';
+import User, { ClientUser } from '../impl/User';
 import Role from '../impl/guild/Role';
 import Invite, { DeletedInvite } from '../impl/Invite';
+import { ReactionAdd } from '../impl/ws/events/message/MESSAGE_REACTION_ADD';
+import { ReactionRemove } from '../impl/ws/events/message/MESSAGE_REACTION_REMOVE';
+import { PresenceUpdateFields } from '../impl/ws/events/PRESENCE_UPDATE';
 
 export interface DeletedMessage {
 	id: string;
@@ -32,7 +33,7 @@ export interface DeletedMessages {
 }
 
 export default interface IClientEvents<T> {
-	(event: 'ready', listener: (user: IUser) => void): T;
+	(event: 'ready', listener: (user: ClientUser) => void): T;
 	(event: 'guild.create', listener: (guild: Guild) => void): T;
 	(event: 'guild.update', listener: (before: Guild, now: Guild) => void): T;
 	(event: 'guild.delete', listener: (guild: Guild) => void): T;
@@ -59,6 +60,8 @@ export default interface IClientEvents<T> {
 	(event: 'message.create', listener: (message: Message) => void): T;
 	(event: 'message.update', listener: (message: Message) => void): T;
 	(event: 'message.delete', listener: (message: DeletedMessage) => void): T;
+	(event: 'message.reaction.add', listener: (reaction: ReactionAdd) => void): T;
+	(event: 'message.reaction.remove', listener: (reaction: ReactionRemove) => void): T;
 	(event: 'message.bulk.delete', listener: (message: DeletedMessages) => void): T;
 	(event: 'interaction.slash', listener: (interaction: SlashInteraction) => void): T;
 	(event: 'interaction.user', listener: (interaction: UserInteraction) => void): T;
@@ -67,4 +70,5 @@ export default interface IClientEvents<T> {
 	(event: 'interaction.selectMenu', listener: (interaction: SelectMenuInteraction) => void): T;
 	(event: 'invite.create', listener: (invite: Invite) => void): T;
 	(event: 'invite.delete', listener: (invite: DeletedInvite) => void): T;
+	(event: 'presence.update', listener: (presence: PresenceUpdateFields) => void): T;
 }
