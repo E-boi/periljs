@@ -1,5 +1,7 @@
 # periljs
 
+> **[NPM](https://www.npmjs.com/package/@e-boi/periljs)** **[Discord](https://discord.gg/qbERr28Dxt)**
+
 A nodejs api wrapper for discord!
 
 ## Installation
@@ -26,7 +28,7 @@ client.on('ready', () => {
 client.connect();
 ```
 
-<p style="font-size: 12px;">More example can be found <a href="https://github.com/E-boi/periljs/tree/main/ex">here</a></p>
+<p style="font-size: 12px;">More examples can be found <a href="https://github.com/E-boi/periljs/tree/main/ex">here</a></p>
 
 ## Documentation
 
