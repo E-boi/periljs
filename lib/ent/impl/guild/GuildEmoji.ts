@@ -22,7 +22,6 @@ export default class Emoji {
 	}
 
 	toString() {
-		console.log(encodeURI(this.name));
 		if (this.id) return `<:${this.name}:${this.id}>`;
 		else return `:${this.name}:`;
 	}
