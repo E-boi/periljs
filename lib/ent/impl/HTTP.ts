@@ -87,6 +87,18 @@ export default class HTTP {
 		return true;
 	}
 
+	async deleteUserReaction(channel_id: string, message_id: string, user_id: string, emoji: string) {
+		const req = await this.delete(`/channels/${channel_id}/messages/${message_id}/reactions/${emoji}/${user_id}`);
+		if (!req.ok) throw Error(await req.text());
+		return true;
+	}
+
+	async deleteOwnReaction(channel_id: string, message_id: string, emoji: string) {
+		const req = await this.delete(`/channels/${channel_id}/messages/${message_id}/reactions/${emoji}/@me`);
+		if (!req.ok) throw Error(await req.text());
+		return true;
+	}
+
 	async getChannel(channel_id: string) {
 		const channelReq = await this.get(`/channels/${channel_id}`);
 		if (!channelReq.ok) return;

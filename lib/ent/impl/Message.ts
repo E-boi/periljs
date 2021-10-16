@@ -98,4 +98,9 @@ export default class Message {
 		if (!this.channel) return;
 		return this.bot.HTTP.reactToMessage(this.channel.id.toString(), this.id, encodeURI(emoji));
 	}
+
+	async deleteReaction(emoji: string) {
+		if (!this.channel) return;
+		return this.bot.HTTP.deleteOwnReaction(this.channel.id.toString(), this.id, emoji);
+	}
 }
