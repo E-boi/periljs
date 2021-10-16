@@ -81,6 +81,12 @@ export default class HTTP {
 		return (await channelReq.json()) as IMessage[];
 	}
 
+	async reactToMessage(channel_id: string, message_id: string, emoji: string) {
+		const req = await this.put(`/channels/${channel_id}/messages/${message_id}/reactions/${emoji}/@me`);
+		if (!req.ok) throw Error(await req.text());
+		return true;
+	}
+
 	async getChannel(channel_id: string) {
 		const channelReq = await this.get(`/channels/${channel_id}`);
 		if (!channelReq.ok) return;

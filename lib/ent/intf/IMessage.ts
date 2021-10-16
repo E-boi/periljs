@@ -21,7 +21,7 @@ import { IUser } from './user/IUser';
  */
 
 export default interface IMessage {
-	id: Snowflake;
+	id: string;
 	channel_id: string;
 	guild_id?: Snowflake;
 	author: IUser;
@@ -124,9 +124,9 @@ export interface IMessageActivity {
  */
 
 export interface IMessageReference {
-	message_id?: Snowflake;
-	channel_id?: Snowflake;
-	guild_id?: Snowflake;
+	message_id?: string;
+	channel_id?: string;
+	guild_id?: string;
 	fail_if_not_exists?: boolean;
 }
 

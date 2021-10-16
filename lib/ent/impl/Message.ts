@@ -12,7 +12,7 @@ import UserMention from './UserMention';
 import { transformComponents } from './util/components';
 
 export default class Message {
-	id: Snowflake;
+	id: string;
 	channelId: Snowflake;
 	author: IUser;
 	content: string;
@@ -45,7 +45,7 @@ export default class Message {
 	private bot: Client;
 	constructor(message: IMessage, bot: Client) {
 		this.bot = bot;
-		this.id = new Snowflake(message.id);
+		this.id = message.id;
 		this.channelId = new Snowflake(message.channel_id);
 		this.author = message.author;
 		this.content = message.content;
@@ -92,5 +92,10 @@ export default class Message {
 		if (typeof message === 'string') message = { content: message };
 		if (message.components) message.components = transformComponents(message.components);
 		return this.bot.HTTP.sendMessage({ ...message, message_reference: { message_id: this.id } }, this.channelId.toString());
+	}
+
+	async createReaction(emoji: string) {
+		if (!this.channel) return;
+		return this.bot.HTTP.reactToMessage(this.channel.id.toString(), this.id, encodeURI(emoji));
 	}
 }
