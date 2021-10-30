@@ -26,10 +26,12 @@ export class MessageCommands {
             command = args.shift() as string;
             Array.from(this.commands.keys()).forEach(element => {
                 element.command?.toLowerCase() == command.toLowerCase() && (this.commands.get(element) || ((...yargs: any[]) => {return;})) ({
+                    client: this.client,
                     message: message,
                     author: message.member,
                     channel: message.channel,
                     guild: message.guild,
+                    strippedContent: args.join(" "),
                     deleteMessage: () => {
                         return (message.channel && this.client.HTTP.deleteMessage(message.id, message.channel.id.toString()))
                     },
