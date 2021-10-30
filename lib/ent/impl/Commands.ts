@@ -52,7 +52,7 @@ export default class Commands {
 		if (!this.bot.bot) throw Error('Cannot set commands before logging in!');
 		const req = await this.bot.HTTP.setGuildInteraction(command, guildID);
 		const json: IApplicationCommand[] = await req.json();
-		(json || (()=>{console.log("json.forEach is not a function")})()).forEach(c => this.commands.set(c.id, handler));
+		(json || (()=>{console.log("json.forEach is not a function")})())?.forEach(c => this.commands.set(c.id, handler));
 	}
 
 	async set(
@@ -62,6 +62,6 @@ export default class Commands {
 		if (!this.bot.bot) throw Error('Cannot set command before logging in!');
 		const req = await this.bot.HTTP.setInteraction(command);
 		const json: IApplicationCommand[] = await req.json();
-		(json || (()=>{console.log("json.forEach is not a function")})()).forEach(c => this.commands.set(c.id, handler));
+		(json || (()=>{console.log("json.forEach is not a function")})())?.forEach(c => this.commands.set(c.id, handler));
 	}
 }
