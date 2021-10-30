@@ -2,11 +2,12 @@
   "name": "@e-boi/periljs",
   "version": "1.0.5",
   "description": "A api wrapper for discord!",
-  "main": "index.js",
+  "main": "dist/index.js",
   "types": "index.d.ts",
   "scripts": {
     "gendoc": "jsdoc -c .jsdoc.json lib/*",
-    "build": "tsc"
+    "build": "tsc",
+    "install": "tsc"
   },
   "keywords": [],
   "author": "E-boi",
@@ -18,13 +19,13 @@
   "dependencies": {
     "better-docs": "^2.3.2",
     "node-fetch": "^2.6.1",
-    "ws": "^8.2.3"
-  },
-  "devDependencies": {
+    "ws": "^8.2.3",
     "@types/node": "^16.10.4",
     "@types/node-fetch": "^2.5.8",
     "@types/ws": "^7.4.7",
-    "jsdoc": "^3.6.7",
     "typescript": "^4.4.4"
+  },
+  "devDependencies": {
+    "jsdoc": "^3.6.7"
   }
 }

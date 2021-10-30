@@ -5,7 +5,7 @@ import Message from './ent/impl/Message';
 import { TextChannel, Category, DMChannel, VoiceChannel, ThreadChannel } from './ent/impl/channels';
 import { SlashInteraction, ButtonInteraction, UserInteraction, MessageInteraction, SelectMenuInteraction } from './ent/impl/interactions';
 import UserMention from './ent/impl/UserMention';
-
+import Embed from './ent/impl/Embed';
 export {
 	Client,
 	Guild,
@@ -23,4 +23,5 @@ export {
 	SelectMenuInteraction,
 	ButtonInteraction,
 	UserMention,
+	Embed,
 };

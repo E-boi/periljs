@@ -14,6 +14,7 @@ import { ChannelTypes } from '../const/discord/channel';
 import { createChannelClass } from './util/channel';
 import { ThreadChannel } from './channels';
 import IThreadMember from '../intf/IThreadMember';
+import IEmbed from '../intf/IEmbed';
 
 export default class HTTP {
 	private base_url: string;
@@ -53,6 +54,11 @@ export default class HTTP {
 		if (!messageReq.ok) throw Error(await messageReq.text());
 		const messageObj: IMessage = (await messageReq.json()) as IMessage;
 		return messageObj;
+	}
+	async sendEmbed(embed: IEmbed, channel_id: string): Promise<IMessage> {
+		const req = await this.post(`/channels/${channel_id}/messages`, JSON.stringify({ embed }));
+		if (!req.ok) throw Error(await req.text());
+		return (await req.json()) as IMessage;
 	}
 
 	async getMessage(message_id: string, channel_id: string): Promise<Message | undefined> {

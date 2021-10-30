@@ -2,6 +2,7 @@ import { InteractionCallbackFlags, InteractionTypes } from '../../const/discord/
 import { Snowflake } from '../../const/Snowflake';
 import IInteraction, { IInteractionCallbackData } from '../../intf/IInteraction';
 import Client from '../client';
+import Embed from '../Embed';
 import { transformComponents } from '../util/components';
 
 export default class Interaction {
@@ -35,6 +36,9 @@ export default class Interaction {
 		if (content.ephemeral) reply.flags = InteractionCallbackFlags.EPHEMERAL;
 		if (reply.components) reply.components = transformComponents(reply.components);
 		return this.bot.HTTP.post(`/interactions/${this.id}/${this.token}/callback`, JSON.stringify({ type: 4, data: reply }));
+	}
+	replyEmbed(embed: Embed) {
+		return this.bot.HTTP.post(`/interactions/${this.id}/${this.token}/callback`, JSON.stringify({ type: 4, data: { embed: embed.toDictionary() } }));
 	}
 
 	get guild() {

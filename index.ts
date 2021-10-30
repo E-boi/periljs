@@ -20,6 +20,7 @@ import {
 	UserInteraction,
 	VoiceChannel,
 	UserMention,
+	Embed
 } from './lib/ent';
 import { Intents } from './lib/ent/const/discord/intents';
 
@@ -43,4 +44,5 @@ export {
 	UserInteraction,
 	VoiceChannel,
 	UserMention,
+	Embed
 };
