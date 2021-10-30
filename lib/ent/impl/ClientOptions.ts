@@ -1,4 +1,5 @@
 import { Intents } from '../const/discord/intents';
+import { IClientCommandConfig } from '../intf/IClientConfig';
 import { IClientOptions } from '../intf/IClientOptions';
 
 /**
@@ -17,13 +18,15 @@ export class ClientOptions implements IClientOptions {
 	discordWebsocket?: string | undefined;
 	intents: Intents[];
 	token: string;
+	config?: IClientCommandConfig;
 	constructor(
 		token: string,
 		allowSlashCommands: boolean = false,
 		commandsDir: string | undefined = undefined,
 		isSharded: boolean = false,
 		discordWebsocket: string | undefined = undefined,
-		intents: Intents[] = [Intents.AllUnprivileged]
+		intents: Intents[] = [Intents.AllUnprivileged],
+		config?: IClientCommandConfig
 	) {
 		this.allowSlashCommands = allowSlashCommands;
 		this.commandsDir = commandsDir;
@@ -31,5 +34,6 @@ export class ClientOptions implements IClientOptions {
 		this.discordWebsocket = discordWebsocket;
 		this.intents = intents;
 		this.token = token;
+		this.config = config;
 	}
 }

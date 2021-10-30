@@ -15,7 +15,8 @@ import { IActivityCreate } from '../intf/IActivity';
 import User, { ClientUser } from './User';
 import CommandsClass from './Commands';
 import IEmbed from '../intf/IEmbed';
-
+import { MessageCommands } from './MessageCommands';
+import { IClientCommandConfig } from '../intf/IClientConfig';
 /**
  * Discord API Client
  * @date 8/7/2021 - 8:00:29 PM
@@ -30,6 +31,7 @@ export default class Client extends EventEmitter implements IClient {
 	private initializedOptions: IClientOptions;
 	private ws?: Peril;
 	commands: CommandsClass;
+	messageCommands: MessageCommands;
 	HTTP: HTTP;
 	declare on: IClientEvents<this>;
 	declare once: IClientEvents<this>;
@@ -37,6 +39,7 @@ export default class Client extends EventEmitter implements IClient {
 	guilds: Map<string, Guild>;
 	channels: Map<string, TextChannel | DMChannel | VoiceChannel | ThreadChannel | Category>;
 	getAllMembers: boolean;
+    config: any;
 	/**
 	 * Creates an instance of Client.
 	 * @date 8/8/2021 - 11:21:12 AM
@@ -53,6 +56,8 @@ export default class Client extends EventEmitter implements IClient {
 		this.HTTP = new HTTP(this.token, this);
 		this.getAllMembers = clientOptions.getAllMembers || false;
 		this.commands = new CommandsClass(this);
+		this.messageCommands = new MessageCommands(this);
+		this.config = clientOptions.config || {prefix: "!"} as IClientCommandConfig;
 	}
 	/**
 	 * Connects to Discord.
