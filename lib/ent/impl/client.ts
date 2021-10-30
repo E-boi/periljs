@@ -14,6 +14,7 @@ import { TextChannel, Category, DMChannel, ThreadChannel, VoiceChannel } from '.
 import { IActivityCreate } from '../intf/IActivity';
 import User, { ClientUser } from './User';
 import CommandsClass from './Commands';
+import IEmbed from '../intf/IEmbed';
 
 /**
  * Discord API Client
@@ -100,6 +101,9 @@ export default class Client extends EventEmitter implements IClient {
 	async sendMessage(message: IMessageCreate, channel_id: string): Promise<IMessage> {
 		if (message.components) message.components = transformComponents(message.components);
 		return this.HTTP.sendMessage(message, channel_id);
+	}
+	async sendEmbed(embed: IEmbed, channel_id: string) {
+		return this.HTTP.sendEmbed(embed, channel_id);
 	}
 
 	setActivity(activity: IActivityCreate) {

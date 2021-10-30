@@ -13,6 +13,32 @@ export default interface IEmbed {
 	author?: IEmbedAuthor;
 	fields?: IEmbedField[];
 }
+export interface IUnsentEmbed {
+	title?: string;
+	type: 'rich';
+	description?: string;
+	url?: string;
+	color?: number;
+	footer?: IEmbedFooter;
+	image?: IEmbedImage;
+	thumbnail?: IEmbedImage;
+	provider?: IEmbedProvider;
+	author?: IEmbedAuthor;
+	fields?: IEmbedField[];
+	setTitle(title: string): void
+	addField(name: string, value: string, inline?: boolean): void
+	addFields(fields: IEmbedField[]): void
+	setFooter(text: string, icon_url?: string): void
+	setImage(url: string): void
+	setThumbnail(url: string): void
+	setAuthor(name: string, icon_url?: string, url?: string): void
+	setProvider(name: string, url: string): void
+	// not allowed to set timestamp
+	//setTimestamp(timestamp: string): void
+	setColor(color: number): void
+	setURL(url: string): void
+	setDescription(description: string): void
+}
 
 export interface IEmbedFooter {
 	text: string;
