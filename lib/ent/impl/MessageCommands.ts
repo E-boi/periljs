@@ -8,14 +8,14 @@ import Client from "./client";
 
 export class MessageCommands {
     readonly client: Client;
-    commands: Map<IMessageCommandData, (ctx: IMessageContext) => void>;
+    commands: Map<IMessageCommandData, Function>;
     constructor(bot: Client )
     {
         this.client = bot;
-        this.commands = new Map<IMessageCommandData, (ctx: IMessageContext) => void>();
+        this.commands = new Map<IMessageCommandData, Function>();
         this.client.on("message.create", this.onMessage.bind(this));
     }
-    add(commandData: IMessageCommandData, action: (ctx: IMessageContext) => void): void{
+    add(commandData: IMessageCommandData, action: Function): void{
         this.commands.set(commandData, action);
     }
     onMessage(message: Message): void{
