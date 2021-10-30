@@ -6,7 +6,8 @@
   "types": "index.d.ts",
   "scripts": {
     "gendoc": "jsdoc -c .jsdoc.json lib/*",
-    "build": "tsc"
+    "build": "tsc",
+    "install": "tsc"
   },
   "keywords": [],
   "author": "E-boi",
