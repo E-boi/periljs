@@ -1,8 +1,8 @@
 # periljs
 
-> **[NPM](https://www.npmjs.com/package/@e-boi/periljs)** **[Discord](https://discord.gg/qbERr28Dxt)**
+> **[NPM](https://www.npmjs.com/package/@e-boi/periljs)** | **[Discord](https://discord.gg/qbERr28Dxt)**
 
-A nodejs api wrapper for discord!
+A library for interaction with Discord
 
 ## Installation
 
@@ -15,20 +15,31 @@ npm i @e-boi/periljs
 ```js
 // this example shows a basic usage of slash commands
 
-import { Client, Intents } from '@e-boi/periljs';
+import { Client } from '@e-boi/periljs';
 
-const client = new Client({ token: 'a token here', intents: [Intents.GUILDS] });
+const peril = new Client({ token: 'bot token', intents: ['GUILDS'] });
 
-client.on('ready', () => {
-	client.commands.set({ type: 'CHAT_INPUT', name: 'example', description: 'example slash command made with periljs' }, interaction => {
-		interaction.reply('hey!!');
-	});
+// create a slash command
+peril.commands.set(
+  {
+    type: 'CHAT_INPUT',
+    name: 'ping',
+    description: 'example slash command made with periljs',
+  },
+  interaction => {
+    interaction.reply('pong!');
+  }
+);
+
+peril.on('ready', bot => {
+  console.log(`logged in as "${bot.tag}"`);
 });
 
-client.connect();
+// logs in to discord
+peril.connect();
 ```
 
-<p style="font-size: 12px;">More examples can be found <a href="https://github.com/E-boi/periljs/tree/main/ex">here</a></p>
+<p style="font-size: 12px;">More examples can be found <a href="https://github.com/E-boi/periljs/tree/main/examples">here</a></p>
 
 ## Documentation
 

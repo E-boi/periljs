@@ -1,0 +1,17 @@
+{
+  "$schema": "https://typedoc.org/schema.json",
+  "gitRemote": "origin",
+  "entryPoints": ["src/"],
+  "excludePrivate": true,
+  "readme": "README.md",
+  "excludeInternal": true,
+  "internalNamespace": "Raw Discord Types",
+  "excludeExternals": true,
+  "externalPattern": ["**/node_modules/**", "src/gateway/**/*.ts"],
+  "out": "docs",
+  "sort": ["enum-value-ascending", "kind", "alphabetical"],
+  "defaultCategory": "Uncategorized",
+  "name": "Periljs",
+  "includeVersion": true,
+  "categorizeByGroup": false
+}

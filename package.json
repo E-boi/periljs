@@ -1,31 +1,49 @@
 {
   "name": "@e-boi/periljs",
-  "version": "1.0.5",
-  "description": "A api wrapper for discord!",
-  "main": "dist/index.js",
-  "types": "index.d.ts",
-  "scripts": {
-    "gendoc": "jsdoc -c .jsdoc.json lib/*",
-    "build": "tsc",
-    "install": "tsc"
-  },
-  "keywords": [],
+  "version": "2.0.0",
+  "description": "A library for interaction with Discord",
   "author": "E-boi",
   "license": "BSD-3-Clause",
+  "typings": "index.d.ts",
+  "main": "index.js",
+  "keywords": [
+    "discord",
+    "bot",
+    "client",
+    "peril"
+  ],
+  "bugs": {
+    "url": "https://github.com/E-boi/periljs/issues"
+  },
   "repository": {
     "type": "git",
     "url": "https://github.com/E-boi/periljs"
   },
-  "dependencies": {
-    "better-docs": "^2.3.2",
-    "node-fetch": "^2.6.1",
-    "ws": "^8.2.3",
-    "@types/node": "^16.10.4",
-    "@types/node-fetch": "^2.5.8",
-    "@types/ws": "^7.4.7",
-    "typescript": "^4.4.4"
+  "scripts": {
+    "build": "rimraf dist/ && npm run lint && npm run build:js && npm run build:ts",
+    "build:ts": "dts-bundle-generator -o dist/index.d.ts src/index.ts",
+    "build:js": "node ./esbuild.config.js",
+    "lint": "eslint src/*",
+    "gendocs": "rimraf docs/ && typedoc --options typedoc.json"
   },
   "devDependencies": {
-    "jsdoc": "^3.6.7"
+    "@types/node-fetch": "^2.6.1",
+    "@types/ws": "^8.5.3",
+    "@typescript-eslint/eslint-plugin": "^5.28.0",
+    "@typescript-eslint/parser": "^5.28.0",
+    "dts-bundle-generator": "^6.12.0",
+    "esbuild": "^0.14.43",
+    "esbuild-node-externals": "^1.4.1",
+    "esbuild-plugin-copy": "^1.3.0",
+    "eslint": "^8.17.0",
+    "rimraf": "^3.0.2",
+    "tslib": "^2.4.0",
+    "typedoc": "^0.23.1",
+    "typedoc-plugin-missing-exports": "^0.23.0",
+    "typescript": "^4.7.3"
+  },
+  "dependencies": {
+    "node-fetch": "^2.6.7",
+    "ws": "^8.7.0"
   }
 }

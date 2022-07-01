@@ -1,0 +1,3 @@
+test/
+dist/
+esbuild.config.js
