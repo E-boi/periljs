@@ -293,7 +293,7 @@ export default class HTTPS {
     await this.put(`/channels/${channelId}/thread-members/${userId}`);
   }
 
-  async leaveTread(channelId: string) {
+  async leaveThread(channelId: string) {
     await this.delete(`/channels/${channelId}/thread-members/@me`);
   }
 
