@@ -1,0 +1,39 @@
+name: Bug Report
+description: File a bug report
+title: '[Bug]: '
+labels: ['bug']
+assignees:
+  - E-boi
+body:
+  - type: markdown
+    attributes:
+      value: |
+        For question ask in the Discord: https://discord.gg/qbERr28Dxt
+  - type: textarea
+    id: what-happened
+    attributes:
+      label: Describe the bug
+      description: Describe the bug in detail
+      placeholder: A clear and concise description of what the bug is.
+    validations:
+      required: true
+  - type: textarea
+    id: code
+    attributes:
+      label: Code Sample
+      description: Include minimal code that can reproduce the bug
+      placerolder: Enter the code here
+      render: javascript
+  - type: input
+    id: peril-version
+    attributes:
+      label: What version of periljs are you using?
+    validations:
+      required: true
+  - type: input
+    id: node-version
+    attributes:
+      label: What version of nodejs are you using?
+      description: To get the node version type `node --version` in command line
+    validations:
+      required: true

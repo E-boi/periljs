@@ -1,0 +1,28 @@
+name: Feature Request
+description: request a feature
+labels: ['enhancement']
+assignees:
+  - E-boi
+body:
+  - type: markdown
+    attributes:
+      value: |
+        For question ask in the Discord: https://discord.gg/qbERr28Dxt
+  - type: textarea
+    id: problem
+    attributes:
+      label: Does the feature solve a problem? if so what?
+      placeholder: Ex. I'm always frustrated when [...]
+  - type: textarea
+    id: feature
+    attributes:
+      label: Feature
+      description: A clear and concise description of what the feature is.
+      placeholder: Ex. To solve [problem] do [...], Discord recently added [...]
+    validations:
+      required: true
+  - type: textarea
+    id: idea
+    attributes:
+      label: How would the feature be implemented?
+      placeholder: Ex. The feature should be implemented on the Client class because [...], The feature should be implemented like [...] because [...]
