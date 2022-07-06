@@ -22,12 +22,15 @@ export default class Gateway extends WebSocket {
   sessionId?: string;
   client: Client;
   request: HTTPS;
+  connected: boolean;
+  expectedGuilds: string[] = [];
 
   constructor(options: Options, client: Client, request: HTTPS) {
     super(URI);
     this.options = options;
     this.client = client;
     this.request = request;
+    this.connected = false;
 
     this.on('message', this.onMessage);
   }
@@ -61,7 +64,11 @@ export default class Gateway extends WebSocket {
 
       case 0: {
         if (Events[data.t])
-          Events[data.t](data.d, this, data.t.toLowerCase().replace('_', '.'));
+          Events[data.t](
+            data.d,
+            this,
+            data.t.toLowerCase().replaceAll('_', '.')
+          );
         else console.log(data);
         break;
         // const name = data.t.toLowerCase().replace('_', '.');

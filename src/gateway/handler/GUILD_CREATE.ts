@@ -16,5 +16,12 @@ export default (data: RawGuild, ws: Gateway, name: string) => {
         d: { guild_id: data.id, query: '', limit: 0 },
       })
     );
-  ws.client.emit(name, guild);
+  // only emit guild.create when a guild is joined and not when the bot starts up
+  if (ws.connected) ws.client.emit(name, guild);
+  else {
+    ws.expectedGuilds.splice(
+      ws.expectedGuilds.findIndex(id => id === guild.id)
+    );
+    if (!ws.expectedGuilds.length) ws.connected = true;
+  }
 };

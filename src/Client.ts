@@ -1,7 +1,13 @@
 import { EventEmitter } from 'ws';
-import { PartailChannel, ThreadChannel, ThreadMember } from './Channel';
+import {
+  BaseTextableChannel,
+  PartailChannel,
+  ThreadChannel,
+  ThreadMember,
+} from './Channel';
 import { CommandManager } from './Command';
 import { Intents } from './discord';
+import { Emoji } from './Emoji';
 import Gateway from './gateway';
 import { Guild } from './Guild';
 import HTTPS from './HTTPS';
@@ -15,7 +21,8 @@ import {
 } from './Interaction';
 import { Message } from './Message';
 import { Role } from './Role';
-import { User } from './User';
+import { Sticker } from './Sticker';
+import { GuildMember, User } from './User';
 
 export interface Options {
   token: string;
@@ -71,6 +78,22 @@ export interface ClientEvents<T> {
   (event: 'guild.update', listener: (oldGuild: Guild, guild: Guild) => void): T;
   (event: 'guild.delete', listener: (guild: Guild) => void): T;
   (
+    event: 'guild.emojis.update',
+    listener: (emojis: Emoji[], guild: Guild) => void
+  ): T;
+  (
+    event: 'guild.stickers.update',
+    listener: (stickers: Sticker[], guild: Guild) => void
+  ): T;
+  (
+    event: 'guild.member.add',
+    listener: (member: GuildMember, guild: Guild) => void
+  ): T;
+  (
+    event: 'guild.member.remove',
+    listener: (member: GuildMember, guild: Guild) => void
+  ): T;
+  (
     event: 'guild.ban.add',
     listener: (ban: { guildId: string; user: User }) => void
   ): T;
@@ -90,6 +113,10 @@ export interface ClientEvents<T> {
     listener: (oldChannel: PartailChannel, channel: PartailChannel) => void
   ): T;
   (event: 'channel.delete', listener: (channel: PartailChannel) => void): T;
+  (
+    event: 'channel.pins.update',
+    listener: (channel: BaseTextableChannel) => void
+  ): T;
   (event: 'thread.create', listener: (channel: ThreadChannel) => void): T;
   (
     event: 'thread.update',

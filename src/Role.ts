@@ -1,4 +1,4 @@
-import { Permission } from './Channel';
+import { Permission } from './Permission';
 import { RawRole } from './RawTypes';
 
 export class Role {

@@ -38,7 +38,7 @@ export class Guild {
   verificationLevel: keyof typeof VerificationLevel;
   defaultMessageNotifications: keyof typeof DefaultMessageNotifications;
   explicitContentFilter: keyof typeof ExplicitContentFilter;
-  emojis: Emoji[];
+  emojis: Map<string, Emoji> = new Map();
   features?: GuildFeatures[];
   mfaLevel: keyof typeof MFALevel;
   systemChannelId?: string;
@@ -53,7 +53,7 @@ export class Guild {
   preferredLocale?: string;
   publicUpdatesChannelId?: string;
   nsfwLevel: keyof typeof NSFWLevel;
-  stickers?: Sticker[];
+  stickers: Map<string, Sticker> = new Map();
   premiumProgressBarEnabled: boolean;
   channels: Map<string, TextChannel | VoiceChannel | Category> = new Map();
   threads: Map<string, ThreadChannel> = new Map();
@@ -83,7 +83,6 @@ export class Guild {
     this.explicitContentFilter = ExplicitContentFilter[
       guild.explicit_content_filter
     ] as keyof typeof ExplicitContentFilter;
-    this.emojis = guild.emojis.map(e => new Emoji(e));
     this.features = guild.features;
     this.mfaLevel = MFALevel[guild.mfa_level] as keyof typeof MFALevel;
     this.systemChannelId = guild.system_channel_id;
@@ -100,22 +99,28 @@ export class Guild {
     this.preferredLocale = guild.preferred_locale;
     this.publicUpdatesChannelId = guild.public_updates_channel_id;
     this.nsfwLevel = NSFWLevel[guild.nsfw_level] as keyof typeof NSFWLevel;
-    this.stickers = guild.stickers?.map(s => new Sticker(s));
     this.premiumProgressBarEnabled = guild.premium_progress_bar_enabled;
     this.request = request;
 
     guild.channels?.forEach(channel => {
+      channel.guild_id = this.id;
       const gchannel = createChannel(channel, request);
       if (!gchannel || !gchannel.inGuild() || gchannel.isThread()) return;
       this.channels.set(channel.id, gchannel);
     });
-    guild.threads?.forEach(thread =>
-      this.threads.set(thread.id, new ThreadChannel(thread, request))
-    );
+    guild.threads?.forEach(thread => {
+      thread.guild_id = this.id;
+      this.threads.set(thread.id, new ThreadChannel(thread, request));
+    });
     guild.members?.forEach(member =>
       // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
       this.members.set(member.user!.id, new GuildMember(member))
     );
     guild.roles.forEach(role => this.roles.set(role.id, new Role(role)));
+    // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+    guild.emojis.forEach(emoji => this.emojis.set(emoji.id!, new Emoji(emoji)));
+    guild.stickers?.forEach(sticker =>
+      this.stickers.set(sticker.id, new Sticker(sticker))
+    );
   }
 }

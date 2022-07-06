@@ -18,6 +18,7 @@ import THREAD_MEMBER_UPDATE from './THREAD_MEMBER_UPDATE';
 import GUILD_ROLE_CREATE from './GUILD_ROLE_CREATE';
 import GUILD_ROLE_DELETE from './GUILD_ROLE_DELETE';
 import GUILD_ROLE_UPDATE from './GUILD_ROLE_UPDATE';
+import CHANNEL_PINS_UPDATE from './CHANNEL_PINS_UPDATE';
 
 export default {
   READY,
@@ -39,4 +40,5 @@ export default {
   GUILD_ROLE_CREATE,
   GUILD_ROLE_DELETE,
   GUILD_ROLE_UPDATE,
+  CHANNEL_PINS_UPDATE,
 } as Record<string, (data: unknown, ws: Gateway, name: string) => void>;

@@ -8,7 +8,6 @@ export {
   DMChannel,
   MessageOptions,
   PartailChannel,
-  Permission,
   TextChannel,
   ThreadChannel,
   TreadMetadata,
@@ -22,4 +21,5 @@ export * from './Interaction';
 export * from './Message';
 export * from './Sticker';
 export * from './Role';
+export * from './Permission';
 export { RawMessageOptions } from './HTTPS';

@@ -4,16 +4,36 @@ import { Embed, EmbedOptions } from './Embed';
 import { Guild } from './Guild';
 import HTTPS from './HTTPS';
 import { Message, MessageReference } from './Message';
+import { Permission } from './Permission';
 import {
   RawAllowedMentions,
   ChannelTypes,
   RawChannel,
   TextableChannelTypes,
   VideoQualityModes,
-  Permissions,
   MessageFlags,
 } from './RawTypes';
 import { User } from './User';
+
+/** @internal */
+export function createChannel(channel: RawChannel, request: HTTPS) {
+  switch (channel.type) {
+    case ChannelTypes.GUILD_TEXT:
+      return new TextChannel(channel, request);
+
+    case ChannelTypes.GUILD_PUBLIC_THREAD:
+      return new ThreadChannel(channel, request);
+
+    case ChannelTypes.GUILD_CATEGORY:
+      return new Category(channel, request);
+
+    case ChannelTypes.GUILD_VOICE:
+      return new VoiceChannel(channel, request);
+
+    case ChannelTypes.DM:
+      return new DMChannel(channel, request);
+  }
+}
 
 /**
  * @category Channels
@@ -22,13 +42,13 @@ export class PartailChannel {
   id: string;
   name?: string;
   type: keyof typeof ChannelTypes;
-  permissions?: Permission[];
+  overwrites?: Permission[];
 
   constructor(channel: RawChannel) {
     this.id = channel.id;
     this.name = channel.name;
     this.type = ChannelTypes[channel.type] as keyof typeof ChannelTypes;
-    this.permissions = channel.permission_overwrites!.map(
+    this.overwrites = channel.permission_overwrites!.map(
       perm => new Permission(perm.allow, perm.id)
     );
   }
@@ -62,26 +82,6 @@ export class PartailChannel {
 
   isTextable(): this is BaseTextableChannel {
     return this instanceof BaseTextableChannel;
-  }
-}
-
-/** @internal */
-export function createChannel(channel: RawChannel, request: HTTPS) {
-  switch (channel.type) {
-    case ChannelTypes.GUILD_TEXT:
-      return new TextChannel(channel, request);
-
-    case ChannelTypes.GUILD_PUBLIC_THREAD:
-      return new ThreadChannel(channel, request);
-
-    case ChannelTypes.GUILD_CATEGORY:
-      return new Category(channel, request);
-
-    case ChannelTypes.GUILD_VOICE:
-      return new VoiceChannel(channel, request);
-
-    case ChannelTypes.DM:
-      return new DMChannel(channel, request);
   }
 }
 
@@ -324,28 +324,6 @@ export class VoiceChannel extends PartailChannel {
 
   toString() {
     return `<#${this.id}>`;
-  }
-}
-
-export class Permission {
-  private bitfield: number;
-  id: string;
-
-  constructor(permission: string | number, id: string) {
-    if (typeof permission === 'string') permission = parseInt(permission);
-    this.bitfield = permission;
-    this.id = id;
-  }
-
-  can(...perms: (keyof typeof Permissions)[]): boolean {
-    let falsey = false;
-    const p: Permissions[] = perms.map(perm => Permissions[perm]);
-    p.forEach(perm => {
-      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-      // @ts-ignore tbh idk
-      if (!(this.bitfield & perm) === perm) falsey = true;
-    });
-    return falsey;
   }
 }
 
