@@ -22,7 +22,7 @@ body:
     attributes:
       label: Code Sample
       description: Include minimal code that can reproduce the bug
-      placerolder: Enter the code here
+      placeholder: Enter the code here
       render: javascript
   - type: input
     id: peril-version
