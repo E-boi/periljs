@@ -49,19 +49,19 @@ export class CommandManager {
   }
 
   async set(
-    commandC: Command,
+    command: Command,
     handler?: (
       interaction: SlashInteraction | UserInteraction | MessageInteraction
     ) => void
   ) {
     if (!this.client.user && handler) {
-      this.queue.push({ command: commandC, handler });
+      this.queue.push({ command: command, handler });
       return;
     }
-    const command = await this.request.setInteraction(
-      this.transformCommand(commandC)
+    const makeCommand = await this.request.setInteraction(
+      this.transformCommand(command)
     );
-    if (command && handler) this.commands.set(command.id, handler);
+    if (makeCommand && handler) this.commands.set(makeCommand.id, handler);
     return;
   }
 
