@@ -1,4 +1,5 @@
 import { RawEmbed, RawEmbedField } from './RawTypes';
+import { hexToInt } from './utils';
 
 /**
  * @category Embed
@@ -7,7 +8,7 @@ export class Embed {
   title?: string;
   description?: string;
   url?: string;
-  color?: number;
+  color?: number | string;
   footer?: EmbedFooter;
   image?: EmbedImage;
   thumbnail?: EmbedThumbnail;
@@ -105,7 +106,7 @@ export class Embed {
     return this;
   }
 
-  setColor(color: number): this {
+  setColor(color: number | string): this {
     this.color = color;
     return this;
   }
@@ -134,7 +135,10 @@ export class Embed {
         icon_url: this.author.iconUrl,
         url: this.author.url,
       },
-      color: this.color,
+      color:
+        typeof this.color === 'number'
+          ? this.color
+          : this.color && hexToInt(this.color.replace('#', '')),
       fields: this.fields,
       footer: this.footer && {
         text: this.footer.text,
@@ -229,7 +233,7 @@ export interface EmbedOptions {
   title?: string;
   description?: string;
   url?: string;
-  color?: number;
+  color?: number | string;
   footer?: Omit<EmbedFooter, 'proxyUrl'>;
   image?: Omit<EmbedImage, 'proxyUrl' | 'height' | 'width'>;
   thumbnail?: Omit<EmbedThumbnail, 'proxyUrl' | 'height' | 'width'>;

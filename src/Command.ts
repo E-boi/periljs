@@ -55,7 +55,7 @@ export class CommandManager {
     ) => void
   ) {
     if (!this.client.user && handler) {
-      this.queue.push({ command: command, handler });
+      this.queue.push({ command, handler });
       return;
     }
     const makeCommand = await this.request.setInteraction(
@@ -76,8 +76,8 @@ export class CommandManager {
     return await this.request.getInteractionAll(guildId);
   }
 
-  async delete(commandId: string, guild?: string) {
-    return await this.request.deleteInteraction(commandId, guild);
+  async delete(commandId: string, guildId?: string) {
+    return await this.request.deleteInteraction(commandId, guildId);
   }
 
   private transformCommand(
