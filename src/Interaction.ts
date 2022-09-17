@@ -10,6 +10,7 @@ import {
   TextInputOptions,
 } from './Component';
 import { Embed, EmbedOptions } from './Embed';
+import { Guild } from './Guild';
 import HTTPS from './HTTPS';
 import { Attachment, Message } from './Message';
 import {
@@ -44,6 +45,8 @@ export class BaseInteraction {
   protected data?: InteractionData;
   /** The guild id of where the interaction was used from */
   guildId?: string;
+  /** Guild in where the interaction was used from */
+  guild?: Guild;
   /** The channel id of where the interaction was used from */
   channelId?: string;
   /** If the interaction was used in a guild */
@@ -61,7 +64,7 @@ export class BaseInteraction {
   /** The guild's preferred language, if used in a guild */
   guildLocale?: string;
 
-  constructor(private interaction: RawInteraction, public request: HTTPS) {
+  constructor(private interaction: RawInteraction, protected request: HTTPS) {
     this.id = interaction.id;
     this.applicationId = interaction.application_id;
     this.type = InteractionType[
@@ -70,8 +73,14 @@ export class BaseInteraction {
     this.token = interaction.token;
     this.version = interaction.version;
     this.guildId = interaction.guild_id;
+    this.guild = interaction.guild_id
+      ? request.client.guilds.get(interaction.guild_id)
+      : undefined;
     this.channelId = interaction.channel_id;
-    this.member = interaction.member && new GuildMember(interaction.member);
+    this.member =
+      interaction.member &&
+      this.guild &&
+      new GuildMember(interaction.member, this.guild, request);
     this.user = interaction.user && new User(interaction.user);
     this.message =
       interaction.message && new Message(interaction.message, request);
@@ -144,14 +153,16 @@ export class BaseInteraction {
   }
 
   static messageInteraction(
-    interaction: RawMessageInteraction
+    interaction: RawMessageInteraction,
+    guild?: Guild
   ): InMessageInteraction {
     return {
       id: interaction.id,
       name: interaction.name,
       type: InteractionType[interaction.type] as keyof typeof InteractionType,
       user: new User(interaction.user),
-      member: interaction.member && new PartialGuildMember(interaction.member),
+      member:
+        interaction.member && new PartialGuildMember(interaction.member, guild),
     };
   }
 

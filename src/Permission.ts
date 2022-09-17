@@ -7,17 +7,15 @@ export class Bitfield {
   }
 
   has(bitfield: number): boolean {
-    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-    // @ts-ignore
     if ((this.field & bitfield) === bitfield) return true;
     return false;
   }
 }
 
 export class Permission extends Bitfield {
-  id: string;
+  id?: string;
 
-  constructor(permission: string | number, id: string) {
+  constructor(permission: string | number, id?: string) {
     super(typeof permission === 'string' ? parseInt(permission) : permission);
     this.id = id;
   }

@@ -140,6 +140,25 @@ export default class HTTPS {
     return (await res.json()) as RawMember[];
   }
 
+  async modifyGuildMember(
+    guildId: string,
+    userId: string,
+    member: {
+      nick?: string;
+      roles?: string[];
+      mute?: boolean;
+      deaf?: boolean;
+      channel_id?: string;
+      communication_disabled_until?: string;
+    }
+  ): Promise<boolean> {
+    const res = await this.patch(
+      `/guilds/${guildId}/members/${userId}`,
+      member
+    );
+    return res.ok;
+  }
+
   // channel related stuff here
 
   async getChannel(channelId: string): Promise<RawChannel> {

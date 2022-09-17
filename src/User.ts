@@ -1,3 +1,6 @@
+import { Guild } from './Guild';
+import HTTPS from './HTTPS';
+import { Permission } from './Permission';
 import { NitroTypes, RawMember, RawUser, UserFlags } from './RawTypes';
 
 export class User {
@@ -63,17 +66,21 @@ export class PartialGuildMember {
   roles?: string[];
   boostingSince?: string;
   pending?: boolean;
-  permissions?: string;
+  permissions?: Permission;
   timeoutUntil?: string;
+  guild?: Guild;
 
-  constructor(member: RawMember) {
+  constructor(member: RawMember, guild?: Guild) {
     this.nick = member.nick;
     this.avatar = member.avatar;
     this.roles = member.roles;
     this.boostingSince = member.premium_since;
     this.pending = member.pending;
-    this.permissions = member.permissions;
+    this.permissions = member.permissions
+      ? new Permission(member.permissions)
+      : undefined;
     this.timeoutUntil = member.communication_disabled_until;
+    this.guild = guild;
   }
 }
 
@@ -82,14 +89,31 @@ export class GuildMember extends PartialGuildMember {
   deaf: boolean;
   mute: boolean;
 
-  constructor(member: RawMember) {
-    super(member);
+  constructor(member: RawMember, guild: Guild, private request: HTTPS) {
+    super(member, guild);
     this.user = member.user && new User(member.user);
     this.deaf = member.deaf;
     this.mute = member.mute;
   }
 
+  edit(member: MemberEditOptions) {
+    if (!this.user || !this.guild) return;
+    this.request.modifyGuildMember(this.guild.id, this.user.id, {
+      ...member,
+      communication_disabled_until: member.timeout?.toISOString(),
+    });
+  }
+
   toString(): string {
     return `<@${this.user?.id}>`;
   }
+}
+
+interface MemberEditOptions {
+  nick?: string;
+  roles?: string[];
+  mute?: boolean;
+  deaf?: boolean;
+  channelId?: string;
+  timeout?: Date;
 }

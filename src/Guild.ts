@@ -114,7 +114,7 @@ export class Guild {
     });
     guild.members?.forEach(member =>
       // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-      this.members.set(member.user!.id, new GuildMember(member))
+      this.members.set(member.user!.id, new GuildMember(member, this, request))
     );
     guild.roles.forEach(role => this.roles.set(role.id, new Role(role)));
     // eslint-disable-next-line @typescript-eslint/no-non-null-assertion

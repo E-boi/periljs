@@ -9,8 +9,9 @@ export default (
 ) => {
   const guild = ws.client.guilds.get(data.guild_id);
   if (!guild) return;
+  const oldMember = data.user && guild.members.get(data.user.id);
   const member = new GuildMember(data, guild, ws.request);
   // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
   guild.members.set(member.user!.id, member);
-  ws.client.emit(name, member, guild);
+  ws.client.emit(name, member, oldMember);
 };

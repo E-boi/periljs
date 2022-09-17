@@ -24,7 +24,7 @@ export class Message {
   id: string;
   channelId: string;
   author?: User;
-  member?: GuildMember;
+  // member?: GuildMember;
   content: string;
   timestamp: Date;
   edited_timestamp?: Date;
@@ -48,7 +48,6 @@ export class Message {
     this.id = message.id;
     this.channelId = message.channel_id;
     this.author = message.author && new User(message.author);
-    this.member = message.member && new GuildMember(message.member);
     this.content = message.content;
     this.timestamp = new Date(message.timestamp);
     this.edited_timestamp = message.edited_timestamp
@@ -81,7 +80,7 @@ export class Message {
       new Message(message.referenced_message, request);
     this.interaction =
       message.interaction &&
-      BaseInteraction.messageInteraction(message.interaction);
+      BaseInteraction.messageInteraction(message.interaction, this.guild);
     // this.thread = message.thread && new ThreadChannel(message.thread, )
     message.components?.forEach(component =>
       this.components.add(...Components.from(...component.components).getAll())
@@ -93,6 +92,10 @@ export class Message {
       id: sticker.id,
       name: sticker.name,
     }));
+    // this.member =
+    //   message.member &&
+    //   this.guild &&
+    //   new GuildMember(message.member, this.guild, request);
   }
 
   get channel(): BaseTextableChannel | undefined {
@@ -104,6 +107,10 @@ export class Message {
   get guild(): Guild | undefined {
     if (this.channel?.inGuild())
       return this.request.client.guilds.get(this.channel.guildId);
+  }
+
+  get member(): GuildMember | undefined {
+    return this.author && this.guild?.members.get(this.author?.id);
   }
 
   async reply(message: MessageOptions | string) {
