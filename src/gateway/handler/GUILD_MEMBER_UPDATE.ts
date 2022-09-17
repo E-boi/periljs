@@ -13,5 +13,5 @@ export default (
   const member = new GuildMember(data, guild, ws.request);
   // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
   guild.members.set(member.user!.id, member);
-  ws.client.emit(name, member, oldMember);
+  ws.client.emit(name, oldMember, member);
 };

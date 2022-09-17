@@ -43,6 +43,7 @@ export class PartailChannel {
   name?: string;
   type: keyof typeof ChannelTypes;
   overwrites?: Permission[];
+  messages: Map<string, Message> = new Map();
 
   constructor(channel: RawChannel) {
     this.id = channel.id;

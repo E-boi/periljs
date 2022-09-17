@@ -81,7 +81,7 @@ export class Message {
     this.interaction =
       message.interaction &&
       BaseInteraction.messageInteraction(message.interaction, this.guild);
-    // this.thread = message.thread && new ThreadChannel(message.thread, )
+    this.thread = message.thread && new ThreadChannel(message.thread, request);
     message.components?.forEach(component =>
       this.components.add(...Components.from(...component.components).getAll())
     );
@@ -92,10 +92,6 @@ export class Message {
       id: sticker.id,
       name: sticker.name,
     }));
-    // this.member =
-    //   message.member &&
-    //   this.guild &&
-    //   new GuildMember(message.member, this.guild, request);
   }
 
   get channel(): BaseTextableChannel | undefined {

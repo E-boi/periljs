@@ -90,6 +90,10 @@ export interface ClientEvents<T> {
     listener: (member: GuildMember, guild: Guild) => void
   ): T;
   (
+    event: 'guild.member.update',
+    listener: (oldMember: GuildMember, member: GuildMember) => void
+  ): T;
+  (
     event: 'guild.member.remove',
     listener: (member: GuildMember, guild: Guild) => void
   ): T;
@@ -128,6 +132,30 @@ export interface ClientEvents<T> {
     listener: (member: ThreadMember & { guildId: string }) => void
   ): T;
   (event: 'message.create', listener: (message: Message) => void): T;
+  (
+    event: 'message.update',
+    listener: (oldMessage: Message, message: Message) => void
+  ): T;
+  (event: 'message.delete', listener: (message: Message) => void): T;
+  (
+    event: 'message.reaction.add',
+    listener: (reaction: {
+      emoji: Emoji;
+      userId: string;
+      message: Message;
+      channel: BaseTextableChannel;
+      member?: GuildMember;
+    }) => void
+  ): T;
+  (
+    event: 'message.reaction.remove',
+    listener: (reaction: {
+      emoji: Emoji;
+      userId: string;
+      message: Message;
+      channel: BaseTextableChannel;
+    }) => void
+  ): T;
   (
     event: 'interaction.slash',
     listener: (interaction: SlashInteraction) => void
