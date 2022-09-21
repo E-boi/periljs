@@ -18,6 +18,16 @@ import {
   RawUser,
 } from './RawTypes';
 
+// this just makes it to the whole minified code of peril in thrown
+class PerilError extends Error {
+  constructor(message: string) {
+    super(message);
+    this.name = 'Error';
+    console.log(this.stack?.length);
+    Object.setPrototypeOf(this, PerilError.prototype);
+  }
+}
+
 /** @internal */
 export default class HTTPS {
   private baseUrl: string;
@@ -45,7 +55,7 @@ export default class HTTPS {
       headers: { ...this.headers, ...headers },
     });
 
-    if (!res.ok) throw new Error(JSONcode[(await res.json()).code]);
+    if (!res.ok) throw new PerilError(JSONcode[(await res.json()).code]);
     return res;
   }
 
@@ -60,7 +70,7 @@ export default class HTTPS {
       headers: { ...this.headers, ...headers },
     });
 
-    if (!res.ok) throw new Error(JSONcode[(await res.json()).code]);
+    if (!res.ok) throw new PerilError(JSONcode[(await res.json()).code]);
     return res;
   }
 
@@ -70,7 +80,7 @@ export default class HTTPS {
       headers: { ...this.headers, ...headers },
     });
 
-    if (!res.ok) throw new Error(JSONcode[(await res.json()).code]);
+    if (!res.ok) throw new PerilError(JSONcode[(await res.json()).code]);
     return res;
   }
 
@@ -85,7 +95,7 @@ export default class HTTPS {
       headers: { ...this.headers, ...headers },
     });
 
-    if (!res.ok) throw new Error(JSONcode[(await res.json()).code]);
+    if (!res.ok) throw new PerilError(JSONcode[(await res.json()).code]);
     return res;
   }
 
@@ -95,7 +105,7 @@ export default class HTTPS {
       headers: { ...this.headers, ...headers },
     });
 
-    if (!res.ok) throw new Error(JSONcode[(await res.json()).code]);
+    if (!res.ok) throw new PerilError(JSONcode[(await res.json()).code]);
     return res;
   }
   // guild related stuff here
@@ -150,13 +160,42 @@ export default class HTTPS {
       deaf?: boolean;
       channel_id?: string;
       communication_disabled_until?: string;
-    }
-  ): Promise<boolean> {
-    const res = await this.patch(
+    },
+    reason?: string
+  ): Promise<undefined> {
+    await this.patch(
       `/guilds/${guildId}/members/${userId}`,
-      member
+      member,
+      reason ? { 'X-Audit-Log-Reason': reason } : undefined
     );
-    return res.ok;
+    return;
+  }
+
+  async addGuildMemberRole(
+    guildId: string,
+    userId: string,
+    roleId: string,
+    reason?: string
+  ): Promise<undefined> {
+    await this.put(
+      `/guilds/${guildId}/members/${userId}/roles/${roleId}`,
+      undefined,
+      reason ? { 'X-Audit-Log-Reason': reason } : undefined
+    );
+    return;
+  }
+
+  async removeGuildMemberRole(
+    guildId: string,
+    userId: string,
+    roleId: string,
+    reason?: string
+  ): Promise<undefined> {
+    await this.delete(
+      `/guilds/${guildId}/members/${userId}/roles/${roleId}`,
+      reason ? { 'X-Audit-Log-Reason': reason } : undefined
+    );
+    return;
   }
 
   // channel related stuff here
@@ -175,8 +214,8 @@ export default class HTTPS {
     channelId: string,
     message: RawMessageOptions
   ): Promise<RawMessage> {
-    if (!message.content && !message.content && !message.sticker_ids)
-      throw new Error(
+    if (!message.content && !message.embeds?.length && !message.sticker_ids)
+      throw new PerilError(
         'Message Must include at least one of "content", "embeds", "sticker_ids", or "files".'
       );
     const res = await this.post(`/channels/${channelId}/messages`, {
@@ -191,8 +230,8 @@ export default class HTTPS {
     messageId: string,
     message: RawMessageOptions
   ): Promise<RawMessage> {
-    if (!message.content && !message.content && !message.sticker_ids)
-      throw new Error(
+    if (!message.content && !message.embeds?.length && !message.sticker_ids)
+      throw new PerilError(
         'An edit Must include at least one of "content", "embeds", "sticker_ids", or "files".'
       );
     const res = await this.patch(
@@ -241,7 +280,7 @@ export default class HTTPS {
     headers?: { 'X-Audit-Log-Reason': string }
   ) {
     if (messagesId.length < 2 || messagesId.length < 100)
-      throw new Error(
+      throw new PerilError(
         'To bulk deletes messages you need to include at least 2 messages and max is 100'
       );
     await this.post(
