@@ -2,6 +2,7 @@ import { Guild } from './Guild';
 import HTTPS from './HTTPS';
 import { Permission } from './Permission';
 import { NitroTypes, RawMember, RawUser, UserFlags } from './RawTypes';
+import { Roles } from './Role';
 
 export class User {
   id: string;
@@ -63,7 +64,6 @@ export class User {
 export class PartialGuildMember {
   nick?: string;
   avatar?: string;
-  roles?: string[];
   boostingSince?: string;
   pending?: boolean;
   permissions?: Permission;
@@ -73,7 +73,6 @@ export class PartialGuildMember {
   constructor(member: RawMember, guild?: Guild) {
     this.nick = member.nick;
     this.avatar = member.avatar;
-    this.roles = member.roles;
     this.boostingSince = member.premium_since;
     this.pending = member.pending;
     this.permissions = member.permissions
@@ -88,12 +87,14 @@ export class GuildMember extends PartialGuildMember {
   user?: User;
   deaf: boolean;
   mute: boolean;
+  roles: Roles;
 
   constructor(member: RawMember, guild: Guild, private request: HTTPS) {
     super(member, guild);
     this.user = member.user && new User(member.user);
     this.deaf = member.deaf;
     this.mute = member.mute;
+    this.roles = new Roles(member.roles ?? [], this, guild, request);
   }
 
   edit(member: MemberEditOptions) {
@@ -102,6 +103,10 @@ export class GuildMember extends PartialGuildMember {
       ...member,
       communication_disabled_until: member.timeout?.toISOString(),
     });
+  }
+
+  get displayName(): string | undefined {
+    return this.nick ?? this.user?.username;
   }
 
   toString(): string {

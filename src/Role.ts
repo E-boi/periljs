@@ -1,5 +1,8 @@
+import { Guild } from './Guild';
+import HTTPS from './HTTPS';
 import { Permission } from './Permission';
 import { RawRole } from './RawTypes';
+import { GuildMember } from './User';
 
 export class Role {
   id: string;
@@ -27,5 +30,46 @@ export class Role {
 
   toString() {
     return `<@&${this.id}>`;
+  }
+}
+
+export class Roles {
+  roles: Role[];
+  private guild: Guild;
+  private member: GuildMember;
+
+  constructor(
+    roles: string[],
+    member: GuildMember,
+    guild: Guild,
+    private request: HTTPS
+  ) {
+    this.roles = roles.map(id => guild.roles.get(id)).filter(m => m) as Role[];
+    this.guild = guild;
+    this.member = member;
+  }
+
+  async add(role: string | Role, reason?: string) {
+    if (role instanceof Role) role = role.id;
+    if (this.roles.some(r => r.id === role) || !this.member.user) return;
+    await this.request.addGuildMemberRole(
+      this.guild.id,
+      this.member.user.id,
+      role,
+      reason
+    );
+    return;
+  }
+
+  async remove(role: string | Role, reason?: string) {
+    if (role instanceof Role) role = role.id;
+    if (!this.roles.some(r => r.id !== role) || !this.member.user) return;
+    await this.request.removeGuildMemberRole(
+      this.guild.id,
+      this.member.user.id,
+      role,
+      reason
+    );
+    return;
   }
 }
