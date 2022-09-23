@@ -50,7 +50,7 @@ export default (data: RawInteraction, ws: Gateway) => {
           break;
         case ComponentTypes.SelectMenu:
           ws.client.emit(
-            'interation.selectmenu',
+            'interaction.selectmenu',
             new SelectMenuInteraction(data, ws.request)
           );
           break;
