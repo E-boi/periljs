@@ -23,3 +23,9 @@ export * from './Sticker';
 export * from './Role';
 export * from './Permission';
 export { RawMessageOptions } from './HTTPS';
+export {
+  Permissions,
+  ChannelTypes,
+  NitroTypes,
+  MessageTypes,
+} from './RawTypes';
