@@ -91,7 +91,7 @@ export class CommandManager {
         command.type === 'CHAT_INPUT' ? command.description : undefined,
       description_localizations:
         command.type === 'CHAT_INPUT'
-          ? command.description_localizations
+          ? command.descriptionLocalizations
           : undefined,
       dm_permission: command.dmPermission,
       guild_id: command.guildId,
@@ -135,7 +135,7 @@ export type Command =
       name: string;
       nameLocalizations?: { [k: string]: string };
       description: string;
-      description_localizations?: { [k: string]: string };
+      descriptionLocalizations?: { [k: string]: string };
       options?: CommandOption[];
       defaultMemberPermissions?: string;
       dmPermission?: boolean;
