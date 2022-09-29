@@ -58,10 +58,22 @@ export class CommandManager {
       this.queue.push({ command, handler });
       return;
     }
-    const makeCommand = await this.request.setInteraction(
-      this.transformCommand(command)
-    );
-    if (makeCommand && handler) this.commands.set(makeCommand.id, handler);
+    try {
+      const makeCommand = await this.request.setInteraction(
+        this.transformCommand(command)
+      );
+      if (makeCommand && handler) this.commands.set(makeCommand.id, handler);
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    } catch (err: any) {
+      try {
+        setTimeout(
+          () => this.set(command, handler),
+          (parseInt(err.message.split('.')[0]) + 1) * 1000
+        );
+      } catch (e) {
+        //shh
+      }
+    }
     return;
   }
 
