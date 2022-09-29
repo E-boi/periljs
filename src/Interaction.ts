@@ -298,7 +298,7 @@ export class SlashInteraction extends ModalReplyable {
     for (let i = 0; i < options.length; i++) {
       if (options[i].type === type && options[i].name === name)
         return options[i];
-      else if (options[i].name === name) return options[i];
+      else if (options[i].name === name && !type) return options[i];
       else if (options[i].options)
         return this.getOption(name, type, options[i].options);
     }

@@ -123,4 +123,14 @@ export class Guild {
       this.stickers.set(sticker.id, new Sticker(sticker))
     );
   }
+
+  /**
+   * Fetches roles from Discord and caches them
+   */
+  async fetchRoles() {
+    const roles = await this.request
+      .getGuildRoles(this.id)
+      .then(e => e.map(r => new Role(r)));
+    roles.forEach(r => this.roles.set(r.id, r));
+  }
 }

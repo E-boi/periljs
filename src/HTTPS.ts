@@ -14,6 +14,7 @@ import {
   RawMessage,
   RawMessageComponent,
   RawMessageReference,
+  RawRole,
   RawThreadMember,
   RawUser,
 } from './RawTypes';
@@ -55,7 +56,10 @@ export default class HTTPS {
       headers: { ...this.headers, ...headers },
     });
 
-    if (!res.ok) throw new PerilError(JSONcode[(await res.json()).code]);
+    if (!res.ok) {
+      const json = await res.json();
+      throw new PerilError(json.code ? JSONcode[json.code] : json.retry_after);
+    }
     return res;
   }
 
@@ -148,6 +152,11 @@ export default class HTTPS {
     );
 
     return (await res.json()) as RawMember[];
+  }
+
+  async getGuildRoles(guildId: string): Promise<RawRole[]> {
+    const res = await this.get(`/guilds/${guildId}/roles`);
+    return (await res.json()) as RawRole[];
   }
 
   async modifyGuildMember(

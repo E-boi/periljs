@@ -34,7 +34,7 @@ export class Role {
 }
 
 export class Roles {
-  roles: Role[];
+  cache: Map<string, Role> = new Map();
   private guild: Guild;
   private member: GuildMember;
 
@@ -44,32 +44,41 @@ export class Roles {
     guild: Guild,
     private request: HTTPS
   ) {
-    this.roles = roles.map(id => guild.roles.get(id)).filter(m => m) as Role[];
+    roles.forEach(
+      // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+      id => guild.roles.has(id) && this.cache.set(id, guild.roles.get(id)!)
+    );
     this.guild = guild;
     this.member = member;
   }
 
   async add(role: string | Role, reason?: string) {
     if (role instanceof Role) role = role.id;
-    if (this.roles.some(r => r.id === role) || !this.member.user) return;
+    if (this.cache.has(role) || !this.member.user) return;
     await this.request.addGuildMemberRole(
       this.guild.id,
       this.member.user.id,
       role,
       reason
     );
-    return;
+    // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+    this.cache.set(role, this.guild.roles.get(role)!);
   }
 
   async remove(role: string | Role, reason?: string) {
     if (role instanceof Role) role = role.id;
-    if (!this.roles.some(r => r.id !== role) || !this.member.user) return;
+    if (!this.cache.has(role) || !this.member.user) return;
     await this.request.removeGuildMemberRole(
       this.guild.id,
       this.member.user.id,
       role,
       reason
     );
-    return;
+    this.cache.delete(role);
+  }
+
+  has(role: string | Role): boolean {
+    if (role instanceof Role) role = role.id;
+    return this.cache.has(role);
   }
 }

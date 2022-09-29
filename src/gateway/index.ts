@@ -71,8 +71,6 @@ export default class Gateway extends WebSocket {
           );
         else console.log(data);
         break;
-        // const name = data.t.toLowerCase().replace('_', '.');
-        // this.client.emit(name, data.d);
       }
     }
   }
