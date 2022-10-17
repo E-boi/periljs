@@ -99,7 +99,7 @@ export class GuildMember extends PartialGuildMember {
 
   edit(member: MemberEditOptions) {
     if (!this.user || !this.guild) return;
-    this.request.modifyGuildMember(this.guild.id, this.user.id, {
+    return this.request.modifyGuildMember(this.guild.id, this.user.id, {
       ...member,
       communication_disabled_until: member.timeout?.toISOString(),
     });

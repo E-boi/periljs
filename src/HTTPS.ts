@@ -24,7 +24,6 @@ class PerilError extends Error {
   constructor(message: string) {
     super(message);
     this.name = 'Error';
-    console.log(this.stack?.length);
     Object.setPrototypeOf(this, PerilError.prototype);
   }
 }
