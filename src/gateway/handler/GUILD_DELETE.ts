@@ -1,8 +1,8 @@
 import Gateway from '..';
 import { RawGuild } from '../../RawTypes';
 
-export default (data: RawGuild, ws: Gateway, name: string) => {
+export default (data: RawGuild, ws: Gateway) => {
   const guild = ws.client.guilds.get(data.id);
   if (!guild) return;
-  ws.client.emit(name, data);
+  ws.client.emit('guild.delete', guild);
 };

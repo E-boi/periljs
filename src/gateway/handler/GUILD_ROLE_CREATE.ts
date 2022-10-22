@@ -7,10 +7,10 @@ interface Data {
   role: RawRole;
 }
 
-export default (data: Data, ws: Gateway, name: string) => {
+export default (data: Data, ws: Gateway) => {
   const role = new Role(data.role);
   const guild = ws.client.guilds.get(data.guild_id);
   if (!guild) return;
   guild.roles.set(role.id, role);
-  ws.client.emit(name, role, guild);
+  ws.client.emit('guild.role.create', role, guild);
 };

@@ -247,6 +247,15 @@ export class Reaction {
   }
 }
 
+export interface MessageReaction {
+  emoji: Emoji;
+  userId: string;
+  message: Message;
+  channel: BaseTextableChannel;
+  member?: GuildMember;
+  guild: Guild;
+}
+
 export class Reactions {
   reactions: Reaction[];
 

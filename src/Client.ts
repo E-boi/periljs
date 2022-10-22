@@ -19,7 +19,7 @@ import {
   SlashInteraction,
   UserInteraction,
 } from './Interaction';
-import { Message } from './Message';
+import { Message, MessageReaction } from './Message';
 import { Role } from './Role';
 import { Sticker } from './Sticker';
 import { GuildMember, User } from './User';
@@ -40,8 +40,25 @@ export default class Client extends EventEmitter {
   private ws?: Gateway;
   private options: Options;
   private request: HTTPS;
-  declare on: ClientEvents<this>;
-  declare once: ClientEvents<this>;
+
+  declare on: <K extends keyof ClientEvents>(
+    event: K,
+    listener: (...args: ClientEvents[K]) => void
+  ) => this;
+  declare once: <K extends keyof ClientEvents>(
+    event: K,
+    listener: (...args: ClientEvents[K]) => void
+  ) => this;
+  declare off: <K extends keyof ClientEvents>(
+    event: K,
+    listener: (...args: ClientEvents[K]) => void
+  ) => this;
+  declare emit: <K extends keyof ClientEvents>(
+    event: K,
+    ...args: ClientEvents[K]
+  ) => boolean;
+  declare removeAllListeners: <K extends keyof ClientEvents>(event: K) => this;
+
   user?: User;
   guilds: Map<string, Guild> = new Map();
   channels: Map<string, PartailChannel> = new Map();
@@ -66,118 +83,52 @@ export default class Client extends EventEmitter {
     this.ws = new Gateway(this.options, this, this.request);
   }
 
+  reconnect() {
+    this.ws?.reconnect();
+  }
+
   disconnect() {
-    this.ws?.close();
+    this.ws?.close(1000);
     delete this.ws;
   }
 }
 
-export interface ClientEvents<T> {
-  (event: 'ready', listener: (user: User) => void): T;
-  (event: 'guild.create', listener: (guild: Guild) => void): T;
-  (event: 'guild.update', listener: (oldGuild: Guild, guild: Guild) => void): T;
-  (event: 'guild.delete', listener: (guild: Guild) => void): T;
-  (
-    event: 'guild.emojis.update',
-    listener: (emojis: Emoji[], guild: Guild) => void
-  ): T;
-  (
-    event: 'guild.stickers.update',
-    listener: (stickers: Sticker[], guild: Guild) => void
-  ): T;
-  (
-    event: 'guild.member.add',
-    listener: (member: GuildMember, guild: Guild) => void
-  ): T;
-  (
-    event: 'guild.member.update',
-    listener: (oldMember: GuildMember, member: GuildMember) => void
-  ): T;
-  (
-    event: 'guild.member.remove',
-    listener: (member: GuildMember, guild: Guild) => void
-  ): T;
-  (
-    event: 'guild.ban.add',
-    listener: (ban: { guildId: string; user: User }) => void
-  ): T;
-  (
-    event: 'guild.ban.remove',
-    listener: (ban: { guildId: string; user: User }) => void
-  ): T;
-  (event: 'guild.role.create', listener: (role: Role, guild: Guild) => void): T;
-  (
-    event: 'guild.role.update',
-    listener: (oldRole: Role, role: Role, guild: Guild) => void
-  ): T;
-  (event: 'guild.role.delete', listener: (role: Role, guild: Guild) => void): T;
-  (event: 'channel.create', listener: (channel: PartailChannel) => void): T;
-  (
-    event: 'channel.update',
-    listener: (oldChannel: PartailChannel, channel: PartailChannel) => void
-  ): T;
-  (event: 'channel.delete', listener: (channel: PartailChannel) => void): T;
-  (
-    event: 'channel.pins.update',
-    listener: (channel: BaseTextableChannel) => void
-  ): T;
-  (event: 'thread.create', listener: (channel: ThreadChannel) => void): T;
-  (
-    event: 'thread.update',
-    listener: (oldChannel: ThreadChannel, channel: ThreadChannel) => void
-  ): T;
-  (event: 'thread.delete', listener: (channel: ThreadChannel) => void): T;
-  (
-    event: 'thread.member.update',
-    listener: (member: ThreadMember & { guildId: string }) => void
-  ): T;
-  (event: 'message.create', listener: (message: Message) => void): T;
-  (
-    event: 'message.update',
-    listener: (oldMessage: Message, message: Message) => void
-  ): T;
-  (event: 'message.delete', listener: (message: Message) => void): T;
-  (
-    event: 'message.reaction.add',
-    listener: (reaction: {
-      emoji: Emoji;
-      userId: string;
-      message: Message;
-      channel: BaseTextableChannel;
-      member?: GuildMember;
-    }) => void
-  ): T;
-  (
-    event: 'message.reaction.remove',
-    listener: (reaction: {
-      emoji: Emoji;
-      userId: string;
-      message: Message;
-      channel: BaseTextableChannel;
-    }) => void
-  ): T;
-  (
-    event: 'interaction.slash',
-    listener: (interaction: SlashInteraction) => void
-  ): T;
-  (
-    event: 'interaction.user',
-    listener: (interaction: UserInteraction) => void
-  ): T;
-  (
-    event: 'interaction.message',
-    listener: (interaction: MessageInteraction) => void
-  ): T;
-  (
-    event: 'interaction.modal',
-    listener: (interaction: ModalInteraction) => void
-  ): T;
-  (
-    event: 'interaction.button',
-    listener: (interaction: ButtonInteraction) => void
-  ): T;
-  (
-    event: 'interaction.selectmenu',
-    listener: (interaction: SelectMenuInteraction) => void
-  ): T;
+export interface ClientEvents {
+  ready: [user: User];
+  'guild.create': [guild: Guild];
+  'guild.update': [oldGuild: Guild, guild: Guild];
+  'guild.delete': [guild: Guild];
+  'guild.emojis.update': [emojis: Emoji[], guild: Guild];
+  'guild.stickers.update': [stickers: Sticker[], guild: Guild];
+  'guild.member.add': [member: GuildMember, guild: Guild];
+  'guild.member.update': [
+    oldMember: GuildMember,
+    member: GuildMember,
+    guild: Guild
+  ];
+  'guild.member.remove': [member: GuildMember, guild: Guild];
+  'guild.ban.add': [ban: { guildId: string; user: User }];
+  'guild.ban.remove': [ban: { guildId: string; user: User }];
+  'guild.role.create': [role: Role, guild: Guild];
+  'guild.role.update': [oldRole: Role, role: Role, guild: Guild];
+  'guild.role.delete': [role: Role, guild: Guild];
+  'channel.create': [channel: PartailChannel];
+  'channel.update': [oldChannel: PartailChannel, channel: PartailChannel];
+  'channel.delete': [channel: PartailChannel];
+  'channel.pins.update': [channel: BaseTextableChannel];
+  'thread.create': [channel: ThreadChannel];
+  'thread.update': [oldChannel: ThreadChannel, channel: ThreadChannel];
+  'thread.delete': [channel: ThreadChannel];
+  'thread.member.update': [member: ThreadMember & { guildId: string }];
+  'message.create': [message: Message];
+  'message.update': [oldMessage: Message, message: Message];
+  'message.delete': [message: Message];
+  'message.reaction.add': [reaction: MessageReaction];
+  'message.reaction.remove': [reaction: Omit<MessageReaction, 'member'>];
+  'interaction.slash': [interaction: SlashInteraction];
+  'interaction.user': [interaction: UserInteraction];
+  'interaction.message': [interaction: MessageInteraction];
+  'interaction.modal': [interaction: ModalInteraction];
+  'interaction.button': [interaction: ButtonInteraction];
+  'interaction.selectmenu': [interaction: SelectMenuInteraction];
 }

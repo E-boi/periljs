@@ -6,10 +6,10 @@ interface Data {
   user: RawUser;
 }
 
-export default (data: Data, ws: Gateway, name: string) => {
+export default (data: Data, ws: Gateway) => {
   const guild = ws.client.guilds.get(data.guild_id);
   const member = guild?.members.get(data.user.id);
   if (!guild || !member) return;
   guild.members.delete(data.user.id);
-  ws.client.emit(name, member, guild);
+  ws.client.emit('guild.member.remove', member, guild);
 };

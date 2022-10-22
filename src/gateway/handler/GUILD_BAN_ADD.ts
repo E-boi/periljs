@@ -7,7 +7,7 @@ interface Data {
   user: RawUser;
 }
 
-export default (data: Data, ws: Gateway, name: string) => {
+export default (data: Data, ws: Gateway) => {
   const user = new User(data.user);
-  ws.client.emit(name, { guildId: data.guild_id, user });
+  ws.client.emit('guild.ban.add', { guildId: data.guild_id, user });
 };

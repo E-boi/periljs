@@ -55,4 +55,4 @@ export default {
   GUILD_MEMBER_ADD,
   GUILD_MEMBER_REMOVE,
   GUILD_MEMBER_UPDATE,
-} as Record<string, (data: unknown, ws: Gateway, name: string) => void>;
+} as Record<string, (data: unknown, ws: Gateway) => void>;

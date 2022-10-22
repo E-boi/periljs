@@ -7,10 +7,10 @@ interface Data {
   stickers: RawSticker[];
 }
 
-export default (data: Data, ws: Gateway, name: string) => {
+export default (data: Data, ws: Gateway) => {
   const guild = ws.client.guilds.get(data.guild_id);
   if (!guild) return;
   const stickers = data.stickers.map(sticker => new Sticker(sticker));
   stickers.forEach(sticker => guild.stickers.set(sticker.id, sticker));
-  ws.client.emit(name, stickers, guild);
+  ws.client.emit('guild.stickers.update', stickers, guild);
 };
