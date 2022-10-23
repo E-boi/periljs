@@ -234,6 +234,18 @@ export default class HTTPS {
     return (await res.json()) as RawMessage;
   }
 
+  async crosspostMessage(
+    channelId: string,
+    messageId: string
+  ): Promise<RawMessage> {
+    const res = await this.post(
+      `/channels/${channelId}/messages/${messageId}/crosspost`,
+      {}
+    );
+
+    return (await res.json()) as RawMessage;
+  }
+
   async editMessage(
     channelId: string,
     messageId: string,

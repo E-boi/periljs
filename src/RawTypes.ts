@@ -313,6 +313,7 @@ export enum TextableChannelTypes {
   GROUP_DM = ChannelTypes.GROUP_DM,
   GUILD_PUBLIC_THREAD = ChannelTypes.GUILD_PUBLIC_THREAD,
   GUILD_PRIVATE_THREAD = ChannelTypes.GUILD_PRIVATE_THREAD,
+  GUILD_NEWS = ChannelTypes.GUILD_NEWS,
 }
 
 export enum OverwriteType {

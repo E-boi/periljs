@@ -21,11 +21,15 @@ export function createChannel(channel: RawChannel, request: HTTPS) {
     case ChannelTypes.GUILD_TEXT:
       return new TextChannel(channel, request);
 
+    case ChannelTypes.GUILD_PRIVATE_THREAD:
     case ChannelTypes.GUILD_PUBLIC_THREAD:
       return new ThreadChannel(channel, request);
 
     case ChannelTypes.GUILD_CATEGORY:
       return new Category(channel, request);
+
+    case ChannelTypes.GUILD_NEWS:
+      return new NewsChannel(channel, request);
 
     case ChannelTypes.GUILD_VOICE:
       return new VoiceChannel(channel, request);
@@ -56,6 +60,10 @@ export class PartailChannel {
 
   isTextChannel(): this is TextChannel {
     return this.type === 'GUILD_TEXT';
+  }
+
+  isNewsChannel(): this is NewsChannel {
+    return this.type === 'GUILD_NEWS';
   }
 
   isDM(): this is DMChannel {
@@ -187,6 +195,14 @@ export class TextChannel extends BaseTextableChannel {
     return new ThreadChannel(channel, this.request);
   }
   // fetchActiveThreads() {}
+}
+
+class NewsChannel extends TextChannel {
+  async crosspost(messageId: string): Promise<Message> {
+    const message = await this.request.crosspostMessage(this.id, messageId);
+
+    return new Message(message, this.request);
+  }
 }
 
 /**
