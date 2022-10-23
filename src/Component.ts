@@ -100,18 +100,32 @@ export class Components {
   }
 
   toJSON(): RawMessageComponent[] {
-    // console.log([
-    //   {
-    //     type: ComponentTypes.ActionRow,
-    //     components: this.components.map(component => component.toJSON()),
-    //   },
-    // ][0].components);
-    return [
-      {
-        type: ComponentTypes.ActionRow,
-        components: this.components.map(component => component.toJSON()),
-      },
-    ];
+    const components: RawMessageComponent[] = [];
+    let lastIdx = 0;
+    // some fuckery so action rows only get 1 text input/select menu and 5 buttons max
+    for (const c of this.components) {
+      // reasons to create a new action row component
+      if (
+        !components[lastIdx] || // if the component doesnt exist in the array
+        components[lastIdx]?.components.length >= 5 || // if it has more than 5 components
+        ['TextInput', 'SelectMenu'].includes(c.type) || // if the component (c) is a text input or select menu
+        components[lastIdx].components.some(com =>
+          [ComponentTypes.TextInput, ComponentTypes.SelectMenu].includes(
+            com.type
+          )
+        ) // if it has a text input or select menu
+      ) {
+        if (components[lastIdx]) ++lastIdx;
+        components.push({
+          type: ComponentTypes.ActionRow,
+          components: [c.toJSON()],
+        });
+        continue;
+      }
+      components[lastIdx].components.push(c.toJSON());
+    }
+
+    return components;
   }
 }
 

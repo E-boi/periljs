@@ -9,8 +9,6 @@ const URI = 'wss://gateway.discord.gg/?v=9&encoding=json';
 interface Payload {
   op: Opcode;
   d: Record<string, unknown>;
-  // s?: number;
-  // t?: string;
 }
 
 interface Payload {
