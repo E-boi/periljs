@@ -34,6 +34,7 @@ export default class Gateway {
     this.request = request;
     this.sequenceNum = 0;
     this.onMessage = this.onMessage.bind(this);
+    this.heartbeat = this.heartbeat.bind(this);
   }
 
   connect() {
@@ -52,15 +53,14 @@ export default class Gateway {
   }
 
   reconnect() {
-    this.close(1097, true);
+    this.close(4392, true);
     clearInterval(this.heartbeatInterval);
-    setTimeout(() => {
-      this.status = 'reconnecting';
-      this.gateway = new WebSocket(this.resumeGatewayUrl || URI, {
-        handshakeTimeout: 30000,
-      });
-      this.gateway.on('message', this.onMessage);
-    }, 2000);
+    this.heartbeatInterval = undefined;
+    this.status = 'reconnecting';
+    this.gateway = new WebSocket(this.resumeGatewayUrl || URI, {
+      handshakeTimeout: 30000,
+    });
+    this.gateway.on('message', this.onMessage);
   }
 
   send(data: { op: number; d: unknown }) {
@@ -68,7 +68,7 @@ export default class Gateway {
   }
 
   heartbeat() {
-    if (this.status !== 'connected') return;
+    if (this.status === 'reconnecting') return;
     this.send({ op: Opcode.HEARTBEAT, d: this.sequenceNum });
   }
 
@@ -76,7 +76,7 @@ export default class Gateway {
     const data: Payload = JSON.parse(rawData.toString());
     switch (data.op) {
       case Opcode.HELLO: {
-        if (!this.sessionId)
+        if (!this.sessionId) {
           this.send({
             op: Opcode.IDENTIFY,
             d: {
@@ -89,7 +89,8 @@ export default class Gateway {
               },
             },
           });
-        else
+          this.heartbeat();
+        } else
           this.send({
             op: Opcode.RESUME,
             d: {
@@ -110,6 +111,29 @@ export default class Gateway {
         this.sequenceNum = data.s;
         if (Events[data.t]) Events[data.t](data.d, this);
         else console.log(data);
+        break;
+      }
+
+      case Opcode.INVALID_SESSION: {
+        this.sequenceNum = 0;
+        this.sessionId = undefined;
+        this.send({
+          op: Opcode.IDENTIFY,
+          d: {
+            token: this.options.token,
+            intents: intentCalculator(this.options.intents),
+            properties: {
+              $os: 'linux',
+              $browser: 'periljs',
+              $device: 'perils',
+            },
+          },
+        });
+        break;
+      }
+
+      case Opcode.HEARTBEAT: {
+        this.heartbeat();
         break;
       }
 
