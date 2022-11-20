@@ -15,7 +15,6 @@ export default (data: Data, ws: Gateway) => {
   ws.sessionId = data.session_id;
   ws.client.user = user;
   ws.expectedGuilds = data.guilds;
-  ws.connected = true;
-  if (!ws.reconnecting) ws.client.emit('ready', user);
-  ws.reconnecting = false;
+  if (ws.status === 'connecting') ws.client.emit('ready', user);
+  ws.status = 'connected';
 };

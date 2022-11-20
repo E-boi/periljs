@@ -37,9 +37,14 @@ export interface Options {
  */
 
 export default class Client extends EventEmitter {
-  private ws?: Gateway;
+  private ws: Gateway;
   private options: Options;
   private request: HTTPS;
+  user?: User;
+  guilds: Map<string, Guild> = new Map();
+  channels: Map<string, PartailChannel> = new Map();
+  commands: CommandManager;
+  getAllMembers?: boolean;
 
   declare on: <K extends keyof ClientEvents>(
     event: K,
@@ -59,12 +64,6 @@ export default class Client extends EventEmitter {
   ) => boolean;
   declare removeAllListeners: <K extends keyof ClientEvents>(event: K) => this;
 
-  user?: User;
-  guilds: Map<string, Guild> = new Map();
-  channels: Map<string, PartailChannel> = new Map();
-  commands: CommandManager;
-  getAllMembers?: boolean;
-
   /**
    * @param {Options} options
    */
@@ -74,22 +73,22 @@ export default class Client extends EventEmitter {
     this.request = new HTTPS(options.token, this);
     this.commands = new CommandManager(this, this.request);
     this.getAllMembers = options.getAllMembers;
+    this.ws = new Gateway(options, this, this.request);
   }
 
   /**
    * Connects to Discord
    */
   connect() {
-    this.ws = new Gateway(this.options, this, this.request);
+    this.ws.connect();
   }
 
   reconnect() {
-    this.ws?.reconnect();
+    this.ws.reconnect();
   }
 
   disconnect() {
-    this.ws?.close(1000);
-    delete this.ws;
+    this.ws.close(1000);
   }
 }
 

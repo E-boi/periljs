@@ -19,68 +19,88 @@ interface Payload {
 export default class Gateway {
   private options: Options;
   private sequenceNum: number;
-  private heartbeat?: NodeJS.Timer;
+  private heartbeatInterval?: NodeJS.Timer;
   sessionId?: string;
   client: Client;
   request: HTTPS;
-  connected: boolean;
-  reconnecting: boolean;
+  status?: 'connected' | 'connecting' | 'reconnecting';
   expectedGuilds: string[] = [];
   resumeGatewayUrl?: string;
-  gateway: WebSocket;
+  gateway?: WebSocket;
 
   constructor(options: Options, client: Client, request: HTTPS) {
     this.options = options;
     this.client = client;
     this.request = request;
-    this.connected = false;
-    this.reconnecting = false;
-    this.gateway = new WebSocket(URI, { handshakeTimeout: 30000 });
     this.sequenceNum = 0;
-
-    this.gateway.on('message', this.onMessage.bind(this));
+    this.onMessage = this.onMessage.bind(this);
   }
 
-  close(code?: number) {
-    this.gateway.close(code);
+  connect() {
+    this.status = 'connecting';
+    this.gateway = new WebSocket(URI, { handshakeTimeout: 30000 });
+    this.gateway.on('message', this.onMessage);
+  }
+
+  close(code?: number, reconnecting = false) {
+    this.gateway?.close(code);
+    delete this.gateway;
+    if (reconnecting) {
+      delete this.sessionId;
+      delete this.resumeGatewayUrl;
+    }
   }
 
   reconnect() {
-    this.close(1000);
-    clearInterval(this.heartbeat);
+    this.close();
+    clearInterval(this.heartbeatInterval);
     setTimeout(() => {
-      this.connected = false;
-      this.reconnecting = true;
+      this.status = 'reconnecting';
       this.gateway = new WebSocket(this.resumeGatewayUrl || URI, {
         handshakeTimeout: 30000,
       });
-      this.gateway.on('message', this.onMessage.bind(this));
+      this.gateway.on('message', this.onMessage);
     }, 2000);
   }
 
   send(data: { op: number; d: unknown }) {
-    this.gateway.send(JSON.stringify(data));
+    this.gateway?.send(JSON.stringify(data));
+  }
+
+  heartbeat() {
+    if (this.status !== 'connected') return;
+    this.send({ op: Opcode.HEARTBEAT, d: this.sequenceNum });
   }
 
   private onMessage(rawData: RawData) {
     const data: Payload = JSON.parse(rawData.toString());
     switch (data.op) {
       case Opcode.HELLO: {
-        this.send({
-          op: Opcode.IDENTIFY,
-          d: {
-            token: this.options.token,
-            intents: intentCalculator(this.options.intents),
-            properties: {
-              $os: 'linux',
-              $browser: 'periljs',
-              $device: 'perils',
+        if (!this.sessionId)
+          this.send({
+            op: Opcode.IDENTIFY,
+            d: {
+              token: this.options.token,
+              intents: intentCalculator(this.options.intents),
+              properties: {
+                $os: 'linux',
+                $browser: 'periljs',
+                $device: 'perils',
+              },
             },
-          },
-        });
+          });
+        else
+          this.send({
+            op: Opcode.RESUME,
+            d: {
+              token: this.options.token,
+              session_id: this.sessionId,
+              seq: this.sequenceNum,
+            },
+          });
 
-        this.heartbeat = setInterval(
-          () => this.send({ op: 1, d: this.sequenceNum }),
+        this.heartbeatInterval = setInterval(
+          this.heartbeat,
           data.d.heartbeat_interval as number
         );
         break;
