@@ -45,14 +45,14 @@ export default class Gateway {
   close(code?: number, reconnecting = false) {
     this.gateway?.close(code);
     delete this.gateway;
-    if (reconnecting) {
+    if (!reconnecting) {
       delete this.sessionId;
       delete this.resumeGatewayUrl;
     }
   }
 
   reconnect() {
-    this.close();
+    this.close(1097, true);
     clearInterval(this.heartbeatInterval);
     setTimeout(() => {
       this.status = 'reconnecting';
