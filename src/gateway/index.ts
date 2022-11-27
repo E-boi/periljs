@@ -4,7 +4,7 @@ import Client, { Options } from '../Client';
 import Events from './handler';
 import HTTPS from '../HTTPS';
 
-const URI = 'wss://gateway.discord.gg/?v=9&encoding=json';
+const GatewayURL = 'wss://gateway.discord.gg/?v=10&encoding=json';
 
 interface Payload {
   op: Opcode;
@@ -39,7 +39,7 @@ export default class Gateway {
 
   connect() {
     this.status = 'connecting';
-    this.gateway = new WebSocket(URI, { handshakeTimeout: 30000 });
+    this.gateway = new WebSocket(GatewayURL, { handshakeTimeout: 30000 });
     this.gateway.on('message', this.onMessage);
   }
 
@@ -57,7 +57,7 @@ export default class Gateway {
     clearInterval(this.heartbeatInterval);
     this.heartbeatInterval = undefined;
     this.status = 'reconnecting';
-    this.gateway = new WebSocket(this.resumeGatewayUrl || URI, {
+    this.gateway = new WebSocket(this.resumeGatewayUrl || GatewayURL, {
       handshakeTimeout: 30000,
     });
     this.gateway.on('message', this.onMessage);

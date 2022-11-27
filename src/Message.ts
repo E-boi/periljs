@@ -184,10 +184,10 @@ export class Attachment {
   id: string;
   filename: string;
   description?: string;
-  content_type?: string;
+  contentType?: string;
   size: number;
   url: string;
-  proxy_url: string;
+  proxyUrl: string;
   height?: number;
   width?: number;
   ephemeral?: boolean;
@@ -196,13 +196,28 @@ export class Attachment {
     this.id = attachment.id;
     this.filename = attachment.filename;
     this.description = attachment.description;
-    this.content_type = attachment.content_type;
+    this.contentType = attachment.content_type;
     this.size = attachment.size;
     this.url = attachment.url;
-    this.proxy_url = attachment.proxy_url;
+    this.proxyUrl = attachment.proxy_url;
     this.height = attachment.height;
     this.width = attachment.width;
     this.ephemeral = attachment.ephemeral;
+  }
+
+  toJSON(): RawAttachment {
+    return {
+      id: this.id,
+      filename: this.filename,
+      description: this.description,
+      content_type: this.contentType,
+      size: this.size,
+      url: this.url,
+      proxy_url: this.proxyUrl,
+      height: this.height,
+      width: this.width,
+      ephemeral: this.ephemeral,
+    };
   }
 }
 

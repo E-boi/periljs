@@ -3,7 +3,7 @@ import { ComponentOptions, Components } from './Component';
 import { Embed, EmbedOptions } from './Embed';
 import { Guild } from './Guild';
 import HTTPS from './HTTPS';
-import { Message, MessageReference } from './Message';
+import { Attachment, Message, MessageReference } from './Message';
 import { Permission } from './Permission';
 import {
   RawAllowedMentions,
@@ -368,5 +368,6 @@ export interface MessageOptions {
   components?: Components | ComponentOptions[];
   stickerIds?: string[];
   messageReference?: MessageReference;
+  attachments?: Attachment[];
   flags?: (keyof typeof MessageFlags)[];
 }
