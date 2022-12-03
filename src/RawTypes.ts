@@ -260,6 +260,30 @@ export interface RawChannel {
   default_auto_archive_duration?: number;
   permission?: string;
   flags?: ChannelFlags;
+  total_message_sent?: number;
+  available_tags?: RawForumTag[];
+  applied_tags?: string[];
+  default_reaction_emoji?: RawDefaultReaction;
+  default_thread_rate_limit_per_user?: number;
+  default_sort_order?: SortOrderTypes;
+}
+
+export enum SortOrderTypes {
+  LATEST_ACTIVITY,
+  CREATION_DATE,
+}
+
+export interface RawDefaultReaction {
+  emoji_id?: string;
+  emoij_name?: string;
+}
+
+export interface RawForumTag {
+  id: string;
+  name: string;
+  moderated?: boolean;
+  emoji_id?: string;
+  emoji_name?: string;
 }
 
 export interface RawChannelMention {

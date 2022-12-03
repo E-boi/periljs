@@ -1,6 +1,7 @@
 /* eslint-disable @typescript-eslint/no-non-null-assertion */
 import { ComponentOptions, Components } from './Component';
 import { Embed, EmbedOptions } from './Embed';
+import { Emoji } from './Emoji';
 import { Guild } from './Guild';
 import HTTPS from './HTTPS';
 import { Attachment, Message, MessageReference } from './Message';
@@ -12,6 +13,8 @@ import {
   TextableChannelTypes,
   VideoQualityModes,
   MessageFlags,
+  RawForumTag,
+  SortOrderTypes,
 } from './RawTypes';
 import { User } from './User';
 
@@ -36,6 +39,9 @@ export function createChannel(channel: RawChannel, request: HTTPS) {
 
     case ChannelTypes.DM:
       return new DMChannel(channel, request);
+
+    case ChannelTypes.GUILD_FORUM:
+      return new ForumChannel(channel, request);
   }
 }
 
@@ -53,7 +59,7 @@ export class PartailChannel {
     this.id = channel.id;
     this.name = channel.name;
     this.type = ChannelTypes[channel.type] as keyof typeof ChannelTypes;
-    this.overwrites = channel.permission_overwrites!.map(
+    this.overwrites = channel.permission_overwrites?.map(
       perm => new Permission(perm.allow, perm.id)
     );
   }
@@ -85,12 +91,21 @@ export class PartailChannel {
     );
   }
 
-  inGuild(): this is ThreadChannel | TextChannel | VoiceChannel | Category {
+  inGuild(): this is
+    | ThreadChannel
+    | TextChannel
+    | VoiceChannel
+    | Category
+    | ForumChannel {
     return 'guild' in this;
   }
 
   isTextable(): this is BaseTextableChannel {
     return this instanceof BaseTextableChannel;
+  }
+
+  isForum(): this is ForumChannel {
+    return this.type === 'GUILD_FORUM';
   }
 }
 
@@ -296,10 +311,6 @@ export class Category extends PartailChannel {
   get guild(): Guild | undefined {
     return this.request.client.guilds.get(this.guildId);
   }
-
-  // createChannel() {
-  //   console.log;
-  // }
 }
 
 /**
@@ -341,6 +352,64 @@ export class VoiceChannel extends PartailChannel {
 
   toString() {
     return `<#${this.id}>`;
+  }
+}
+
+export class ForumChannel extends PartailChannel {
+  type: 'GUILD_FORUM' = 'GUILD_FORUM';
+  guildId: string;
+  availableTags: FourmTag[];
+  defaultReactionEmoji?: Emoji;
+  rateLimit: number;
+  defaultThreadRateLimit: number;
+  defaultSortOrder: keyof typeof SortOrderTypes;
+
+  constructor(channel: RawChannel, private request: HTTPS) {
+    super(channel);
+    console.log(channel);
+    this.guildId = channel.guild_id!;
+    this.availableTags = channel.available_tags!.map(tag => new FourmTag(tag));
+    this.defaultReactionEmoji =
+      channel.default_reaction_emoji &&
+      new Emoji({
+        name: channel.default_reaction_emoji.emoij_name!,
+        id: channel.default_reaction_emoji.emoji_id,
+      });
+    this.rateLimit = channel.rate_limit_per_user ?? 0;
+    this.defaultThreadRateLimit =
+      channel.default_thread_rate_limit_per_user ?? 0;
+    this.defaultSortOrder = SortOrderTypes[
+      channel.default_sort_order ?? 0
+    ] as keyof typeof SortOrderTypes;
+  }
+
+  get guild(): Guild | undefined {
+    return this.request.client.guilds.get(this.guildId);
+  }
+
+  async createPost(post: { name: string; message: MessageOptions | string }) {
+    const rawThread = await this.request.startThreadInForum(this.id, {
+      name: post.name,
+      message: Message.create(post.message),
+    });
+
+    return new ThreadChannel(rawThread, this.request);
+  }
+}
+
+class FourmTag {
+  id: string;
+  name: string;
+  moderated?: boolean;
+  emojiId?: string;
+  emojiName?: string;
+
+  constructor(tag: RawForumTag) {
+    this.id = tag.id;
+    this.name = tag.name;
+    this.moderated = tag.moderated;
+    this.emojiId = tag.emoji_id;
+    this.emojiName = tag.emoji_name;
   }
 }
 

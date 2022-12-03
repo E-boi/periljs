@@ -364,6 +364,20 @@ export default class HTTPS {
     return (await res.json()) as RawChannel;
   }
 
+  async startThreadInForum(
+    channelId: string,
+    post: {
+      name: string;
+      auto_archive_duration?: 60 | 1440 | 4320 | 10080;
+      rate_limit_per_user?: number;
+      message: RawMessageOptions;
+      applied_tags?: string[];
+    }
+  ) {
+    const res = await this.post(`/channels/${channelId}/threads`, post);
+    return (await res.json()) as RawChannel & { message: RawMessage };
+  }
+
   async joinThread(channelId: string) {
     await this.put(`/channels/${channelId}/thread-members/@me`);
   }

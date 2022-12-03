@@ -1,6 +1,7 @@
 import {
   Category,
   createChannel,
+  ForumChannel,
   TextChannel,
   ThreadChannel,
   VoiceChannel,
@@ -55,7 +56,8 @@ export class Guild {
   nsfwLevel: keyof typeof NSFWLevel;
   stickers: Map<string, Sticker> = new Map();
   premiumProgressBarEnabled: boolean;
-  channels: Map<string, TextChannel | VoiceChannel | Category> = new Map();
+  channels: Map<string, TextChannel | VoiceChannel | Category | ForumChannel> =
+    new Map();
   threads: Map<string, ThreadChannel> = new Map();
   members: Map<string, GuildMember> = new Map();
   roles: Map<string, Role> = new Map();
