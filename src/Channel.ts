@@ -366,7 +366,6 @@ export class ForumChannel extends PartailChannel {
 
   constructor(channel: RawChannel, private request: HTTPS) {
     super(channel);
-    console.log(channel);
     this.guildId = channel.guild_id!;
     this.availableTags = channel.available_tags!.map(tag => new FourmTag(tag));
     this.defaultReactionEmoji =
