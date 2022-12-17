@@ -148,7 +148,8 @@ export default class Gateway {
     }
   }
 
-  onClose(code: number, reason: string) {
-    console.log(`code: ${code}, reason: ${reason}`);
+  onClose(code: number, reason: Buffer) {
+    console.log(`code: ${code}, reason: ${reason.toString()}`);
+    this.reconnect();
   }
 }
