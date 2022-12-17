@@ -1,4 +1,4 @@
-import { RawData, WebSocket } from 'ws';
+import WebSocket, { RawData } from 'ws';
 import { intentCalculator, Opcode } from '../discord';
 import Client, { Options } from '../Client';
 import Events from './handler';
@@ -34,6 +34,7 @@ export default class Gateway {
     this.request = request;
     this.sequenceNum = 0;
     this.onMessage = this.onMessage.bind(this);
+    this.onClose = this.onClose.bind(this);
     this.heartbeat = this.heartbeat.bind(this);
   }
 
@@ -41,10 +42,12 @@ export default class Gateway {
     this.status = 'connecting';
     this.gateway = new WebSocket(GatewayURL, { handshakeTimeout: 30000 });
     this.gateway.on('message', this.onMessage);
+    this.gateway.on('close', this.onClose);
   }
 
   close(code?: number, reconnecting = false) {
     this.gateway?.close(code);
+    this.gateway?.removeAllListeners();
     delete this.gateway;
     if (!reconnecting) {
       delete this.sessionId;
@@ -61,6 +64,7 @@ export default class Gateway {
       handshakeTimeout: 30000,
     });
     this.gateway.on('message', this.onMessage);
+    this.gateway.on('close', this.onClose);
   }
 
   send(data: { op: number; d: unknown }) {
@@ -83,9 +87,9 @@ export default class Gateway {
               token: this.options.token,
               intents: intentCalculator(this.options.intents),
               properties: {
-                $os: 'linux',
-                $browser: 'periljs',
-                $device: 'perils',
+                os: 'linux',
+                browser: 'periljs',
+                device: 'perils',
               },
             },
           });
@@ -123,9 +127,9 @@ export default class Gateway {
             token: this.options.token,
             intents: intentCalculator(this.options.intents),
             properties: {
-              $os: 'linux',
-              $browser: 'periljs',
-              $device: 'perils',
+              os: 'linux',
+              browser: 'periljs',
+              device: 'perils',
             },
           },
         });
@@ -142,5 +146,9 @@ export default class Gateway {
         break;
       }
     }
+  }
+
+  onClose(code: number, reason: string) {
+    console.log(`code: ${code}, reason: ${reason}`);
   }
 }
