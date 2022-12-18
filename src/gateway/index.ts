@@ -67,6 +67,21 @@ export default class Gateway {
     this.gateway.on('close', this.onClose);
   }
 
+  identify() {
+    this.send({
+      op: Opcode.IDENTIFY,
+      d: {
+        token: this.options.token,
+        intents: intentCalculator(this.options.intents),
+        properties: {
+          os: 'linux',
+          browser: 'periljs',
+          device: 'perils',
+        },
+      },
+    });
+  }
+
   send(data: { op: number; d: unknown }) {
     this.gateway?.send(JSON.stringify(data));
   }
@@ -81,18 +96,7 @@ export default class Gateway {
     switch (data.op) {
       case Opcode.HELLO: {
         if (!this.sessionId) {
-          this.send({
-            op: Opcode.IDENTIFY,
-            d: {
-              token: this.options.token,
-              intents: intentCalculator(this.options.intents),
-              properties: {
-                os: 'linux',
-                browser: 'periljs',
-                device: 'perils',
-              },
-            },
-          });
+          this.identify();
           this.heartbeat();
         } else
           this.send({
@@ -119,20 +123,14 @@ export default class Gateway {
       }
 
       case Opcode.INVALID_SESSION: {
+        if (data.d) {
+          this.reconnect();
+          return;
+        }
         this.sequenceNum = 0;
         this.sessionId = undefined;
-        this.send({
-          op: Opcode.IDENTIFY,
-          d: {
-            token: this.options.token,
-            intents: intentCalculator(this.options.intents),
-            properties: {
-              os: 'linux',
-              browser: 'periljs',
-              device: 'perils',
-            },
-          },
-        });
+        this.resumeGatewayUrl = undefined;
+        this.identify();
         break;
       }
 
@@ -150,6 +148,9 @@ export default class Gateway {
 
   onClose(code: number, reason: Buffer) {
     console.log(`code: ${code}, reason: ${reason.toString()}`);
+    this.sequenceNum = 0;
+    this.sessionId = undefined;
+    this.resumeGatewayUrl = undefined;
     this.reconnect();
   }
 }
