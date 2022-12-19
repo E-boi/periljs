@@ -4,7 +4,7 @@
     "target": "esnext",
     "strict": true,
     "esModuleInterop": true,
-    "skipLibCheck": true,
+    // "skipLibCheck": true,
     "forceConsistentCasingInFileNames": true,
     "declaration": true,
     "outDir": "dist/types",

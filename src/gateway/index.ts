@@ -3,6 +3,7 @@ import { intentCalculator, Opcode } from '../discord';
 import Client, { Options } from '../Client';
 import Events from './handler';
 import HTTPS from '../HTTPS';
+import { ActivityTypes } from '../RawTypes';
 
 const GatewayURL = 'wss://gateway.discord.gg/?v=10&encoding=json';
 
@@ -77,6 +78,17 @@ export default class Gateway {
           os: 'linux',
           browser: 'periljs',
           device: 'perils',
+        },
+        presence: {
+          since: null,
+          afk: false,
+          status: this.options.presence.status || 'online',
+          activities:
+            this.options.presence.activities?.map(activity => ({
+              name: activity.name,
+              type: ActivityTypes[activity.type],
+              url: activity.url,
+            })) || [],
         },
       },
     });

@@ -791,3 +791,14 @@ export interface RawInteractionCallbackModalData {
   title: string;
   components?: RawMessageComponent[];
 }
+
+export enum ActivityTypes {
+  GAME,
+  STREAMING,
+  LISTENING,
+  WATCHING,
+  CUSTOM,
+  COMPETING,
+}
+
+export type StatusTypes = 'online' | 'dnd' | 'idle' | 'invisible' | 'offline';
