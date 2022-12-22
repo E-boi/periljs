@@ -22,7 +22,11 @@ export default (data: RawGuild, ws: Gateway) => {
     ws.expectedGuilds.splice(
       ws.expectedGuilds.findIndex(id => id === guild.id)
     );
-    if (!ws.expectedGuilds.length && ws.client.user) {
+    if (
+      !ws.expectedGuilds.length &&
+      ws.client.user &&
+      ws.status === 'connecting'
+    ) {
       ws.status = 'connected';
       // fire the ready event when all the expected guild are sent to client
       ws.client.emit('ready', ws.client.user);
