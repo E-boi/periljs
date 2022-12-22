@@ -34,7 +34,7 @@ export class Role {
 }
 
 export class Roles {
-  cache: Map<string, Role> = new Map();
+  private cache: Map<string, Role> = new Map();
   private guild: Guild;
   private member: GuildMember;
 

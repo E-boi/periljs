@@ -16,12 +16,16 @@ export default (data: RawGuild, ws: Gateway) => {
         d: { guild_id: data.id, query: '', limit: 0 },
       })
     );
-  // only emit guild.create when a guild is joined and not when the bot starts up
+  // only emit guild.create when a guild is joined and not when the gateway sends guilds on start up
   if (ws.status === 'connected') ws.client.emit('guild.create', guild);
   else {
     ws.expectedGuilds.splice(
       ws.expectedGuilds.findIndex(id => id === guild.id)
     );
-    if (!ws.expectedGuilds.length) ws.status = 'connected';
+    if (!ws.expectedGuilds.length && ws.client.user) {
+      ws.status = 'connected';
+      // fire the ready event when all the expected guild are sent to client
+      ws.client.emit('ready', ws.client.user);
+    }
   }
 };

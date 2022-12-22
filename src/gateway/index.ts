@@ -18,9 +18,9 @@ interface Payload {
 }
 
 export default class Gateway {
-  private options: Options;
   private sequenceNum: number;
   private heartbeatInterval?: NodeJS.Timer;
+  options: Options;
   sessionId?: string;
   client: Client;
   request: HTTPS;

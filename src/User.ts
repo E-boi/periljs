@@ -1,7 +1,16 @@
+import { Opcode } from './discord';
+import Gateway from './gateway';
 import { Guild } from './Guild';
 import HTTPS from './HTTPS';
 import { Permission } from './Permission';
-import { NitroTypes, RawMember, RawUser, UserFlags } from './RawTypes';
+import {
+  ActivityTypes,
+  NitroTypes,
+  RawMember,
+  RawUser,
+  StatusTypes,
+  UserFlags,
+} from './RawTypes';
 import { Roles } from './Role';
 
 export class User {
@@ -112,6 +121,63 @@ export class GuildMember extends PartialGuildMember {
   toString(): string {
     return `<@${this.user?.id}>`;
   }
+}
+
+export class ClientUser extends User {
+  presence: Presence;
+  ws: Gateway;
+
+  constructor(user: RawUser, presence: Presence, ws: Gateway) {
+    super(user);
+    this.presence = presence;
+    this.ws = ws;
+  }
+
+  setActivies(...activities: Activity[]) {
+    this.presence.activities = activities;
+    this.ws.send({
+      op: Opcode.PRESENCE_UPDATE,
+      d: {
+        since: 0,
+        afk: false,
+        status: this.presence.status,
+        activities: activities.map(activity => ({
+          name: activity.name,
+          type: ActivityTypes[activity.type],
+          url: activity.url,
+        })),
+      },
+    });
+  }
+
+  setStatus(status: StatusTypes) {
+    this.presence.status = status;
+    this.ws.send({
+      op: Opcode.PRESENCE_UPDATE,
+      d: {
+        since: null,
+        afk: false,
+        status,
+        activities:
+          this.presence.activities?.map(activity => ({
+            name: activity.name,
+            type: ActivityTypes[activity.type],
+            url: activity.url,
+          })) || [],
+      },
+    });
+  }
+}
+
+export interface Activity {
+  name: string;
+  type: keyof typeof ActivityTypes;
+  url?: string;
+}
+
+export interface Presence {
+  status?: StatusTypes;
+  activities?: Activity[];
 }
 
 interface MemberEditOptions {

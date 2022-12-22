@@ -17,4 +17,5 @@ export default (data: Data, ws: Gateway) => {
       new GuildMember(member, guild, ws.request)
     )
   );
+  ws.client.emit('guild.members.chunk', guild);
 };
