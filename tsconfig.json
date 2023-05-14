@@ -1,19 +1,19 @@
 {
   "compilerOptions": {
-    "module": "ES6",
-    "target": "esnext",
+    "module": "CommonJS",
+    "target": "ESNext",
+    "lib": ["ESNext"],
     "strict": true,
     "esModuleInterop": true,
-    // "skipLibCheck": true,
     "forceConsistentCasingInFileNames": true,
     "declaration": true,
-    "outDir": "dist/types",
+    "outDir": "dist",
     "baseUrl": "./src",
-    "emitDeclarationOnly": true,
+    // "emitDeclarationOnly": true,
     "newLine": "LF",
+    "useDefineForClassFields": false,
     "moduleResolution": "node"
   },
   "include": ["./src/"],
-  "checkJs": true,
-  "exclude": ["node_modules"]
+  "checkJs": true
 }

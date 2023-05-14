@@ -1,17 +1,18 @@
 {
   "$schema": "https://typedoc.org/schema.json",
   "gitRemote": "origin",
-  "entryPoints": ["src/"],
-  "excludePrivate": true,
+  "entryPoints": ["src/", "src/rawTypes.ts"],
   "readme": "README.md",
-  "excludeInternal": true,
-  "internalNamespace": "Raw Discord Types",
-  "excludeExternals": true,
-  "externalPattern": ["**/node_modules/**", "src/gateway/**/*.ts"],
   "out": "docs",
-  "sort": ["enum-value-ascending", "kind", "alphabetical"],
-  "defaultCategory": "Uncategorized",
+  "defaultCategory": "Client",
   "name": "Periljs",
   "includeVersion": true,
-  "categorizeByGroup": false
+  "plugin": ["typedoc-plugin-coverage", "typedoc-plugin-rename-defaults"],
+  "sort": ["enum-value-ascending", "kind", "alphabetical"],
+  "categorizeByGroup": false,
+  "cleanOutputDir": true,
+  "excludeReferences": true,
+  "searchCategoryBoosts": {
+    "Classes": 1.5
+  }
 }

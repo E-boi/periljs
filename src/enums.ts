@@ -1,0 +1,379 @@
+export enum PrivacyLevels {
+  GUILD_ONLY = 2,
+}
+
+export enum EntityTypes {
+  STAGE_INSTANCE = 1,
+  VOICE = 2,
+  EXTERNAL = 3,
+}
+
+export enum EventStatus {
+  SCHEDULED = 1,
+  ACTIVE = 2,
+  COMPLETED = 3,
+  CANCELED = 4,
+}
+
+export enum InviteTargetTypes {
+  STREAM = 1,
+  EMBEDDED_APPLICATION = 1,
+}
+
+export enum ComponentTypes {
+  ActionRow = 1,
+  Button = 2,
+  StringSelect = 3,
+  TextInput = 4,
+  UserSelect = 5,
+  RoleSelect = 6,
+  MentionableSelect = 7,
+  ChannelSelect = 8,
+}
+
+export enum TextInputStyles {
+  SHORT = 1,
+  PARAGRAPH = 2,
+}
+
+export enum ButtonStyle {
+  /**
+   * blurple
+   * requires customId
+   */
+  PRIMARY = 1,
+  /**
+   * grey
+   * required customId
+   */
+  SECONDARY = 2,
+  /**
+   * green
+   * required customId
+   */
+  SUCCESS = 3,
+  /**
+   * red
+   * required customId
+   */
+  DANGER = 4,
+  /**
+   * grey
+   * required url
+   */
+  LINK = 5,
+}
+
+export enum AllowedMentionTypes {
+  ROLE_MENTIONS = "roles",
+  USER_MENTIONS = "users",
+  EVERYONE_MENTIONS = "everyone",
+}
+
+export enum MessageActivityTypes {
+  JOIN = 1,
+  SPECTATE = 2,
+  LISTEN = 3,
+  JOIN_REQUEST = 5,
+}
+
+export enum MessageFlags {
+  CROSSPOSTED = 1 << 0,
+  IS_CROSSPOST = 1 << 1,
+  SUPPRESS_EMBEDS = 1 << 2,
+  SOURCE_MESSAGE_DELETED = 1 << 3,
+  URGENT = 1 << 4,
+  HAS_THREAD = 1 << 5,
+  EPHEMERAL = 1 << 6,
+  LOADING = 1 << 7,
+  FAILED_TO_MENTION_SOME_ROLES_IN_THREAD = 1 << 8,
+  SUPPRESS_NOTIFICATIONS = 1 << 12,
+  IS_VOICE_MESSAGE = 1 << 13,
+}
+
+export enum MessageTypes {
+  DEFAULT = 0,
+  RECIPIENT_ADD = 1,
+  RECIPIENT_REMOVE = 2,
+  CALL = 3,
+  CHANNEL_NAME_CHANGE = 4,
+  CHANNEL_ICON_CHANGE = 5,
+  CHANNEL_PINNED_MESSAGE = 6,
+  USER_JOIN = 7,
+  GUILD_BOOST = 8,
+  GUILD_BOOST_TIER_1 = 9,
+  GUILD_BOOST_TIER_2 = 10,
+  GUILD_BOOST_TIER_3 = 11,
+  CHANNEL_FOLLOW_ADD = 12,
+  GUILD_DISCOVERY_DISQUALIFIED = 14,
+  GUILD_DISCOVERY_REQUALIFIED = 15,
+  GUILD_DISCOVERY_GRACE_PERIOD_INITIAL_WARNING = 16,
+  GUILD_DISCOVERY_GRACE_PERIOD_FINAL_WARNING = 17,
+  THREAD_CREATED = 18,
+  REPLY = 19,
+  CHAT_INPUT_COMMAND = 20,
+  THREAD_STARTER_MESSAGE = 21,
+  GUILD_INVITE_REMINDER = 22,
+  CONTEXT_MENU_COMMAND = 23,
+  AUTO_MODERATION_ACTION = 24,
+  ROLE_SUBSCRIPTION_PURCHASE = 25,
+  INTERACTION_PREMIUM_UPSELL = 26,
+  STAGE_START = 27,
+  STAGE_END = 28,
+  STAGE_SPEAKER = 29,
+  STAGE_TOPIC = 31,
+  GUILD_APPLICATION_PREMIUM_SUBSCRIPTION = 32,
+}
+
+export enum EmbedTypes {
+  RICH = "rich",
+  IMAGE = "image",
+  VIDEO = "video",
+  GIFV = "gifv",
+  ARTICLE = "article",
+  LINK = "link",
+}
+
+export enum InteractionTypes {
+  PING = 1,
+  APPLICATION_COMMAND = 2,
+  MESSAGE_COMPONENT = 3,
+  APPLICATION_COMMAND_AUTOCOMPLETE = 4,
+  MODAL_SUBMIT = 5,
+}
+
+export enum InteractionCallbackTypes {
+  PONG = 1,
+  CHANNEL_MESSAGE_WITH_SOURCE = 4,
+  DEFERRED_CHANNEL_MESSAGE_WITH_SOURCE = 5,
+  DEFERRED_UPDATE_MESSAGE = 6,
+  UPDATE_MESSAGE = 7,
+  APPLICATION_COMMAND_AUTOCOMPLETE_RESULT = 8,
+  MODAL = 9,
+}
+
+export enum CommandOptionTypes {
+  SUB_COMMAND = 1,
+  SUB_COMMAND_GROUP = 2,
+  STRING = 3,
+  INTEGER = 4,
+  BOOLEAN = 5,
+  USER = 6,
+  CHANNEL = 7,
+  ROLE = 8,
+  MENTIONABLE = 9,
+  NUMBER = 10,
+  ATTACHMENT = 11,
+}
+
+export enum CommandTypes {
+  CHAT_INPUT = 1,
+  USER = 2,
+  MESSAGE = 3,
+}
+
+export enum Permissions {
+  CREATE_INSTANT_INVITE = 1 << 0,
+  KICK_MEMBERS = 1 << 1,
+  BAN_MEMBERS = 1 << 2,
+  ADMINISTRATOR = 1 << 3,
+  MANAGE_CHANNELS = 1 << 4,
+  MANAGE_GUILD = 1 << 5,
+  ADD_REACTIONS = 1 << 6,
+  VIEW_AUDIT_LOG = 1 << 7,
+  PRIORITY_SPEAKER = 1 << 8,
+  STREAM = 1 << 9,
+  VIEW_CHANNEL = 1 << 10,
+  SEND_MESSAGES = 1 << 11,
+  SEND_TTS_MESSAGES = 1 << 12,
+  MANAGE_MESSAGES = 1 << 13,
+  EMBED_LINKS = 1 << 14,
+  ATTACH_FILES = 1 << 15,
+  READ_MESSAGE_HISTORY = 1 << 16,
+  MENTION_EVERYONE = 1 << 17,
+  USE_EXTERNAL_EMOJIS = 1 << 18,
+  VIEW_GUILD_INSIGHTS = 1 << 19,
+  CONNECT = 1 << 20,
+  SPEAK = 1 << 21,
+  MUTE_MEMBERS = 1 << 22,
+  DEAFEN_MEMBERS = 1 << 23,
+  MOVE_MEMBERS = 1 << 24,
+  USE_VAD = 1 << 25,
+  CHANGE_NICKNAME = 1 << 26,
+  MANAGE_NICKNAMES = 1 << 27,
+  MANAGE_ROLES = 1 << 28,
+  MANAGE_WEBHOOKS = 1 << 29,
+  MANAGE_GUILD_EXPRESSIONS = 1 << 30,
+  USE_APPLICATION_COMMANDS = 1 << 31,
+  REQUEST_TO_SPEAK = 1 << 32,
+  MANAGE_EVENTS = 1 << 33,
+  MANAGE_THREADS = 1 << 34,
+  USE_PUBLIC_THREADS = 1 << 35,
+  USE_PRIVATE_THREADS = 1 << 36,
+  USE_EXTERNAL_STICKERS = 1 << 37,
+  SEND_MESSAGES_IN_THREAD = 1 << 38,
+  USE_EMBEDDED_ACTIVITIES = 1 << 39,
+  MODERATE_MEMBERS = 1 << 40,
+  VIEW_CREATOR_MONETIZATION_ANALYTICS = 1 << 41,
+  USE_SOUNDBOARD = 1 << 42,
+  SEND_VOICE_MESSAGES = 1 << 46,
+}
+
+export enum VerificationLevel {
+  NONE = 0,
+  LOW = 1,
+  MEDIUM = 2,
+  HIGH = 3,
+  VERY_HIGH = 4,
+}
+export enum DefaultMessageNotifications {
+  ALL_MESSAGES = 0,
+  ONLY_MENTIONS = 1,
+}
+
+export enum ExplicitContentFilter {
+  DISABLED = 0,
+  MEMBERS_WITHOUT_ROLES = 1,
+  ALL_MEMBERS = 2,
+}
+
+export enum UserFlags {
+  STAFF = 1 << 0,
+  PARTNER = 1 << 1,
+  HYPESQUAD = 1 << 2,
+  BUG_HUNTER_LEVEL_1 = 1 << 3,
+  HYPESQUAD_ONLINE_HOUSE_1 = 1 << 6,
+  HYPESQUAD_ONLINE_HOUSE_2 = 1 << 7,
+  HYPESQUAD_ONLINE_HOUSE_3 = 1 << 8,
+  PREMIUM_EARLY_SUPPORTER = 1 << 9,
+  TEAM_PSEUDO_USER = 1 << 10,
+  BUG_HUNTER_LEVEL_2 = 1 << 14,
+  VERIFIED_BOT = 1 << 16,
+  VERIFIED_DEVELOPER = 1 << 17,
+  CERTIFIED_MODERATOR = 1 << 18,
+  BOT_HTTP_INTERACTIONS = 1 << 19,
+  ACTIVE_DEVELOPER = 1 << 22,
+}
+
+export enum NitroTypes {
+  NONE = 0,
+  CLASSIC = 1,
+  NITRO = 2,
+  BASIC = 3,
+}
+
+export enum GuildFeatures {
+  ANIMATED_ICON = "ANIMATED_ICON",
+  ANIMATED_BANNER = "ANIMATED_BANNER",
+  APPLICATION_COMMAND_PERMISSIONS_V2 = "APPLICATION_COMMAND_PERMISSIONS_V2",
+  AUTO_MODERATION = "AUTO_MODERATION",
+  BANNER = "BANNER",
+  COMMUNITY = "COMMUNITY",
+  CREATOR_MONETIZABLE_PROVISIONAL = "CREATOR_MONETIZABLE_PROVISIONAL",
+  CREATOR_STORE_PAGE = "CREATOR_STORE_PAGE",
+  DEVELOPER_SUPPORT_SERVER = "DEVELOPER_SUPPORT_SERVER",
+  DISCOVERABLE = "DISCOVERABLE",
+  FEATURABLE = "FEATURABLE",
+  INVITES_DISABLED = "INVITES_DISABLED",
+  INVITE_SPLASH = "INVITE_SPLASH",
+  MORE_STICKERS = "MORE_STICKERS",
+  NEWS = "NEWS",
+  PARTNERED = "PARTNERED",
+  PREVIEW_ENABLED = "PREVIEW_ENABLED",
+  ROLE_ICONS = "ROLE_ICONS",
+  ROLE_SUBSCRIPTIONS_AVAILABLE_FOR_PURCHASE = "ROLE_SUBSCRIPTIONS_AVAILABLE_FOR_PURCHASE",
+  ROLE_SUBSCRIPTIONS_ENABLED = "ROLE_SUBSCRIPTIONS_ENABLED",
+  TICKETED_EVENTS_ENABLED = "TICKETED_EVENTS_ENABLED",
+  VANITY_URL = "VANITY_URL",
+  VERIFIED = "VERIFIED",
+  VIP_REGIONS = "VIP_REGIONS",
+  WELCOME_SCREEN_ENABLED = "WELCOME_SCREEN_ENABLED",
+}
+
+export enum MFALevel {
+  NONE = 0,
+  ELEVATED = 1,
+}
+
+export enum SystemChannelFlags {
+  SUPPRESS_JOIN_NOTIFICATIONS = 1 << 0,
+  SUPPRESS_PREMIUM_SUBSCRIPTIONS = 1 << 1,
+  SUPPRESS_GUILD_REMINDER_NOTIFICATIONS = 1 << 2,
+  SUPPRESS_JOIN_NOTIFICATION_REPLIES = 1 << 3,
+  SUPPRESS_ROLE_SUBSCRIPTION_PURCHASE_NOTIFICATIONS = 1 << 4,
+  SUPPRESS_ROLE_SUBSCRIPTION_PURCHASE_NOTIFICATION_REPLIES = 1 << 5,
+}
+
+export enum ServerBoostLevel {
+  NONE = 0,
+  TIER_1 = 1,
+  TIER_2 = 2,
+  TIER_3 = 3,
+}
+
+export enum NSFWLevel {
+  DEFAULT = 0,
+  EXPLICIT = 1,
+  SAFE = 2,
+  AGE_RESTRICTED = 3,
+}
+
+export enum StickerTypes {
+  STANDARD = 1,
+  GUILD = 2,
+}
+
+export enum StickerFormatTypes {
+  PNG = 1,
+  APNG = 2,
+  LOTTIE = 3,
+  GIF = 4,
+}
+
+export enum ChannelTypes {
+  GUILD_TEXT = 0,
+  DM = 1,
+  GUILD_VOICE = 2,
+  GROUP_DM = 3,
+  GUILD_CATEGORY = 4,
+  GUILD_ANNOUNCEMENT = 5,
+  ANNOUNCEMENT_THREAD = 10,
+  PUBLIC_THREAD = 11,
+  PRIVATE_THREAD = 12,
+  GUILD_STAGE_VOICE = 13,
+  GUILD_DIRECTORY = 14,
+  GUILD_FORUM = 15,
+}
+
+export enum OverwriteTypes {
+  ROLE = 0,
+  MEMBER = 1,
+}
+
+export enum VideoQualityModes {
+  AUTO = 1,
+  FULL = 2,
+}
+
+export enum ChannelFlags {
+  PINNED = 1 << 1,
+  REQUIRE_TAG = 1 << 4,
+}
+
+export enum SortOrderTypes {
+  LATEST_ACTIVITY = 0,
+  CREATION_DATE = 1,
+}
+
+export enum ForumLayoutTypes {
+  NOT_SET = 0,
+  LIST_VIEW = 1,
+  GALLERY_VIEW = 2,
+}
+
+export enum GuildMemberFlags {
+  DID_REJOIN = 1 << 0,
+  COMPLETED_ONBOADING = 1 << 1,
+  BYPASSES_VERIFICATION = 1 << 2,
+  STARTED_ONBOARDING = 1 << 3,
+}

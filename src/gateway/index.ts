@@ -1,168 +1,176 @@
-import WebSocket, { RawData } from 'ws';
-import { intentCalculator, Opcode } from '../discord';
-import Client, { Options } from '../Client';
-import Events from './handler';
-import HTTPS from '../HTTPS';
-import { ActivityTypes } from '../RawTypes';
+import WebSocket from "ws";
+import { Client, ClientOptions } from "../client";
+import Logger from "../logger";
+import Events from "./events";
+import { Intents, intentCalculator } from "./intents";
+import { Opcodes } from "./opcode";
 
-const GatewayURL = 'wss://gateway.discord.gg/?v=10&encoding=json';
-
-interface Payload {
-  op: Opcode;
-  d: Record<string, unknown>;
+export interface Payload {
+  op: Opcodes;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  d?: any;
+  s?: number;
+  t?: string;
 }
 
-interface Payload {
-  s: number;
-  t: string;
-}
-
-export default class Gateway {
-  private sequenceNum: number;
+export class Gateway {
+  // eslint-disable-next-line no-undef
   private heartbeatInterval?: NodeJS.Timer;
-  options: Options;
-  sessionId?: string;
+  private websocket?: WebSocket;
+  private sequence?: number;
+  private token: string;
+  private intents: Intents[];
+  private websocketUrl?: string;
   client: Client;
-  request: HTTPS;
-  status?: 'connected' | 'connecting' | 'reconnecting';
-  expectedGuilds: string[] = [];
-  resumeGatewayUrl?: string;
-  gateway?: WebSocket;
+  logger = new Logger("Gateway");
+  status: "idle" | "connected" | "connecting" | "reconnecting" | "disconnected";
+  sessionId?: string;
+  resumeUrl?: string;
+  retries = 0;
+  expectedGuilds?: string[];
 
-  constructor(options: Options, client: Client, request: HTTPS) {
-    this.options = options;
+  constructor(client: Client, clientOptions: ClientOptions) {
+    this.token = clientOptions.token;
+    this.intents = clientOptions.intents;
+    this.status = "idle";
     this.client = client;
-    this.request = request;
-    this.sequenceNum = 0;
+
     this.onMessage = this.onMessage.bind(this);
-    this.onClose = this.onClose.bind(this);
-    this.heartbeat = this.heartbeat.bind(this);
   }
 
-  connect() {
-    this.status = 'connecting';
-    this.gateway = new WebSocket(GatewayURL, { handshakeTimeout: 30000 });
-    this.gateway.on('message', this.onMessage);
-    this.gateway.on('close', this.onClose);
+  async init() {
+    this.status = "connecting";
+    const gatewayBot = await this.client.rest.getGateway();
+
+    this.websocketUrl = `${gatewayBot.url}/?v=10&encoding=json`;
+
+    this.websocket = new WebSocket(this.websocketUrl);
+
+    this.websocket.on("open", () => {
+      this.logger.debug("Connected to gateway");
+    });
+
+    this.websocket.on("message", this.onMessage);
+    this.websocket.on("close", (code, reason) => {
+      clearInterval(this.heartbeatInterval);
+      this.logger.error(`Closing, code: ${code}, reason: ${reason.toString}`);
+    });
   }
 
-  close(code?: number, reconnecting = false) {
-    this.gateway?.close(code);
-    this.gateway?.removeAllListeners();
-    delete this.gateway;
-    if (!reconnecting) {
-      delete this.sessionId;
-      delete this.resumeGatewayUrl;
-    }
-  }
-
-  reconnect() {
-    this.close(4392, true);
+  close() {
+    this.websocket?.removeAllListeners();
+    this.websocket?.close(4901, "Reconnecting");
+    this.logger.debug("Closing");
     clearInterval(this.heartbeatInterval);
-    this.heartbeatInterval = undefined;
-    this.status = 'reconnecting';
-    this.gateway = new WebSocket(this.resumeGatewayUrl || GatewayURL, {
-      handshakeTimeout: 30000,
-    });
-    this.gateway.on('message', this.onMessage);
-    this.gateway.on('close', this.onClose);
   }
 
-  identify() {
-    this.send({
-      op: Opcode.IDENTIFY,
-      d: {
-        token: this.options.token,
-        intents: intentCalculator(this.options.intents),
-        properties: {
-          os: 'linux',
-          browser: 'periljs',
-          device: 'perils',
-        },
-        presence: {
-          since: null,
-          afk: false,
-          status: this.options.presence.status || 'online',
-          activities:
-            this.options.presence.activities?.map(activity => ({
-              name: activity.name,
-              type: ActivityTypes[activity.type],
-              url: activity.url,
-            })) || [],
-        },
-      },
+  reconnect(resume?: boolean) {
+    this.logger.debug("Attempting to reconnect, resume: ", resume);
+
+    this.close();
+    if (resume) this.status = "reconnecting";
+    // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+    this.websocket = new WebSocket(this.resumeUrl ?? this.websocketUrl!);
+    this.websocket.on("open", () => {
+      this.logger.debug("Connected to gateway");
+    });
+
+    this.websocket.on("message", this.onMessage);
+    this.websocket.on("close", (code, reason) => {
+      clearInterval(this.heartbeatInterval);
+      this.logger.error(`Closing, code: ${code}, reason: ${reason.toString}`);
     });
   }
 
-  send(data: { op: number; d: unknown }) {
-    this.gateway?.send(JSON.stringify(data));
+  send(payload: Payload) {
+    this.websocket?.send(JSON.stringify(payload));
+    this.logger.log("Sent", payload);
   }
 
-  heartbeat() {
-    if (this.status === 'reconnecting') return;
-    this.send({ op: Opcode.HEARTBEAT, d: this.sequenceNum });
-  }
+  private onMessage(message: WebSocket.RawData) {
+    const data: Payload = JSON.parse(message.toString());
 
-  private onMessage(rawData: RawData) {
-    const data: Payload = JSON.parse(rawData.toString());
     switch (data.op) {
-      case Opcode.HELLO: {
-        if (!this.sessionId) {
-          this.identify();
-          this.heartbeat();
-        } else
+      case Opcodes.hello: {
+        // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+        this.startBeating(data.d!.heartbeat_interval);
+
+        if (this.status === "reconnecting") {
+          this.logger.debug("Resuming...");
           this.send({
-            op: Opcode.RESUME,
+            op: Opcodes.resume,
             d: {
-              token: this.options.token,
+              token: this.token,
               session_id: this.sessionId,
-              seq: this.sequenceNum,
+              seq: this.sequence,
             },
           });
+        } else this.identify();
 
-        this.heartbeatInterval = setInterval(
-          this.heartbeat,
-          data.d.heartbeat_interval as number
-        );
         break;
       }
 
-      case Opcode.DISPATCH: {
-        this.sequenceNum = data.s;
-        if (Events[data.t]) Events[data.t](data.d, this);
-        else console.log(data);
+      case Opcodes.heartbeat: {
+        this.send({ op: Opcodes.heartbeat, d: this.sequence });
         break;
       }
 
-      case Opcode.INVALID_SESSION: {
-        if (data.d) {
-          this.reconnect();
-          return;
+      case Opcodes.heartbeatACK: {
+        this.logger.debug("Heartbeat acknowledged");
+        break;
+      }
+
+      case Opcodes.invalidSession: {
+        if (data.d === true) this.reconnect(true);
+        else {
+          delete this.sessionId;
+          delete this.resumeUrl;
+          this.sequence = 0;
+          this.status = "disconnected";
+          if (this.retries < 5) {
+            this.reconnect();
+            this.retries++;
+          } else {
+            this.close();
+            throw Error("Could not connect to gateway");
+          }
         }
-        this.sequenceNum = 0;
-        this.sessionId = undefined;
-        this.resumeGatewayUrl = undefined;
-        this.identify();
         break;
       }
 
-      case Opcode.HEARTBEAT: {
-        this.heartbeat();
+      case Opcodes.reconnect: {
+        this.reconnect(true);
         break;
       }
 
-      case Opcode.RECONNECT: {
-        this.reconnect();
+      case Opcodes.dispatch: {
+        this.sequence = data.s;
+
+        // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+        if (Events[data.t!]) Events[data.t!](data.d, this);
+        else this.logger.error("Unknown Event:", data);
         break;
       }
     }
   }
 
-  onClose(code: number, reason: Buffer) {
-    console.log(`code: ${code}, reason: ${reason.toString()}`);
-    this.sequenceNum = 0;
-    this.sessionId = undefined;
-    this.resumeGatewayUrl = undefined;
-    this.reconnect();
+  private identify() {
+    const identifier = {
+      token: this.token,
+      intents: intentCalculator(this.intents),
+      properties: {
+        os: "linux",
+        browser: "peril",
+        device: "perils",
+      },
+    };
+
+    this.send({ op: Opcodes.identify, d: identifier });
+  }
+
+  private startBeating(interval: number) {
+    this.heartbeatInterval = setInterval(() => {
+      this.send({ op: Opcodes.heartbeat, d: this.sequence });
+    }, interval);
   }
 }

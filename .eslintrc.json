@@ -1,19 +1,29 @@
 {
   "env": {
-    "browser": true,
-    "es2021": true
+    "browser": false,
+    "es6": true,
+    "node": true
   },
-  "extends": ["eslint:recommended", "plugin:@typescript-eslint/recommended"],
+  "extends": [
+    "eslint:recommended",
+    "plugin:@typescript-eslint/recommended",
+    "eslint-config-dmitmel/presets/node"
+  ],
   "parser": "@typescript-eslint/parser",
   "parserOptions": {
     "ecmaVersion": "latest",
     "sourceType": "module"
   },
-  "plugins": ["@typescript-eslint"],
+  "plugins": ["@typescript-eslint", "unused-imports"],
   "rules": {
     "indent": ["error", 2, { "SwitchCase": 1 }],
-    "linebreak-style": ["error", "unix"],
-    "quotes": ["error", "single"],
-    "semi": ["error", "always"]
+    "quotes": ["error", "double"],
+    "semi": ["error", "always"],
+    "node/no-unsupported-features/es-syntax": "off",
+    "unused-imports/no-unused-imports": "error",
+    "no-undefined": "off",
+    "no-unused-vars": "off",
+    "camelcase": "off",
+    "node/no-missing-import": "off"
   }
 }

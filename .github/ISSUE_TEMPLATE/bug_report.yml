@@ -1,14 +1,14 @@
 name: Bug Report
 description: File a bug report
-title: '[Bug]: '
-labels: ['bug']
+title: "[Bug]: "
+labels: ["bug"]
 assignees:
   - E-boi
 body:
   - type: markdown
     attributes:
       value: |
-        For question ask in the Discord: https://discord.gg/qbERr28Dxt
+        For questions ask in the Discord: https://discord.gg/qbERr28Dxt
   - type: textarea
     id: what-happened
     attributes:

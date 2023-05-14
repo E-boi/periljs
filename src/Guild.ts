@@ -1,27 +1,23 @@
-import {
-  Category,
-  createChannel,
-  ForumChannel,
-  TextChannel,
-  ThreadChannel,
-  VoiceChannel,
-} from './Channel';
-import { Emoji } from './Emoji';
-import HTTPS from './HTTPS';
+import { Bitfield } from "./bitfield";
+import { createChannel } from "./channels";
+import { GuildChannel } from "./channels/guild";
+import { ThreadChannel } from "./channels/thread";
+import { Client } from "./client";
+import { Emoji } from "./emoji";
 import {
   DefaultMessageNotifications,
   ExplicitContentFilter,
   GuildFeatures,
   MFALevel,
   NSFWLevel,
-  RawGuild,
   ServerBoostLevel,
   SystemChannelFlags,
   VerificationLevel,
-} from './RawTypes';
-import { Role } from './Role';
-import { Sticker } from './Sticker';
-import { GuildMember } from './User';
+} from "./enums";
+import { GuildMember } from "./member";
+import { RawGuild } from "./rawTypes";
+import { Role } from "./role";
+import { Sticker } from "./sticker";
 
 export class Guild {
   id: string;
@@ -36,34 +32,33 @@ export class Guild {
   afkTimeout: number;
   widgetEnabled?: boolean;
   widgetChannelId?: string;
-  verificationLevel: keyof typeof VerificationLevel;
-  defaultMessageNotifications: keyof typeof DefaultMessageNotifications;
-  explicitContentFilter: keyof typeof ExplicitContentFilter;
+  verificationLevel: VerificationLevel;
+  defaultMessageNotifications: DefaultMessageNotifications;
+  explicitContentFilter: ExplicitContentFilter;
   emojis: Map<string, Emoji> = new Map();
   features?: GuildFeatures[];
-  mfaLevel: keyof typeof MFALevel;
+  mfaLevel: MFALevel;
   systemChannelId?: string;
-  systemChannelFlags: SystemChannelFlags;
+  systemChannelFlags: Bitfield<SystemChannelFlags>;
   rulesChannelId?: string;
   maxMembers?: number;
   vanityUrlCode?: string;
   description?: string;
   banner?: string;
-  premiumTier: keyof typeof ServerBoostLevel;
+  premiumTier: ServerBoostLevel;
   premiumSubscriptionCount?: number;
   preferredLocale?: string;
   publicUpdatesChannelId?: string;
-  nsfwLevel: keyof typeof NSFWLevel;
+  nsfwLevel: NSFWLevel;
   stickers: Map<string, Sticker> = new Map();
   premiumProgressBarEnabled: boolean;
-  channels: Map<string, TextChannel | VoiceChannel | Category | ForumChannel> =
-    new Map();
+  channels: Map<string, GuildChannel> = new Map();
   threads: Map<string, ThreadChannel> = new Map();
   members: Map<string, GuildMember> = new Map();
   roles: Map<string, Role> = new Map();
-  private request: HTTPS;
+  private client: Client;
 
-  constructor(guild: RawGuild, request: HTTPS) {
+  constructor(guild: RawGuild, client: Client) {
     this.id = guild.id;
     this.name = guild.name;
     this.icon = guild.icon;
@@ -76,63 +71,43 @@ export class Guild {
     this.afkTimeout = guild.afk_timeout;
     this.widgetEnabled = guild.widget_enabled;
     this.widgetChannelId = guild.widget_channel_id;
-    this.verificationLevel = VerificationLevel[
-      guild.verification_level
-    ] as keyof typeof VerificationLevel;
-    this.defaultMessageNotifications = DefaultMessageNotifications[
-      guild.default_message_notifications
-    ] as keyof typeof DefaultMessageNotifications;
-    this.explicitContentFilter = ExplicitContentFilter[
-      guild.explicit_content_filter
-    ] as keyof typeof ExplicitContentFilter;
+    this.verificationLevel = guild.verification_level;
+    this.defaultMessageNotifications = guild.default_message_notifications;
+    this.explicitContentFilter = guild.explicit_content_filter;
     this.features = guild.features;
-    this.mfaLevel = MFALevel[guild.mfa_level] as keyof typeof MFALevel;
+    this.mfaLevel = guild.mfa_level;
     this.systemChannelId = guild.system_channel_id;
-    this.systemChannelFlags = guild.system_channel_flags;
+    this.systemChannelFlags = new Bitfield(guild.system_channel_flags);
     this.rulesChannelId = guild.rules_channel_id;
     this.maxMembers = guild.max_members;
     this.vanityUrlCode = guild.vanity_url_code;
     this.description = guild.description;
     this.banner = guild.banner;
-    this.premiumTier = ServerBoostLevel[
-      guild.premium_tier
-    ] as keyof typeof ServerBoostLevel;
+    this.premiumTier = guild.premium_tier;
     this.premiumSubscriptionCount = guild.premium_subscription_count;
     this.preferredLocale = guild.preferred_locale;
     this.publicUpdatesChannelId = guild.public_updates_channel_id;
-    this.nsfwLevel = NSFWLevel[guild.nsfw_level] as keyof typeof NSFWLevel;
+    this.nsfwLevel = guild.nsfw_level;
     this.premiumProgressBarEnabled = guild.premium_progress_bar_enabled;
-    this.request = request;
+    this.client = client;
 
-    guild.channels?.forEach(channel => {
+    guild.channels?.forEach((channel) => {
       channel.guild_id = this.id;
-      const gchannel = createChannel(channel, request);
-      if (!gchannel || !gchannel.inGuild() || gchannel.isThread()) return;
-      this.channels.set(channel.id, gchannel);
+      const c = createChannel(channel, client);
+      if (!c?.inGuild()) return;
+      this.channels.set(channel.id, c);
     });
-    guild.threads?.forEach(thread => {
+    guild.threads?.forEach((thread) => {
       thread.guild_id = this.id;
-      this.threads.set(thread.id, new ThreadChannel(thread, request));
+      this.threads.set(thread.id, new ThreadChannel(thread, client));
     });
-    guild.members?.forEach(member =>
+    guild.members?.forEach((member) =>
       // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-      this.members.set(member.user!.id, new GuildMember(member, this, request))
+      this.members.set(member.user!.id, new GuildMember(member, this, client))
     );
-    guild.roles.forEach(role => this.roles.set(role.id, new Role(role)));
+    guild.roles.forEach((role) => this.roles.set(role.id, new Role(role)));
     // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-    guild.emojis.forEach(emoji => this.emojis.set(emoji.id!, new Emoji(emoji)));
-    guild.stickers?.forEach(sticker =>
-      this.stickers.set(sticker.id, new Sticker(sticker))
-    );
-  }
-
-  /**
-   * Fetches roles from Discord and caches them
-   */
-  async fetchRoles() {
-    const roles = await this.request
-      .getGuildRoles(this.id)
-      .then(e => e.map(r => new Role(r)));
-    roles.forEach(r => this.roles.set(r.id, r));
+    guild.emojis.forEach((emoji) => this.emojis.set(emoji.id!, new Emoji(emoji)));
+    guild.stickers?.forEach((sticker) => this.stickers.set(sticker.id, new Sticker(sticker)));
   }
 }

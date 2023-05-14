@@ -1,52 +1,39 @@
-import {
-  RawPartialSticker,
-  RawSticker,
-  StickerFormatTypes,
-  StickerTypes,
-} from './RawTypes';
-import { User } from './User';
+import { RawSticker } from "./rawTypes";
+import { StickerFormatTypes, StickerTypes } from "./enums";
+import User from "./user";
 
-export class Sticker {
+export class PartialSticker {
   id: string;
-  packId?: string;
   name: string;
+  formatType: StickerFormatTypes;
+  constructor(sticker: RawSticker) {
+    this.id = sticker.id;
+    this.name = sticker.name;
+    this.formatType = sticker.format_type;
+  }
+}
+
+export class Sticker extends PartialSticker {
+  packId?: string;
   description?: string;
   tags: string;
   asset?: string;
-  type: keyof typeof StickerTypes;
-  formatType: keyof typeof StickerFormatTypes;
+  type: StickerTypes;
   available?: boolean;
   guildId?: string;
   user?: User;
   sortValue?: number;
 
   constructor(sticker: RawSticker) {
+    super(sticker);
     this.id = sticker.id;
     this.packId = sticker.pack_id;
-    this.name = sticker.name;
     this.description = sticker.description;
     this.tags = sticker.tags;
-    this.asset = sticker.asset;
-    this.type = StickerTypes[sticker.type] as keyof typeof StickerTypes;
-    this.formatType = StickerFormatTypes[
-      sticker.format_type
-    ] as keyof typeof StickerFormatTypes;
+    this.type = sticker.type;
     this.available = sticker.available;
     this.guildId = sticker.guild_id;
-    this.user = sticker.user && new User(sticker.user);
+    if (sticker.user) this.user = new User(sticker.user);
     this.sortValue = sticker.sort_value;
-  }
-}
-
-export class PartailSticker {
-  id: string;
-  name: string;
-  formatType: keyof typeof StickerFormatTypes;
-  constructor(sticker: RawPartialSticker) {
-    this.id = sticker.id;
-    this.name = sticker.name;
-    this.formatType = StickerFormatTypes[
-      sticker.format_type
-    ] as keyof typeof StickerFormatTypes;
   }
 }

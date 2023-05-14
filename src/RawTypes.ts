@@ -1,19 +1,271 @@
-export interface RawRole {
-  id: string;
+/**
+ * @module Raw Discord Types
+ */
+
+import {
+  AllowedMentionTypes,
+  ButtonStyle,
+  ChannelFlags,
+  ChannelTypes,
+  CommandOptionTypes,
+  CommandTypes,
+  ComponentTypes,
+  DefaultMessageNotifications,
+  EmbedTypes,
+  EntityTypes,
+  EventStatus,
+  ExplicitContentFilter,
+  ForumLayoutTypes,
+  GuildFeatures,
+  GuildMemberFlags,
+  InteractionCallbackTypes,
+  InteractionTypes,
+  InviteTargetTypes,
+  MFALevel,
+  MessageActivityTypes,
+  MessageFlags,
+  MessageTypes,
+  NSFWLevel,
+  NitroTypes,
+  OverwriteTypes,
+  PrivacyLevels,
+  ServerBoostLevel,
+  SortOrderTypes,
+  StickerFormatTypes,
+  StickerTypes,
+  SystemChannelFlags,
+  TextInputStyles,
+  UserFlags,
+  VerificationLevel,
+  VideoQualityModes,
+} from "./enums";
+
+/* eslint-disable no-use-before-define */
+
+export interface RawThreadCreateFromMessage {
   name: string;
-  color: number;
-  hoist: boolean;
-  icon?: string;
-  unicode_emoji?: string;
-  position: number;
-  permissions: string;
-  managed: boolean;
-  mentionable: boolean;
+  auto_archive_duration?: number;
+  rate_limit_per_user?: number;
+}
+
+export type RawThreadCreateWithoutMessage = RawThreadCreateFromMessage & {
+  type?: ChannelTypes.PUBLIC_THREAD | ChannelTypes.PRIVATE_THREAD;
+  invitable?: boolean;
+};
+
+export interface RawInviteCreate {
+  max_age?: number;
+  max_uses?: number;
+  temporary?: boolean;
+  unique?: boolean;
+  target_type?: InviteTargetTypes;
+  target_user_id?: string;
+  target_application_id?: string;
+}
+
+export type RawInviteMetadata = RawInvite & {
+  uses: number;
+  max_uses: number;
+  max_age: number;
+  temporary: boolean;
+  created_at: string;
+};
+
+export interface RawInvite {
+  code: string;
+  guild?: RawGuild;
+  channel?: RawChannel;
+  inviter?: RawUser;
+  target_type?: InviteTargetTypes;
+  approximate_presence_count?: number;
+  approximate_member_count?: number;
+  expires_at?: string;
+  guild_scheduled_event?: RawGuildScheduledEvent;
+}
+
+export interface RawGuildScheduledEvent {
+  id: string;
+  guild_id: string;
+  channel_id?: string;
+  creator_id?: string;
+  name: string;
+  description?: string;
+  scheduled_start_time: string;
+  scheduled_end_time?: string;
+  privacy_level: PrivacyLevels;
+  status: EventStatus;
+  entity_type: EntityTypes;
+  entity_id?: string;
+  entity_metadata?: RawEntityMetadata;
+  creator?: RawUser;
+  user_count?: number;
+  image?: string;
+}
+
+export interface RawEntityMetadata {
+  location?: string;
+}
+
+export interface RawModifyChannelJSON {
+  name?: string;
+  type?: ChannelTypes;
+  position?: number;
+  topic?: string;
+  nsfw?: boolean;
+  rate_limit_per_user?: number;
+  bitrate?: number;
+  user_limit?: number;
+  permission_overwrites?: RawOverwrite[];
+  parent_id?: string;
+  rtc_region?: string;
+  video_quality_mode?: VideoQualityModes;
+  default_auto_archive_duration?: number;
+  flags?: ChannelFlags;
+  available_tags?: RawForumTag[];
+  default_reaction_emoji?: RawDefaultReaction;
+  default_thread_rate_limit_per_user?: number;
+  default_sort_order?: SortOrderTypes;
+  default_forum_layout?: ForumLayoutTypes;
+}
+
+export interface RawActionRow {
+  type: ComponentTypes.ActionRow;
+  components: (RawButton | RawSelectMenu | RawTextInput)[];
+}
+
+export interface RawTextInput {
+  type: ComponentTypes.TextInput;
+  custom_id: string;
+  style: TextInputStyles;
+  label: string;
+  min_length?: number;
+  max_length?: number;
+  required?: boolean;
+  value?: string;
+  placeholder?: string;
+}
+
+export interface RawSelectMenu {
+  type:
+    | ComponentTypes.StringSelect
+    | ComponentTypes.ChannelSelect
+    | ComponentTypes.MentionableSelect
+    | ComponentTypes.UserSelect
+    | ComponentTypes.RoleSelect;
+  custom_id: string;
+  options?: RawSelectOption[];
+  channel_types?: ChannelTypes[];
+  placeholder?: string;
+  min_values?: number;
+  max_values?: number;
+  disabled?: boolean;
+}
+
+export interface RawSelectOption {
+  label: string;
+  value: string;
+  description?: string;
+  emoji?: RawEmoji;
+  default?: boolean;
+}
+
+export interface RawButton {
+  type: ComponentTypes.Button;
+  style: ButtonStyle;
+  label?: string;
+  emoji?: RawEmoji;
+  custom_id: string;
+  url?: string;
+  disabled?: boolean;
+}
+
+export interface RawMessage {
+  id: string;
+  channel_id: string;
+  author: RawUser;
+  member?: RawGuildMember;
+  content: string;
+  timestamp: string;
+  edited_timestamp?: string;
+  tts: boolean;
+  mention_everyone: boolean;
+  mentions?: RawUser[];
+  mention_roles?: string[];
+  mention_channels?: RawChannelMention[];
+  attachments: RawAttachment[];
+  embeds: RawEmbed[];
+  reactions?: RawReaction[];
+  nonce?: string | number;
+  pinned: boolean;
+  webhook_id?: string;
+  type: MessageTypes;
+  activity?: RawMessageActivity;
+  message_reference?: RawMessageReference;
+  flags?: MessageFlags;
+  referenced_message?: RawMessage;
+  interaction?: RawMessageInteraction;
+  thread?: RawChannel;
+  components?: RawActionRow[];
+  sticker_items?: RawSticker[];
+  position?: number;
+  role_subscription_data?: RawRoleSubscriptionData;
+}
+
+export interface RawMessageCreate {
+  content?: string;
+  tts?: boolean;
+  embeds?: RawEmbed[];
+  allowed_mentions?: RawAllowedMention;
+  message_reference?: RawMessageReference;
+  components?: RawActionRow[];
+  sticker_ids?: string[];
+  attachments?: Partial<RawAttachment>[];
+  flags?: MessageFlags;
+}
+
+export interface RawAllowedMention {
+  parse: AllowedMentionTypes[];
+  roles: string[];
+  users: string[];
+  replied_user: boolean;
+}
+
+export interface RawMessageActivity {
+  type: MessageActivityTypes;
+  party_id?: string;
+}
+
+export interface RawRoleSubscriptionData {
+  role_subscription_listing_id: string;
+  tier_name: string;
+  total_months_subscribed: string;
+  is_renewal: string;
+}
+
+export interface RawMessageInteraction {
+  id: string;
+  type: InteractionTypes;
+  name: string;
+  user: RawUser;
+  member?: RawGuildMember;
+}
+
+export interface RawMessageReference {
+  message_id?: string;
+  channel_id?: string;
+  guild_id?: string;
+  fail_if_not_exists?: boolean;
+}
+
+export interface RawReaction {
+  count: string;
+  me: boolean;
+  emoji: RawEmoji;
 }
 
 export interface RawEmbed {
   title?: string;
-  type?: EmbedType;
+  type?: EmbedTypes;
   description?: string;
   url?: string;
   color?: number;
@@ -25,6 +277,12 @@ export interface RawEmbed {
   author?: RawEmbedAuthor;
   fields?: RawEmbedField[];
   timestamp?: string;
+}
+
+interface BaseThing {
+  proxy_url?: string;
+  height?: number;
+  width?: number;
 }
 
 export interface RawEmbedThumbnail extends BaseThing {
@@ -63,53 +321,168 @@ export interface RawEmbedField {
   inline?: boolean;
 }
 
-// idk wat to name suggestions open
-/** @hidden */
-interface BaseThing {
-  proxy_url?: string;
+export interface RawChannelMention {
+  id: string;
+  guild_id: string;
+  type: ChannelTypes;
+  name: string;
+}
+
+export interface RawInteraction {
+  id: string;
+  application_id: string;
+  type: InteractionTypes;
+  data?:
+    | RawInteractionApplicationCommandData
+    | RawInteractionMessageComponentData
+    | RawInteractionModalSubmitData;
+  guild_id?: string;
+  channel_id?: string;
+  member?: RawGuildMember;
+  user?: RawUser;
+  token: string;
+  readonly version: number;
+  message?: RawMessage;
+  locale?: string;
+  guild_locale?: string;
+}
+
+export interface RawInteractionApplicationCommandData {
+  id: string;
+  name: string;
+  type: CommandTypes;
+  resolved?: RawInteractionResolvedData;
+  options?: RawInteractionCommandDataOption[];
+  guild_id?: string;
+  target_id?: string;
+}
+
+export interface RawInteractionMessageComponentData {
+  custom_id: string;
+  component_type: ComponentTypes;
+  values?: (RawSelectOption | string)[];
+}
+
+export interface RawInteractionModalSubmitData {
+  custom_id: string;
+  components: RawActionRow[];
+}
+
+export interface RawInteractionCommandDataOption {
+  name: string;
+  type: CommandOptionTypes;
+  value?: string | number;
+  options?: RawInteractionCommandDataOption[];
+  focused?: boolean;
+}
+
+export interface RawInteractionResolvedData {
+  users?: { [id: string]: RawUser };
+  messages?: { [id: string]: RawMessage };
+  members?: { [id: string]: Omit<RawGuildMember, "user" | "deaf" | "mute"> };
+  channels?: { [id: string]: RawChannel };
+  roles?: { [id: string]: RawRole };
+  attachments?: { [id: string]: RawAttachment };
+}
+
+export interface RawInteractionCallback {
+  type: InteractionCallbackTypes;
+  data?:
+    | RawInteractionMessageCallback
+    | RawInteractionAutoCompleteCallback
+    | RawInteractionModalCallback;
+}
+
+export type RawInteractionMessageCallback = Omit<
+  RawMessageCreate,
+  "sticker_ids" | "message_reference"
+>;
+
+export interface RawInteractionAutoCompleteCallback {
+  choices: RawApplicationCommandOptionChoice[];
+}
+
+export interface RawInteractionModalCallback {
+  custom_id: string;
+  title: string;
+  components: RawActionRow[];
+}
+
+export interface RawAttachment {
+  id: string;
+  filename: string;
+  description?: string;
+  content_type?: string;
+  size: number;
+  url: string;
+  proxy_url: string;
   height?: number;
   width?: number;
+  ephemeral?: boolean;
+  duration_secs?: number;
+  waveform?: string;
 }
 
-export enum EmbedType {
-  rich = 'rich',
-  image = 'image',
-  video = 'video',
-  gifv = 'gifv',
-  article = 'article',
-  link = 'link',
-}
-
-export interface RawSticker {
+export interface RawApplicationCommand {
   id: string;
-  pack_id?: string;
-  name: string;
-  description?: string;
-  tags: string;
-  asset?: string;
-  type: StickerTypes;
-  format_type: StickerFormatTypes;
-  available?: boolean;
+  type: CommandTypes;
+  application_id: string;
   guild_id?: string;
-  user?: RawUser;
-  sort_value?: number;
-}
-
-export interface RawPartialSticker {
-  id: string;
   name: string;
-  format_type: StickerFormatTypes;
+  name_localizations?: Record<string, string>;
+  description?: string;
+  description_localizations?: Record<string, string>;
+  options?: RawApplicationCommandOption[];
+  default_member_permissions?: string;
+  dm_permission?: boolean;
+  nsfw?: boolean;
+  version: string;
 }
 
-export enum StickerTypes {
-  STANDARD = 1,
-  GUILD = 2,
+export type RawApplicationCommandCreate = Omit<
+  RawApplicationCommand,
+  "id" | "application_id" | "version"
+>;
+
+export interface RawApplicationCommandOption {
+  type: CommandOptionTypes;
+  name: string;
+  name_localizations?: Record<string, string>;
+  description: string;
+  description_localizations?: Record<string, string>;
+  required?: boolean;
+  choices?: RawApplicationCommandOptionChoice[];
+  options?: RawApplicationCommandOption[];
+  channel_types?: ChannelTypes[];
+  min_value?: number;
+  max_value?: number;
+  min_length?: number;
+  max_length?: number;
+  autocomplete?: boolean;
 }
 
-export enum StickerFormatTypes {
-  PNG = 1,
-  APNG = 2,
-  LOTTIE = 3,
+export interface RawApplicationCommandOptionChoice {
+  name: string;
+  name_localizations?: Record<string, string>;
+  value: string | number;
+}
+
+export interface RawGatewayBot {
+  url: string;
+  shards: number;
+  session_start_limit: RawSessionStartLimit;
+}
+
+interface RawSessionStartLimit {
+  total: number;
+  remaining: number;
+  reset_after: number;
+  max_concurrency: number;
+}
+
+export interface RawUnavailableGuild {
+  id: string;
+  unavailable: boolean;
 }
 
 export interface RawGuild {
@@ -149,88 +522,78 @@ export interface RawGuild {
   stickers?: RawSticker[];
   premium_progress_bar_enabled: boolean;
   channels?: RawChannel[];
-  members?: RawMember[];
+  members?: RawGuildMember[];
   threads?: RawChannel[];
 }
 
-export enum VerificationLevel {
-  NONE = 0,
-  LOW = 1,
-  MEDIUM = 2,
-  HIGH = 3,
-  VERY_HIGH = 4,
-}
-
-export enum DefaultMessageNotifications {
-  ALL_MESSAGES = 0,
-  ONLY_MENTIONS = 1,
-}
-
-export enum ExplicitContentFilter {
-  DISABLED = 0,
-  MEMBERS_WITHOUT_ROLES = 1,
-  ALL_MEMBERS = 2,
-}
-
-export enum MFALevel {
-  NONE = 0,
-  ELEVATED = 1,
-}
-
-export enum NSFWLevel {
-  DEFAULT = 0,
-  EXPLICIT = 1,
-  SAFE = 2,
-  AGE_RESTRICTED = 3,
-}
-
-export enum ServerBoostLevel {
-  NONE = 0,
-  TIER_1 = 1,
-  TIER_2 = 2,
-  TIER_3 = 3,
-}
-
-export enum SystemChannelFlags {
-  SUPPRESS_JOIN_NOTIFICATIONS = 1 << 0,
-  SUPPRESS_PREMIUM_SUBSCRIPTIONS = 1 << 1,
-  SUPPRESS_GUILD_REMINDER_NOTIFICATIONS = 1 << 2,
-  SUPPRESS_JOIN_NOTIFICATION_REPLIES = 1 << 3,
-}
-
-export enum GuildFeatures {
-  ANIMATED_ICON = 'ANIMATED_ICON',
-  BANNER = 'BANNER',
-  COMMERCE = 'COMMERCE',
-  COMMUNITY = 'COMMUNITY',
-  DISCOVERABLE = 'DISCOVERABLE',
-  FEATURABLE = 'FEATURABLE',
-  INVITE_SPLASH = 'INVITE_SPLASH',
-  MEMBER_VERIFICATION_GATE_ENABLED = 'MEMBER_VERIFICATION_GATE_ENABLED',
-  NEWS = 'NEWS',
-  PARTNERED = 'PARTNERED',
-  PREVIEW_ENABLED = 'PREVIEW_ENABLED',
-  VANITY_URL = 'VANITY_URL',
-  VERIFIED = 'VERIFIED',
-  VIP_REGIONS = 'VIP_REGIONS',
-  WELCOME_SCREEN_ENABLED = 'WELCOME_SCREEN_ENABLED',
-  TICKETED_EVENTS_ENABLED = 'TICKETED_EVENTS_ENABLED',
-  MONETIZATION_ENABLED = 'MONETIZATION_ENABLED',
-  MORE_STICKERS = 'MORE_STICKERS',
-  THREE_DAY_THREAD_ARCHIVE = 'THREE_DAY_THREAD_ARCHIVE',
-  SEVEN_DAY_THREAD_ARCHIVE = 'SEVEN_DAY_THREAD_ARCHIVE',
-  PRIVATE_THREADS = 'PRIVATE_THREADS',
+export interface RawRole {
+  id: string;
+  name: string;
+  color: number;
+  hoist: boolean;
+  icon?: string;
+  unicode_emoji?: string;
+  position: number;
+  permissions: string;
+  managed: boolean;
+  mentionable: boolean;
 }
 
 export interface RawEmoji {
   id?: string;
-  name: string;
+  name?: string;
   roles?: string[];
   user?: RawUser;
   require_colons?: boolean;
   managed?: boolean;
   animated?: boolean;
   available?: boolean;
+}
+
+export interface RawUser {
+  id: string;
+  username: string;
+  avatar?: string;
+  bot?: boolean;
+  system?: boolean;
+  mfa_enabled?: boolean;
+  banner?: string;
+  accent_color?: number;
+  locale?: string;
+  verified?: boolean;
+  email?: string;
+  flags?: UserFlags;
+  premium_type?: NitroTypes;
+  public_flags?: UserFlags;
+}
+
+export interface RawSticker {
+  id: string;
+  pack_id?: string;
+  name: string;
+  description?: string;
+  tags: string;
+  type: StickerTypes;
+  format_type: StickerFormatTypes;
+  available?: boolean;
+  guild_id?: string;
+  user?: RawUser;
+  sort_value?: number;
+}
+
+export interface RawGuildMember {
+  user?: RawUser;
+  nick?: string;
+  avatar?: string;
+  roles?: string[];
+  joined_at: string;
+  premium_since?: string;
+  deaf: boolean;
+  mute: boolean;
+  flags: GuildMemberFlags;
+  pending?: boolean;
+  permissions?: string;
+  communication_disabled_until?: string;
 }
 
 export interface RawChannel {
@@ -258,7 +621,7 @@ export interface RawChannel {
   thread_metadata?: RawTreadMetadata;
   member?: RawThreadMember;
   default_auto_archive_duration?: number;
-  permission?: string;
+  permissions?: string;
   flags?: ChannelFlags;
   total_message_sent?: number;
   available_tags?: RawForumTag[];
@@ -266,42 +629,18 @@ export interface RawChannel {
   default_reaction_emoji?: RawDefaultReaction;
   default_thread_rate_limit_per_user?: number;
   default_sort_order?: SortOrderTypes;
+  default_forum_layout?: ForumLayoutTypes;
 }
 
-export enum SortOrderTypes {
-  LATEST_ACTIVITY,
-  CREATION_DATE,
-}
-
-export interface RawDefaultReaction {
-  emoji_id?: string;
-  emoij_name?: string;
-}
-
-export interface RawForumTag {
+export interface RawOverwrite {
   id: string;
-  name: string;
-  moderated?: boolean;
-  emoji_id?: string;
-  emoji_name?: string;
-}
-
-export interface RawChannelMention {
-  id: string;
-  guild_id: string;
-  type: ChannelTypes;
-  name: string;
-}
-
-export interface RawThreadMember {
-  id?: string;
-  user_id?: string;
-  join_timestamp: string;
-  flags: number;
+  type: OverwriteTypes;
+  allow: string;
+  deny: string;
 }
 
 export interface RawTreadMetadata {
-  achived: string;
+  archived: string;
   auto_archive_duration: string;
   archive_timestamp: string;
   locked: boolean;
@@ -309,496 +648,23 @@ export interface RawTreadMetadata {
   create_timestamp?: string;
 }
 
-export interface RawOverwrite {
-  id: string;
-  type: OverwriteType;
-  allow: string;
-  deny: string;
+export interface RawThreadMember {
+  id?: string;
+  user_id?: string;
+  join_timestamp: string;
+  flags: number;
+  member: RawGuildMember;
 }
 
-export enum ChannelTypes {
-  GUILD_TEXT,
-  DM,
-  GUILD_VOICE,
-  GROUP_DM,
-  GUILD_CATEGORY,
-  GUILD_NEWS,
-  GUILD_NEWS_THREAD = 10,
-  GUILD_PUBLIC_THREAD,
-  GUILD_PRIVATE_THREAD,
-  GUILD_STAGE_VOICE,
-  GUILD_DIRECTORY,
-  GUILD_FORUM,
-}
-
-export enum TextableChannelTypes {
-  GUILD_TEXT = ChannelTypes.GUILD_TEXT,
-  DM = ChannelTypes.DM,
-  GROUP_DM = ChannelTypes.GROUP_DM,
-  GUILD_PUBLIC_THREAD = ChannelTypes.GUILD_PUBLIC_THREAD,
-  GUILD_PRIVATE_THREAD = ChannelTypes.GUILD_PRIVATE_THREAD,
-  GUILD_NEWS = ChannelTypes.GUILD_NEWS,
-}
-
-export enum OverwriteType {
-  ROLE,
-  MEMBER,
-}
-
-export enum ChannelFlags {
-  PINNED = 1 << 1,
-}
-
-export enum VideoQualityModes {
-  AUTO,
-  FULL,
-}
-
-export enum Permissions {
-  CREATE_INSTANT_INVITE = 1 << 0,
-  KICK_MEMBERS = 1 << 1,
-  BAN_MEMBERS = 1 << 2,
-  ADMINISTRATOR = 1 << 3,
-  MANAGE_CHANNELS = 1 << 4,
-  MANAGE_GUILD = 1 << 5,
-  ADD_REACTIONS = 1 << 6,
-  VIEW_AUDIT_LOG = 1 << 7,
-  PRIORITY_SPEAKER = 1 << 8,
-  STREAM = 1 << 9,
-  VIEW_CHANNEL = 1 << 10,
-  SEND_MESSAGES = 1 << 11,
-  SEND_TTS_MESSAGES = 1 << 12,
-  MANAGE_MESSAGES = 1 << 13,
-  EMBED_LINKS = 1 << 14,
-  ATTACH_FILES = 1 << 15,
-  READ_MESSAGE_HISTORY = 1 << 16,
-  MENTION_EVERYONE = 1 << 17,
-  USE_EXTERNAL_EMOJIS = 1 << 18,
-  VIEW_GUILD_INSIGHTS = 1 << 19,
-  CONNECT = 1 << 20,
-  SPEAK = 1 << 21,
-  MUTE_MEMBERS = 1 << 22,
-  DEAFEN_MEMBERS = 1 << 23,
-  MOVE_MEMBERS = 1 << 24,
-  USE_VAD = 1 << 25,
-  CHANGE_NICKNAME = 1 << 26,
-  MANAGE_NICKNAMES = 1 << 27,
-  MANAGE_ROLES = 1 << 28,
-  MANAGE_WEBHOOKS = 1 << 29,
-  MANAGE_EMOJIS_AND_STICKERS = 1 << 30,
-  USE_SLASH_COMMANDS = 1 << 31,
-  REQUEST_TO_SPEAK = 1 << 32,
-  MANAGE_THREADS = 1 << 34,
-  USE_PUBLIC_THREADS = 1 << 35,
-  USE_PRIVATE_THREADS = 1 << 36,
-  USE_EXTERNAL_STICKERS = 1 << 37,
-  SEND_MESSAGES_IN_THREAD = 1 << 38,
-  USE_EMBEDDED_ACTIVITIES = 1 << 39,
-  MODERATE_MEMBERS = 1 << 40,
-}
-
-export interface RawUser {
-  id: string;
-  username: string;
-  discriminator: string;
-  avatar?: string;
-  bot?: boolean;
-  system?: boolean;
-  mfa_enabled?: boolean;
-  banner?: string;
-  accent_color?: number;
-  locale?: string;
-  verified?: boolean;
-  email?: string;
-  flags?: UserFlags;
-  premium_type?: NitroTypes;
-  public_flags?: UserFlags;
-}
-
-export interface RawMember {
-  user?: RawUser;
-  nick?: string;
-  avatar?: string;
-  roles?: string[];
-  premium_since?: string;
-  deaf: boolean;
-  mute: boolean;
-  pending?: boolean;
-  permissions?: string;
-  communication_disabled_until?: string;
-}
-
-export enum UserFlags {
-  STAFF = 1 << 0,
-  PARTNER = 1 << 1,
-  HYPESQUAD = 1 << 2,
-  BUG_HUNTER_LEVEL_1 = 1 << 3,
-  HYPESQUAD_ONLINE_HOUSE_1 = 1 << 6,
-  HYPESQUAD_ONLINE_HOUSE_2 = 1 << 7,
-  HYPESQUAD_ONLINE_HOUSE_3 = 1 << 8,
-  PREMIUM_EARLY_SUPPORTER = 1 << 9,
-  TEAM_PSEUDO_USER = 1 << 10,
-  BUG_HUNTER_LEVEL_2 = 1 << 14,
-  VERIFIED_BOT = 1 << 16,
-  VERIFIED_DEVELOPER = 1 << 17,
-  CERTIFIED_MODERATOR = 1 << 18,
-  BOT_HTTP_INTERACTIONS = 1 << 19,
-}
-
-export enum NitroTypes {
-  None = 0,
-  Classic = 1,
-  Nitro = 2,
-}
-
-export interface RawMessage {
-  id: string;
-  channel_id: string;
-  author?: RawUser;
-  member?: RawMember;
-  content: string;
-  timestamp: string;
-  edited_timestamp?: string;
-  tts: boolean;
-  mention_everyone: boolean;
-  mentions?: RawUser[];
-  mention_roles?: string[];
-  mention_channels?: RawChannelMention[];
-  attachments: RawAttachment[];
-  embeds: RawEmbed[];
-  reactions?: RawReaction[];
-  nonce?: string | number;
-  pinned: boolean;
-  webhook_id?: string;
-  type: MessageTypes;
-  message_reference?: RawMessageReference;
-  flags?: MessageFlags;
-  referenced_message?: RawMessage;
-  interaction?: RawMessageInteraction;
-  thread?: RawChannel;
-  components?: RawMessageComponent[];
-  sticker_items?: RawPartialSticker[];
-}
-
-export interface RawMessageInteraction {
-  id: string;
-  type: InteractionType;
-  name: string;
-  user: RawUser;
-  member?: RawMember;
-}
-
-export interface RawMessageReference {
-  message_id?: string;
-  channel_id?: string;
-  guild_id?: string;
-  fail_if_not_exists?: boolean;
-}
-
-export interface RawReaction {
-  count: string;
-  me: boolean;
-  emoji: RawEmoji;
-}
-
-export interface RawAttachment {
-  id: string;
-  filename: string;
-  description?: string;
-  content_type?: string;
-  size: number;
-  url: string;
-  proxy_url: string;
-  height?: number;
-  width?: number;
-  ephemeral?: boolean;
-}
-
-export enum MessageFlags {
-  CROSSPOSTED = 1 << 0,
-  IS_CROSSPOST = 1 << 1,
-  SUPPRESS_EMBEDS = 1 << 2,
-  SOURCE_MESSAGE_DELETED = 1 << 3,
-  URGENT = 1 << 4,
-  HAS_THREAD = 1 << 5,
-  EPHEMERAL = 1 << 6,
-  LOADING = 1 << 7,
-  FAILED_TO_MENTION_SOME_ROLES_IN_THREAD = 1 << 8,
-}
-
-export enum MessageTypes {
-  DEFAULT = 0,
-  RECIPIENT_ADD,
-  RECIPIENT_REMOVE,
-  CALL,
-  CHANNEL_NAME_CHANGE,
-  CHANNEL_ICON_CHANGE,
-  CHANNEL_PINNED_MESSAGE,
-  GUILD_MEMBER_JOIN,
-  USER_PREMIUM_GUILD_SUBSCRIPTION,
-  USER_PREMIUM_GUILD_SUBSCRIPTION_TIER_1,
-  USER_PREMIUM_GUILD_SUBSCRIPTION_TIER_2,
-  USER_PREMIUM_GUILD_SUBSCRIPTION_TIER_3,
-  CHANNEL_FOLLOW_ADD,
-  GUILD_DISCOVERY_DISQUALIFIED = 14,
-  GUILD_DISCOVERY_REQUALIFIED,
-  GUILD_DISCOVERY_GRACE_PERIOD_INITIAL_WARNING,
-  GUILD_DISCOVERY_GRACE_PERIOD_FINAL_WARNING,
-  THREAD_CREATED,
-  REPLY,
-  CHAT_INPUT_COMMAND,
-  THREAD_STARTER_MESSAGE,
-  GUILD_INVITE_REMINDER,
-  CONTEXT_MENU_COMMAND,
-}
-
-export enum AllowedMentionTypes {
-  ROLE_MENTIONS = 'role',
-  USER_MENTIONS = 'user',
-  EVERYONE_MENTIONS = 'everyone',
-}
-
-export interface RawAllowedMentions {
-  parse?: AllowedMentionTypes[];
-  roles?: string[];
-  users?: string[];
-  replied_user?: boolean;
-}
-
-export type RawMessageComponent = RawActionRow;
-
-export interface RawActionRow {
-  type: ComponentTypes.ActionRow;
-  components:
-    | (RawButtonComponent | RawSelectMenuComponent | RawTextInputComponent)[];
-}
-
-export interface RawButtonComponent {
-  type: ComponentTypes.Button;
-  style: ButtonStyles;
-  custom_id: string;
-  label: string;
-  emoji?: RawEmoji;
-  url?: string;
-  disabled?: boolean;
-}
-
-export interface RawSelectMenuComponent {
-  type: ComponentTypes.SelectMenu;
-  custom_id: string;
-  options: RawSelectOption[];
-  placeholder?: string;
-  min_values?: number;
-  max_values?: number;
-  disabled?: boolean;
-}
-
-export interface RawTextInputComponent {
-  type: ComponentTypes.TextInput;
-  custom_id: string;
-  style: TextInputStyles;
-  label: string;
-  min_length?: number;
-  max_length?: number;
-  required?: boolean;
-  value?: string;
-  placeholder?: string;
-}
-
-export interface RawSelectOption {
-  label: string;
-  value: string;
-  description?: string;
-  emoji?: RawEmoji;
-  default?: boolean;
-}
-
-export interface SelectMenuComponentData extends RawSelectMenuComponent {
-  values: string[];
-}
-
-export enum ComponentTypes {
-  ActionRow = 1,
-  Button,
-  SelectMenu,
-  TextInput,
-}
-
-export enum ButtonStyles {
-  PRIMARY = 1,
-  SECONDARY,
-  SUCCESS,
-  DANGER,
-  LINK,
-}
-
-export enum TextInputStyles {
-  SHORT = 1,
-  PARAGRAPH,
-}
-
-/**
- * Types of Interaction
- */
-export enum InteractionType {
-  PING = 1,
-  APPLICATION_COMMAND,
-  /** Message Component */
-  MESSAGE_COMPONENT,
-  /** Autocomplete */
-  APPLICATION_COMMAND_AUTOCOMPLETE = 4,
-  MODAL_SUBMIT,
-}
-
-export interface RawInteraction {
-  id: string;
-  application_id: string;
-  type: InteractionType;
-  data?: RawInteractionData;
-  guild_id?: string;
-  channel_id?: string;
-  member?: RawMember;
-  user?: RawUser;
-  token: string;
-  readonly version: number;
-  message?: RawMessage;
-  locale?: string;
-  guild_locale?: string;
-}
-
-export interface RawInteractionData {
+export interface RawForumTag {
   id: string;
   name: string;
-  type: Commandtype;
-  resolved?: RawInteractionResolvedData;
-  options?: RawInterationCommandDataOption[];
-  components?: RawMessageComponent[];
-  custom_id?: string;
-  guild_id?: string;
-  target_id?: string;
-  component_type?: ComponentTypes;
-  values?: string[];
+  moderated: boolean;
+  emoji_id?: string;
+  emoji_name?: string;
 }
 
-export interface RawInteractionResolvedData {
-  users?: { [id: string]: RawUser };
-  messages?: { [id: string]: RawMessage };
-  members?: { [id: string]: Omit<RawMember, 'user' | 'deaf' | 'mute'> };
-  channels?: { [id: string]: RawChannel };
-  roles?: { [id: string]: RawRole };
-  attachments?: { [id: string]: RawAttachment };
+export interface RawDefaultReaction {
+  emoji_id?: string;
+  emoij_name?: string;
 }
-
-export interface RawInteractionCommand {
-  id: string;
-  type: Commandtype;
-  application_id: string;
-  guild_id?: string;
-  name: string;
-  name_localizations?: { [k: string]: string };
-  description?: string;
-  description_localizations?: { [k: string]: string };
-  options?: RawInterationCommandOption[];
-  default_member_permissions?: string;
-  dm_permission?: boolean;
-  version: number;
-}
-
-export interface RawInterationCommandOption {
-  type: CommandOptionType;
-  name: string;
-  name_localizations?: { [k: string]: string };
-  description: string;
-  description_localizations?: { [k: string]: string };
-  required?: boolean;
-  choices?: RawInterationCommandOptionChoice[];
-  options?: RawInterationCommandOption[];
-  channel_types?: ChannelTypes[];
-  min_value?: number;
-  max_value?: number;
-  autocomplete?: boolean;
-}
-
-export interface RawInterationCommandDataOption {
-  name: string;
-  type: CommandOptionType;
-  value?: string | number;
-  options?: RawInterationCommandDataOption[];
-  focused?: boolean;
-}
-
-export interface RawInterationCommandOptionChoice {
-  name: string;
-  name_localizations?: { [k: string]: string };
-  value: string | number;
-}
-
-export enum Commandtype {
-  CHAT_INPUT = 1,
-  USER,
-  MESSAGE,
-}
-
-export enum CommandOptionType {
-  SUB_COMMAND = 1,
-  SUB_COMMAND_GROUP,
-  STRING,
-  INTEGER,
-  BOOLEAN,
-  USER,
-  CHANNEL,
-  ROLE,
-  MENTIONABLE,
-  NUMBER,
-  ATTACHMENT,
-}
-
-export enum InteractionCallbackType {
-  PONG = 1,
-  CHANNEL_MESSAGE_WITH_SOURCE = 4,
-  DEFERRED_CHANNEL_MESSAGE_WITH_SOURCE,
-  DEFERRED_UPDATE_MESSAGE,
-  UPDATE_MESSAGE,
-  APPLICATION_COMMAND_AUTOCOMPLETE_RESULT,
-  MODAL,
-}
-
-export interface RawInteractionCallback {
-  type: InteractionCallbackType;
-  data?: RawInteractionCallbackData;
-}
-
-export type RawInteractionCallbackData =
-  | RawInteractionCallbackMessageData
-  | RawInteractionCallbackModalData
-  | RawInteractionCallbackAutocompleteData;
-
-export interface RawInteractionCallbackMessageData {
-  tts?: boolean;
-  content?: string;
-  embeds?: RawEmbed[];
-  allowed_mentions?: RawAllowedMentions;
-  flags?: MessageFlags;
-  components?: RawMessageComponent[];
-}
-
-export interface RawInteractionCallbackAutocompleteData {
-  choices: RawInterationCommandOptionChoice[];
-}
-
-export interface RawInteractionCallbackModalData {
-  custom_id: string;
-  title: string;
-  components?: RawMessageComponent[];
-}
-
-export enum ActivityTypes {
-  GAME,
-  STREAMING,
-  LISTENING,
-  WATCHING,
-  CUSTOM,
-  COMPETING,
-}
-
-export type StatusTypes = 'online' | 'dnd' | 'idle' | 'invisible' | 'offline';
